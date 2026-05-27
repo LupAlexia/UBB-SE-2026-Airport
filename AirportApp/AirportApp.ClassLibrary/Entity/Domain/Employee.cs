@@ -6,7 +6,7 @@ namespace AirportApp.ClassLibrary.Entity.Domain
     public class Employee
     {
         [Key]
-        [Column("Customer_Id")]
+        [Column("Employee_Id")]
         public int Id { get; set; }
 
         [Required]
