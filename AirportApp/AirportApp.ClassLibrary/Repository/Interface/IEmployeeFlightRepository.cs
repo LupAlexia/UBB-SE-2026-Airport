@@ -1,11 +1,11 @@
-﻿namespace AirportAPI.Repositories.Interfaces;
+﻿namespace AirportApp.ClassLibrary.Repository.Interface;
 
 public interface IEmployeeFlightRepository
 {
-    void AssignFlightToEmployeeUsingIds(int employeeId, int flightId);
-    void RemoveFlightFromEmployeeUsingIds(int employeeId, int flightId);
-    List<int> GetFlightsByEmployeeId(int employeeId);
-    List<int> GetEmployeesByFlightId(int flightId);
-    void RemoveAllByFlightId(int flightId);
-    void RemoveAllByEmployeeId(int employeeId);
+    Task AssignAsync(int employeeId, int flightId);
+    Task UnassignAsync(int employeeId, int flightId);
+    Task<IEnumerable<int>> GetFlightIdsByEmployeeIdAsync(int employeeId);
+    Task<IEnumerable<int>> GetEmployeeIdsByFlightIdAsync(int flightId);
+    Task DeleteByFlightIdAsync(int flightId);
+    Task DeleteByEmployeeIdAsync(int employeeId);
 }
