@@ -13,54 +13,97 @@ public class FlightService(IFlightRepository flightRepository) : IFlightService
 
     public async Task<Flight?> GetFlightByIdAsync(int flightId)
     {
+        if (flightId <= 0)
+        {
+            return null;
+        }
+
         return await flightRepository.GetByIdAsync(flightId);
     }
 
-    public async Task AddFlightAsync(Flight flight)
+    public async Task<IEnumerable<Flight>> GetFlightsByRouteIdAsync(int routeId)
     {
-        if (string.IsNullOrWhiteSpace(flight.FlightNumber))
-            throw new ArgumentException("Flight number cannot be empty.");
-        if (flight.Route is null || flight.Route.Id <= 0)
-            throw new ArgumentException("A valid route must be assigned to the flight.");
-        await flightRepository.AddAsync(flight);
+        if (routeId <= 0)
+        {
+            return new List<Flight>();
+        }
+
+        return await flightRepository.GetByRouteIdAsync(routeId);
     }
 
-    public async Task UpdateFlightAsync(Flight flight)
+    public async Task<int> AddFlightAsync(string flightNumber, int routeId, DateTime date, int runwayId, int gateId)
     {
-        var existing = await flightRepository.GetByIdAsync(flight.Id);
-        if (existing is null)
-            throw new InvalidOperationException($"Flight with ID {flight.Id} not found.");
+        if (string.IsNullOrWhiteSpace(flightNumber))
+        {
+            throw new ArgumentException("The flight number cannot be empty.");
+        }
 
-        if (flight.FlightNumber is not null)
-            existing.FlightNumber = flight.FlightNumber;
-        if (flight.Gate is not null)
-            existing.Gate = flight.Gate;
-        if (flight.Runway is not null)
-            existing.Runway = flight.Runway;
-        if (flight.Route is not null)
-            existing.Route = flight.Route;
-        if (flight.Date != default)
-            existing.Date = flight.Date;
+        if (routeId <= 0)
+        {
+            throw new ArgumentException("A valid route Id is required.");
+        }
 
-        await flightRepository.UpdateAsync(existing);
+        Flight newFlight = new Flight
+        {
+            FlightNumber = flightNumber,
+            Route = new Route { Id = routeId },
+            Date = date,
+            Runway = new Runway { Id = runwayId },
+            Gate = new Gate { Id = gateId }
+        };
+
+        return await flightRepository.AddAsync(newFlight);
+    }
+
+    public async Task UpdateFlightAsync(
+        int flightId,
+        DateTime? date = null,
+        string? flightNumber = null,
+        int? runwayId = null,
+        int? gateId = null)
+    {
+        Flight? existingFlight = await flightRepository.GetByIdAsync(flightId);
+
+        if (existingFlight == null)
+        {
+            throw new InvalidOperationException($"Flight with Id {flightId} does not exist in the system.");
+        }
+
+        if (date.HasValue)
+        {
+            existingFlight.Date = date.Value;
+        }
+
+        if (flightNumber != null)
+        {
+            existingFlight.FlightNumber = flightNumber;
+        }
+
+        if (runwayId.HasValue)
+        {
+            existingFlight.Runway = new Runway { Id = runwayId.Value };
+        }
+
+        if (gateId.HasValue)
+        {
+            existingFlight.Gate = new Gate { Id = gateId.Value };
+        }
+
+        await flightRepository.UpdateAsync(existingFlight);
     }
 
     public async Task DeleteFlightAsync(int flightId)
     {
+        if (flightId <= 0)
+        {
+            throw new ArgumentException("The provided flight Id is invalid.");
+        }
+
+        if (await flightRepository.GetByIdAsync(flightId) == null)
+        {
+            throw new InvalidOperationException($"Flight with Id {flightId} does not exist.");
+        }
+
         await flightRepository.DeleteAsync(flightId);
-    }
-
-    public async Task<IEnumerable<Flight>> SearchFlightsAsync(string location, string routeType, DateTime? date)
-    {
-        return await flightRepository.SearchFlightsAsync(location, routeType, date);
-    }
-
-    public async Task<int> GetOccupiedSeatCountAsync(int flightId)
-    {
-        return await flightRepository.GetOccupiedSeatCountAsync(flightId);
-    }
-    public async Task<IEnumerable<Flight>> GetFlightsByRouteIdAsync(int routeId)
-    {
-        return await flightRepository.GetByRouteIdAsync(routeId);
     }
 }

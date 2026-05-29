@@ -11,6 +11,6 @@ public interface IShopItemService
     Task AddShopItemAsync(ShopItem shopItem);
     Task UpdateShopItemAsync(ShopItem shopItem);
     Task RemoveShopItemAsync(int shopItemId);
-    Task<IEnumerable<ShopItem>> GetItemsSortedByPriceAsync(int shopId);
-    Task<IEnumerable<ShopItem>> GetItemsSortedAlphabeticallyAsync(int shopId);
+    Task<IEnumerable<ShopItem>> GetItemsSortedByPriceAsync(Shop currentShop);
+    Task<IEnumerable<ShopItem>> GetItemsSortedAlphabeticallyAsync(Shop currentShop);
 }

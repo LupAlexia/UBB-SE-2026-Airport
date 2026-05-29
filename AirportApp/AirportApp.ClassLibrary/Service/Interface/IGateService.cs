@@ -10,6 +10,6 @@ public interface IGateService
     Task UpdateGateAsync(Gate gate);
     Task DeleteGateAsync(int gateId);
     Task<bool> HasFlightsAsync(int gateId);
-    Task<string> GetDeleteWarningMessageAsync(int gateId, string gateName);
+    Task<string> GetDeleteWarningMessageAsync(int gateId);
     Task SaveGateAsync(Gate gate);
 }

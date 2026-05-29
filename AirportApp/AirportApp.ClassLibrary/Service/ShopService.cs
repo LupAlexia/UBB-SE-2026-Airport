@@ -6,6 +6,10 @@ namespace AirportApp.ClassLibrary.Service;
 
 public class ShopService(IShopRepository shopRepository) : IShopService
 {
+    private const string EmptyNameErrorMessage = "The shop name field must not be empty.";
+    private const string EmptyTypeErrorMessage = "The shop type field must not be empty.";
+    private const string DuplicateNameErrorMessage = "A shop with this name already exists in the system.";
+
     public async Task<IEnumerable<Shop>> GetAllAvailableShopsAsync()
     {
         return await shopRepository.GetAsync();
@@ -16,32 +20,46 @@ public class ShopService(IShopRepository shopRepository) : IShopService
         return await shopRepository.GetByIdAsync(shopId);
     }
 
-    public async Task AddShopAsync(Shop shop)
+    public async Task AddShopAsync(Shop shopToAdd)
     {
-        if (string.IsNullOrWhiteSpace(shop.Name))
-            throw new ArgumentException("Shop name cannot be empty.");
-        if (string.IsNullOrWhiteSpace(shop.Type))
-            throw new ArgumentException("Shop type cannot be empty.");
+        if (string.IsNullOrWhiteSpace(shopToAdd.Name))
+        {
+            throw new ArgumentException(EmptyNameErrorMessage, nameof(shopToAdd));
+        }
 
-        var allShops = await shopRepository.GetAsync();
-        if (allShops.Any(s => s.Name.Equals(shop.Name, StringComparison.OrdinalIgnoreCase)))
-            throw new InvalidOperationException($"A shop with the name '{shop.Name}' already exists.");
+        if (string.IsNullOrWhiteSpace(shopToAdd.Type))
+        {
+            throw new ArgumentException(EmptyTypeErrorMessage, nameof(shopToAdd));
+        }
 
-        await shopRepository.AddAsync(shop);
+        bool doesNameAlreadyExist = await CheckIfNameExistsAsync(shopToAdd.Name);
+        if (doesNameAlreadyExist)
+        {
+            throw new InvalidOperationException(DuplicateNameErrorMessage);
+        }
+
+        await shopRepository.AddAsync(shopToAdd);
     }
 
-    public async Task UpdateShopAsync(Shop shop)
+    public async Task UpdateShopAsync(Shop shopToUpdate)
     {
-        if (string.IsNullOrWhiteSpace(shop.Name))
-            throw new ArgumentException("Shop name cannot be empty.");
-        if (string.IsNullOrWhiteSpace(shop.Type))
-            throw new ArgumentException("Shop type cannot be empty.");
+        if (string.IsNullOrWhiteSpace(shopToUpdate.Name))
+        {
+            throw new ArgumentException(EmptyNameErrorMessage, nameof(shopToUpdate));
+        }
 
-        var allShops = await shopRepository.GetAsync();
-        if (allShops.Any(s => s.Id != shop.Id && s.Name.Equals(shop.Name, StringComparison.OrdinalIgnoreCase)))
-            throw new InvalidOperationException($"Another shop with the name '{shop.Name}' already exists.");
+        if (string.IsNullOrWhiteSpace(shopToUpdate.Type))
+        {
+            throw new ArgumentException(EmptyTypeErrorMessage, nameof(shopToUpdate));
+        }
 
-        await shopRepository.UpdateAsync(shop);
+        bool isDuplicateName = await CheckIfNameIsDuplicateForOtherShopAsync(shopToUpdate.Id, shopToUpdate.Name);
+        if (isDuplicateName)
+        {
+            throw new InvalidOperationException(DuplicateNameErrorMessage);
+        }
+
+        await shopRepository.UpdateAsync(shopToUpdate);
     }
 
     public async Task DeleteShopAsync(int shopId)
@@ -51,14 +69,64 @@ public class ShopService(IShopRepository shopRepository) : IShopService
 
     public async Task<IEnumerable<Shop>> SortAlphabeticallyAsync()
     {
-        var shops = await shopRepository.GetAsync();
-        return shops.OrderBy(s => s.Name).ToList();
+        IEnumerable<Shop> allShops = await GetAllAvailableShopsAsync();
+        List<Shop> sortedList = new List<Shop>(allShops);
+        sortedList.Sort(new ShopNameComparer());
+        return sortedList;
     }
 
-    public async Task<IEnumerable<Shop>> SearchByNameAsync(string name)
+    public async Task<IEnumerable<Shop>> SearchByNameAsync(string searchText)
     {
-        var shops = await shopRepository.GetAsync();
-        if (string.IsNullOrWhiteSpace(name)) return shops;
-        return shops.Where(s => s.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
+        IEnumerable<Shop> allShops = await GetAllAvailableShopsAsync();
+        List<Shop> matchingShops = new List<Shop>();
+
+        foreach (Shop shop in allShops)
+        {
+            if (shop.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+            {
+                matchingShops.Add(shop);
+            }
+        }
+
+        return matchingShops;
+    }
+
+    private async Task<bool> CheckIfNameExistsAsync(string nameToFind)
+    {
+        foreach (Shop existingShop in await shopRepository.GetAsync())
+        {
+            if (string.Equals(existingShop.Name, nameToFind, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private async Task<bool> CheckIfNameIsDuplicateForOtherShopAsync(int currentShopId, string nameToVerify)
+    {
+        foreach (Shop otherShop in await shopRepository.GetAsync())
+        {
+            if (otherShop.Id != currentShopId && string.Equals(otherShop.Name, nameToVerify, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private class ShopNameComparer : IComparer<Shop>
+    {
+        public int Compare(Shop? firstShop, Shop? secondShop)
+        {
+            if (firstShop == null || secondShop == null)
+            {
+                return 0;
+            }
+
+            return string.Compare(firstShop.Name, secondShop.Name, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

@@ -4,31 +4,317 @@ using AirportApp.ClassLibrary.Service.Interface;
 
 namespace AirportApp.ClassLibrary.Service;
 
+public enum RecurrenceType
+{
+    Daily,
+    Weekly,
+    Monthly,
+    Custom
+}
+
 public class FlightRouteService(
     IFlightRepository flightRepository,
     IRouteRepository routeRepository,
+    ICompanyRepository companyRepository,
     IAirportRepository airportRepository,
-    IGateRepository gateRepository,
-    IRunwayRepository runwayRepository) : IFlightRouteService
+    IRunwayService runwayService,
+    IGateService gateService,
+    IAirportService airportService) : IFlightRouteService
 {
-    public async Task<IEnumerable<Flight>> GetAllFlightsAsync()
+    private const int MinutesInADay = 1440;
+    private const int MinutesInAnHour = 60;
+    private const string ArrivalText = "Arrival";
+    private const string ArrivalCode = "ARR";
+    private const string DepartureCode = "DEP";
+    private const string FlightDateTimeFormat = "dd.MM.yyyy HH:mm";
+    private const string EmptyFieldPlaceholder = "-";
+
+    private const int DailyIntervalDays = 1;
+    private const int WeeklyIntervalDays = 7;
+    private const int MonthlyIntervalDays = 30;
+
+    private bool CheckOverlappingTimes(TimeOnly startTime1, TimeOnly endTime1, TimeOnly startTime2, TimeOnly endTime2)
     {
-        return await flightRepository.GetAsync();
+        int startMinutes1 = (startTime1.Hour * MinutesInAnHour) + startTime1.Minute;
+        int endMinutes1 = (endTime1.Hour * MinutesInAnHour) + endTime1.Minute;
+
+        if (endMinutes1 <= startMinutes1)
+        {
+            endMinutes1 += MinutesInADay;
+        }
+
+        int startMinutes2 = (startTime2.Hour * MinutesInAnHour) + startTime2.Minute;
+        int endMinutes2 = (endTime2.Hour * MinutesInAnHour) + endTime2.Minute;
+
+        if (endMinutes2 <= startMinutes2)
+        {
+            endMinutes2 += MinutesInADay;
+        }
+
+        return startMinutes1 < endMinutes2 && startMinutes2 < endMinutes1;
     }
 
-    public async Task<Flight?> GetFlightByIdAsync(int flightId)
+    public async Task<int> AddFlightToRouteAsync(
+        int companyId,
+        int airportId,
+        string routeType,
+        int recurrenceInterval,
+        DateTime startDate,
+        DateTime endDate,
+        TimeOnly departureTime,
+        TimeOnly arrivalTime,
+        int capacity,
+        string flightNumber,
+        int runwayId,
+        int gateId)
     {
-        return await flightRepository.GetByIdAsync(flightId);
+        if (startDate > endDate)
+        {
+            throw new ArgumentException("The start date cannot be after the end date.");
+        }
+
+        if (capacity <= 0)
+        {
+            throw new ArgumentException("Capacity must be a positive number greater than 0.");
+        }
+
+        IEnumerable<Flight> allFlights = await flightRepository.GetAsync();
+
+        foreach (Flight existingFlight in allFlights)
+        {
+            if (existingFlight.Date.Date == startDate.Date)
+            {
+                if (existingFlight.Gate.Id == gateId || existingFlight.Runway.Id == runwayId)
+                {
+                    Route? existingRoute = await routeRepository.GetByIdAsync(existingFlight.Route.Id);
+
+                    if (existingRoute != null)
+                    {
+                        bool isTimeOverlap = CheckOverlappingTimes(
+                            departureTime,
+                            arrivalTime,
+                            existingRoute.DepartureTime,
+                            existingRoute.ArrivalTime);
+
+                        if (isTimeOverlap)
+                        {
+                            if (existingFlight.Gate.Id == gateId)
+                            {
+                                throw new InvalidOperationException($"Gate Conflict: Gate {gateId} is occupied by Flight {existingFlight.FlightNumber}.");
+                            }
+
+                            if (existingFlight.Runway.Id == runwayId)
+                            {
+                                throw new InvalidOperationException($"Runway Conflict: Runway {runwayId} is occupied by Flight {existingFlight.FlightNumber}.");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Company? company = await companyRepository.GetByIdAsync(companyId);
+        Airport? airport = await airportRepository.GetByIdAsync(airportId);
+
+        Route newRoute = new Route
+        {
+            Company = company!,
+            Airport = airport!,
+            RouteType = routeType,
+            RecurrenceInterval = recurrenceInterval,
+            StartDate = DateOnly.FromDateTime(startDate),
+            EndDate = DateOnly.FromDateTime(endDate),
+            DepartureTime = departureTime,
+            ArrivalTime = arrivalTime,
+            Capacity = capacity
+        };
+
+        int routeId = await routeRepository.AddAsync(newRoute);
+
+        DateTime flightFullDateTime = startDate.Date.Add(departureTime.ToTimeSpan());
+
+        Flight initialFlight = new Flight
+        {
+            Route = new Route { Id = routeId },
+            Date = flightFullDateTime,
+            FlightNumber = flightNumber,
+            Runway = new Runway { Id = runwayId },
+            Gate = new Gate { Id = gateId }
+        };
+
+        await flightRepository.AddAsync(initialFlight);
+
+        return routeId;
     }
 
-    public async Task DeleteFlightUsingIdAsync(int flightId)
+    public async Task CreateFlightWithScheduleAsync(
+        int companyId,
+        string? routeTypeDisplayName,
+        int airportId,
+        int capacity,
+        TimeSpan departureOffset,
+        TimeSpan arrivalOffset,
+        bool isRecurrent,
+        DateTime? startDate,
+        DateTime? endDate,
+        DateTime? singleDate,
+        string recurrenceType,
+        string customDaysText,
+        int runwayId,
+        int gateId,
+        Func<int, string> flightCodeGenerator)
     {
-        await flightRepository.DeleteAsync(flightId);
+        if (companyId <= 0)
+        {
+            throw new InvalidOperationException("A company must be selected before adding a flight.");
+        }
+
+        if (airportId <= 0 || runwayId <= 0 || gateId <= 0)
+        {
+            throw new InvalidOperationException("Please ensure all required fields are populated.");
+        }
+
+        if (capacity <= 0)
+        {
+            throw new InvalidOperationException("The provided capacity value is invalid.");
+        }
+
+        string routeType = routeTypeDisplayName == ArrivalText ? ArrivalCode : DepartureCode;
+
+        DateTime start = isRecurrent ? startDate?.Date ?? DateTime.Today : singleDate?.Date ?? DateTime.Today;
+        DateTime end = isRecurrent ? endDate?.Date ?? start : start;
+
+        if (isRecurrent && end < start)
+        {
+            throw new InvalidOperationException("The end date must be after the start date.");
+        }
+
+        int interval = 0;
+        if (isRecurrent)
+        {
+            interval = recurrenceType switch
+            {
+                nameof(RecurrenceType.Daily) => DailyIntervalDays,
+                nameof(RecurrenceType.Weekly) => WeeklyIntervalDays,
+                nameof(RecurrenceType.Monthly) => MonthlyIntervalDays,
+                nameof(RecurrenceType.Custom) => int.TryParse(customDaysText, out int custom) && custom > 0
+                                                      ? custom
+                                                      : throw new InvalidOperationException("Invalid custom interval."),
+                _ => throw new InvalidOperationException("A recurrence type is required for recurrent flights.")
+            };
+        }
+
+        TimeOnly depTime = TimeOnly.FromTimeSpan(departureOffset);
+        TimeOnly arrTime = TimeOnly.FromTimeSpan(arrivalOffset);
+
+        if (depTime == arrTime)
+        {
+            throw new InvalidOperationException("Arrival time cannot be identical to departure time.");
+        }
+
+        string flightNumber = flightCodeGenerator(companyId);
+        await AddFlightToRouteAsync(companyId, airportId, routeType, interval, start, end, depTime, arrTime, capacity, flightNumber, runwayId, gateId);
     }
 
-    public async Task<IEnumerable<Route>> GetAllRoutesAsync()
+    public async Task<IEnumerable<Flight>> GetAllFlightsWithDetailsAsync()
     {
-        return await routeRepository.GetAsync();
+        List<Flight> flights = (await GetAllFlightsAsync()).ToList();
+
+        foreach (Flight flight in flights)
+        {
+            if (flight.Runway != null && flight.Runway.Id > 0)
+            {
+                flight.Runway = await runwayService.GetRunwayByIdAsync(flight.Runway.Id);
+            }
+
+            if (flight.Gate != null && flight.Gate.Id > 0)
+            {
+                flight.Gate = await gateService.GetGateByIdAsync(flight.Gate.Id);
+            }
+
+            if (flight.Route != null && flight.Route.Id > 0)
+            {
+                flight.Route = await GetRouteByIdAsync(flight.Route.Id);
+
+                if (flight.Route?.Airport != null && flight.Route.Airport.Id > 0)
+                {
+                    flight.Route.Airport = await airportService.GetAirportByIdAsync(flight.Route.Airport.Id);
+                }
+            }
+        }
+
+        return flights;
+    }
+
+    public async Task<IEnumerable<Flight>> SearchFlightsAsync(IEnumerable<Flight> flights, string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return flights;
+        }
+
+        List<Flight> matchingFlights = new List<Flight>();
+        foreach (Flight flight in flights)
+        {
+            if (IsFlightMatch(flight, query))
+            {
+                matchingFlights.Add(flight);
+            }
+        }
+
+        await Task.CompletedTask;
+        return matchingFlights;
+    }
+
+    public async Task<IEnumerable<Flight>> SearchFlightsByNumberAsync(IEnumerable<Flight> flights, string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return flights;
+        }
+
+        List<Flight> matchingFlights = new List<Flight>();
+        foreach (Flight flight in flights)
+        {
+            if (flight.FlightNumber != null && flight.FlightNumber.ToLowerInvariant().Contains(query))
+            {
+                matchingFlights.Add(flight);
+            }
+        }
+
+        await Task.CompletedTask;
+        return matchingFlights;
+    }
+
+    private bool IsFlightMatch(Flight flight, string query)
+    {
+        if (flight.FlightNumber != null && flight.FlightNumber.ToLowerInvariant().Contains(query))
+        {
+            return true;
+        }
+
+        if (flight.Date.ToString(FlightDateTimeFormat).ToLowerInvariant().Contains(query))
+        {
+            return true;
+        }
+
+        string destination = GetDestinationText(flight).ToLowerInvariant();
+        if (destination.Contains(query))
+        {
+            return true;
+        }
+
+        if (flight.Runway?.Name != null && flight.Runway.Name.ToLowerInvariant().Contains(query))
+        {
+            return true;
+        }
+
+        if (flight.Gate?.GateName != null && flight.Gate.GateName.ToLowerInvariant().Contains(query))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public async Task<Route?> GetRouteByIdAsync(int routeId)
@@ -36,193 +322,91 @@ public class FlightRouteService(
         return await routeRepository.GetByIdAsync(routeId);
     }
 
-    public async Task AddFlightToRouteAsync(Flight newFlight, IEnumerable<Flight> existingFlights)
+    public async Task<Flight?> GetFlightByIdAsync(int flightId)
     {
-        if (newFlight.Route is null)
-            throw new ArgumentException("Flight must have a route.");
-
-        var route = await routeRepository.GetByIdAsync(newFlight.Route.Id);
-        if (route is null)
-            throw new InvalidOperationException($"Route with ID {newFlight.Route.Id} not found.");
-
-        int newGateId = newFlight.Gate?.Id ?? 0;
-        int newRunwayId = newFlight.Runway?.Id ?? 0;
-
-        int newStart = route.DepartureTime.Hour * 60 + route.DepartureTime.Minute;
-        int newEnd = route.ArrivalTime.Hour * 60 + route.ArrivalTime.Minute;
-        if (newEnd <= newStart) newEnd += 1440;
-
-        var sameDayFlights = existingFlights.Where(f => f.Date.Date == newFlight.Date.Date).ToList();
-
-        foreach (var existing in sameDayFlights)
-        {
-            if (existing.Route is null) continue;
-
-            bool sameGate = existing.Gate?.Id == newGateId;
-            bool sameRunway = existing.Runway?.Id == newRunwayId;
-
-            if (!sameGate && !sameRunway) continue;
-
-            int existStart = existing.Route.DepartureTime.Hour * 60 + existing.Route.DepartureTime.Minute;
-            int existEnd = existing.Route.ArrivalTime.Hour * 60 + existing.Route.ArrivalTime.Minute;
-            if (existEnd <= existStart) existEnd += 1440;
-
-            bool overlaps = newStart < existEnd && existStart < newEnd;
-            if (overlaps)
-            {
-                if (sameGate)
-                    throw new InvalidOperationException($"Gate conflict: Gate {newGateId} is already occupied during that time slot.");
-                if (sameRunway)
-                    throw new InvalidOperationException($"Runway conflict: Runway {newRunwayId} is already occupied during that time slot.");
-            }
-        }
-
-        await flightRepository.AddAsync(newFlight);
+        return await flightRepository.GetByIdAsync(flightId);
     }
 
-    public async Task CreateFlightWithScheduleAsync(int routeId, int companyId, int airportId, string routeType,
-        DateOnly startDate, DateOnly endDate, TimeOnly departureTime, TimeOnly arrivalTime,
-        int capacity, int gateId, int runwayId, string recurrenceType, string customInterval)
+    public async Task<IEnumerable<Route>> GetAllRoutesAsync()
     {
-        int intervalDays = recurrenceType switch
-        {
-            "Daily" => 1,
-            "Weekly" => 7,
-            "Monthly" => 30,
-            "Custom" => int.TryParse(customInterval, out int ci) ? ci : throw new ArgumentException("Invalid custom interval."),
-            _ => throw new ArgumentException($"Unknown recurrence type: {recurrenceType}")
-        };
-
-        var company = new Company { Id = companyId };
-        var airport = new Airport { Id = airportId };
-        var gate = new Gate { Id = gateId };
-        var runway = new Runway { Id = runwayId };
-
-        var route = new Route
-        {
-            Company = company,
-            Airport = airport,
-            RouteType = routeType,
-            StartDate = startDate,
-            EndDate = endDate,
-            DepartureTime = departureTime,
-            ArrivalTime = arrivalTime,
-            Capacity = capacity,
-            RecurrenceInterval = intervalDays
-        };
-
-        int newRouteId = await routeRepository.AddAsync(route);
-        route.Id = newRouteId;
-
-        var allFlights = (await flightRepository.GetAsync()).ToList();
-
-        int start = departureTime.Hour * 60 + departureTime.Minute;
-        int end = arrivalTime.Hour * 60 + arrivalTime.Minute;
-        if (end <= start) end += 1440;
-
-        var current = startDate;
-        while (current <= endDate)
-        {
-            var flightDate = current.ToDateTime(departureTime);
-            var sameDayFlights = allFlights.Where(f => f.Date.Date == flightDate.Date).ToList();
-
-            bool hasConflict = false;
-            foreach (var existing in sameDayFlights)
-            {
-                if (existing.Route is null) continue;
-                bool sameGate = existing.Gate?.Id == gateId;
-                bool sameRunway = existing.Runway?.Id == runwayId;
-                if (!sameGate && !sameRunway) continue;
-
-                int existStart = existing.Route.DepartureTime.Hour * 60 + existing.Route.DepartureTime.Minute;
-                int existEnd = existing.Route.ArrivalTime.Hour * 60 + existing.Route.ArrivalTime.Minute;
-                if (existEnd <= existStart) existEnd += 1440;
-
-                if (start < existEnd && existStart < end)
-                {
-                    hasConflict = true;
-                    break;
-                }
-            }
-
-            if (!hasConflict)
-            {
-                var flight = new Flight
-                {
-                    Route = route,
-                    Gate = gate,
-                    Runway = runway,
-                    Date = flightDate,
-                    FlightNumber = string.Empty
-                };
-                await flightRepository.AddAsync(flight);
-            }
-
-            current = current.AddDays(intervalDays);
-        }
+        return await routeRepository.GetAsync();
     }
 
-    public async Task<IEnumerable<FlightSummary>> GetAllFlightsWithDetailsAsync()
+    public async Task<IEnumerable<Flight>> GetAllFlightsAsync()
     {
-        var flights = await flightRepository.GetAsync();
-        var summaries = new List<FlightSummary>();
-        foreach (var flight in flights)
+        return await flightRepository.GetAsync();
+    }
+
+    public async Task DeleteFlightUsingIdAsync(int flightId)
+    {
+        if (flightId <= 0)
         {
-            summaries.Add(await BuildFlightSummaryAsync(flight));
+            throw new ArgumentException("The provided flight Id is invalid.");
         }
-        return summaries;
+
+        if (await GetFlightByIdAsync(flightId) == null)
+        {
+            throw new ArgumentException("A flight with the specified Id does not exist.");
+        }
+
+        await flightRepository.DeleteAsync(flightId);
     }
 
     public async Task<IEnumerable<Flight>> GetFlightsByCompanyIdAsync(int companyId)
     {
-        var allFlights = await flightRepository.GetAsync();
-        return allFlights.Where(f => f.Route?.Company?.Id == companyId).ToList();
+        IEnumerable<Route> allRoutes = await routeRepository.GetAsync();
+        List<int> companyRouteIds = new List<int>();
+
+        foreach (Route route in allRoutes)
+        {
+            if (route.Company.Id == companyId)
+            {
+                companyRouteIds.Add(route.Id);
+            }
+        }
+
+        IEnumerable<Flight> allFlights = await flightRepository.GetAsync();
+        List<Flight> filteredFlights = new List<Flight>();
+
+        foreach (Flight flight in allFlights)
+        {
+            if (companyRouteIds.Contains(flight.Route.Id))
+            {
+                filteredFlights.Add(flight);
+            }
+        }
+
+        return filteredFlights;
     }
 
-    public async Task<string> GetDestinationTextAsync(int routeId)
+    public string GetDestinationText(Flight flight)
     {
-        var route = await routeRepository.GetByIdAsync(routeId);
-        if (route?.Airport is null) return "Unknown";
-        return route.Airport.Name ?? route.Airport.City ?? "Unknown";
+        if (flight.Route == null || flight.Route.Airport == null)
+        {
+            return EmptyFieldPlaceholder;
+        }
+
+        return $"{flight.Route.Airport.AirportCode} - {flight.Route.Airport.Name}";
     }
 
-    public async Task<FlightSummary> BuildFlightSummaryAsync(Flight flight)
+    public async Task<string> GetDestinationTextAsync(Flight flight)
     {
-        string destination = flight.Route is not null
-            ? await GetDestinationTextAsync(flight.Route.Id)
-            : "Unknown";
+        await Task.CompletedTask;
+        return GetDestinationText(flight);
+    }
 
-        var employeeIds = new List<int>();
+    public async Task<FlightSummary> BuildFlightSummaryAsync(Flight flight, string crewText)
+    {
+        await Task.CompletedTask;
         return new FlightSummary
         {
             Id = flight.Id,
-            FlightNumber = flight.FlightNumber,
-            DateText = flight.Date.ToString("yyyy-MM-dd HH:mm"),
-            DestinationText = destination,
-            RunwayText = flight.Runway?.Name ?? "-",
-            GateText = flight.Gate?.GateName ?? "-",
-            CrewText = "Unassigned"
+            FlightNumber = flight.FlightNumber ?? string.Empty,
+            DateText = flight.Date.ToString(FlightDateTimeFormat),
+            DestinationText = GetDestinationText(flight),
+            RunwayText = flight.Runway?.Name ?? EmptyFieldPlaceholder,
+            GateText = flight.Gate?.GateName ?? EmptyFieldPlaceholder,
+            CrewText = crewText
         };
-    }
-
-    public async Task<IEnumerable<Flight>> SearchFlightsAsync(string query)
-    {
-        var allFlights = await flightRepository.GetAsync();
-        if (string.IsNullOrWhiteSpace(query)) return allFlights;
-
-        string lowerQuery = query.ToLowerInvariant();
-        return allFlights.Where(f =>
-            f.FlightNumber.ToLowerInvariant().Contains(lowerQuery) ||
-            (f.Route?.RouteType?.ToLowerInvariant().Contains(lowerQuery) ?? false) ||
-            (f.Route?.Airport?.City?.ToLowerInvariant().Contains(lowerQuery) ?? false)
-        ).ToList();
-    }
-
-    public async Task<IEnumerable<Flight>> SearchFlightsByNumberAsync(string flightNumber)
-    {
-        var allFlights = await flightRepository.GetAsync();
-        if (string.IsNullOrWhiteSpace(flightNumber)) return allFlights;
-        string lower = flightNumber.ToLowerInvariant();
-        return allFlights.Where(f => f.FlightNumber.ToLowerInvariant().Contains(lower)).ToList();
     }
 }

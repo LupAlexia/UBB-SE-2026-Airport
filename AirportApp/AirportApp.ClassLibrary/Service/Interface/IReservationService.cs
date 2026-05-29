@@ -6,7 +6,7 @@ public interface IReservationService
 {
     Task<IEnumerable<Reservation>> GetAllReservationsAsync();
     Task<Reservation?> GetReservationByIdAsync(int reservationId);
-    Task ReserveCartAsync(int cartId);
+    Task ReserveCartAsync(Reservation reservation);
     Task CancelReservationAsync(int reservationId);
     Task<Reservation?> GetActiveReservationForCartAsync(int cartId);
     Task DeleteReservationAsync(int reservationId);

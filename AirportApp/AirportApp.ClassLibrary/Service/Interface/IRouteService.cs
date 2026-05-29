@@ -6,10 +6,9 @@ public interface IRouteService
 {
     Task<IEnumerable<Route>> GetAllRoutesAsync();
     Task<Route?> GetRouteByIdAsync(int routeId);
-    Task AddRouteAsync(Route route);
-    Task UpdateRouteAsync(Route route);
-    Task DeleteRouteAsync(int routeId);
-    Task AddWithInitialFlightAsync(Route route, Flight initialFlight);
+    Task<int> AddWithInitialFlightAsync(int companyId, int airportId, string routeType, int recurrenceInterval,
+        DateTime startDate, DateTime endDate, TimeOnly departureTime, TimeOnly arrivalTime,
+        int capacity, string flightNumber, int runwayId, int gateId);
     string NormalizeFlightType(string? routeType);
-    string GetRelevantTime(string? routeType, TimeOnly departureTime, TimeOnly arrivalTime);
+    string GetRelevantTime(Route? route);
 }

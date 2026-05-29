@@ -81,10 +81,10 @@ public class CartService(ICartRepository cartRepository, IClientRepository clien
         await cartRepository.ClearCartAsync(cartId);
     }
 
-    public async Task<float> GetCartTotalAsync(int cartId)
+    public async Task<double> GetCartTotalAsync(int cartId)
     {
         var cart = await cartRepository.GetByIdAsync(cartId);
-        if (cart is null) return 0f;
+        if (cart is null) return 0;
         return cart.GetOverallPrice();
     }
 

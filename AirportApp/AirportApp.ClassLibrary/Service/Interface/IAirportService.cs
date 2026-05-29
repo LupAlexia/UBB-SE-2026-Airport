@@ -10,6 +10,6 @@ public interface IAirportService
     Task UpdateAirportAsync(Airport airport);
     Task DeleteAirportAsync(int airportId);
     Task<bool> HasFlightsAsync(int airportId);
-    Task<string> GetDeleteWarningMessageAsync(int airportId, string airportName);
+    Task<string> GetDeleteWarningMessageAsync(int airportId);
     Task SaveAirportAsync(Airport airport);
 }

@@ -9,5 +9,5 @@ public interface IManagerService
     Task AddManagerAsync(Manager manager);
     Task UpdateManagerAsync(Manager manager);
     Task DeleteManagerAsync(int managerId);
-    Task<Manager> GetAnyManagerAsync();
+    Task<Manager?> GetAnyManagerAsync();
 }

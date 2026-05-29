@@ -45,10 +45,9 @@ public class ManagerService(IManagerRepository managerRepository) : IManagerServ
         await managerRepository.DeleteAsync(managerId);
     }
 
-    public async Task<Manager> GetAnyManagerAsync()
+    public async Task<Manager?> GetAnyManagerAsync()
     {
         var managers = await managerRepository.GetAsync();
-        return managers.FirstOrDefault()
-            ?? throw new InvalidOperationException("No managers found.");
+        return managers.FirstOrDefault();
     }
 }

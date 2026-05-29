@@ -7,6 +7,7 @@ public interface IEmployeeService
     Task<IEnumerable<Employee>> GetAllEmployeesAsync();
     Task<Employee?> GetEmployeeByIdAsync(int employeeId);
     Task<IEnumerable<Employee>> GetEmployeesByRoleAsync(EmployeeRoleEnum role);
+    Task SaveEmployeeAsync(Employee employee, DateTimeOffset? birthday, DateTimeOffset? hiringDate, string salaryText);
     Task SaveEmployeeAsync(Employee employee);
     Task DeleteEmployeeAsync(int employeeId);
     Task DeleteWithAssignmentsAsync(int employeeId);
