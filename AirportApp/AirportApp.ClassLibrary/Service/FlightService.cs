@@ -59,4 +59,8 @@ public class FlightService(IFlightRepository flightRepository) : IFlightService
     {
         return await flightRepository.GetOccupiedSeatCountAsync(flightId);
     }
+    public async Task<IEnumerable<Flight>> GetFlightsByRouteIdAsync(int routeId)
+    {
+        return await flightRepository.GetByRouteIdAsync(routeId);
+    }
 }

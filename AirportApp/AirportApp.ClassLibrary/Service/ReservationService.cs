@@ -72,4 +72,8 @@ public class ReservationService(
         var allReservations = await reservationRepository.GetAsync();
         return allReservations.FirstOrDefault(r => r.ReservationCart?.Id == cartId && r.Active);
     }
+    public async Task DeleteReservationAsync(int reservationId)
+    {
+        await reservationRepository.DeleteAsync(reservationId);
+    }
 }

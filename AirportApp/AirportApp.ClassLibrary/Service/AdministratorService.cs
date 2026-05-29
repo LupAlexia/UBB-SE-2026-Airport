@@ -6,28 +6,53 @@ namespace AirportApp.ClassLibrary.Service;
 
 public class AdministratorService(IAdministratorRepository administratorRepository) : IAdministratorService
 {
-    public async Task<IEnumerable<Administrator>> GetAllAsync()
+    public async Task<Administrator?> GetAdministratorByIdAsync(int identificationNumber)
     {
-        return await administratorRepository.GetAsync();
+        return await administratorRepository.GetByIdAsync(identificationNumber);
     }
 
-    public async Task<Administrator?> GetByIdAsync(int administratorId)
+    public async Task<int> AddAdministratorAsync(Administrator administratorEntity)
     {
-        return await administratorRepository.GetByIdAsync(administratorId);
+        return await administratorRepository.AddAsync(administratorEntity);
     }
 
-    public async Task AddAsync(Administrator administrator)
+    public async Task UpdateAdministratorByIdAsync(int identificationNumber, Administrator administratorEntity)
     {
-        await administratorRepository.AddAsync(administrator);
+        await administratorRepository.UpdateAsync(administratorEntity);
     }
 
-    public async Task UpdateAsync(Administrator administrator)
+    public async Task DeleteAdministratorByIdAsync(int identificationNumber)
     {
-        await administratorRepository.UpdateAsync(administrator);
+        await administratorRepository.DeleteAsync(identificationNumber);
     }
 
-    public async Task DeleteAsync(int administratorId)
+    public async Task<List<Administrator>> GetAllAdministratorsAsync()
     {
-        await administratorRepository.DeleteAsync(administratorId);
+        return (await administratorRepository.GetAsync()).ToList();
+    }
+
+    public async Task CreateNewAdministratorAsync(int identificationNumber, string fullName, string emailAddress, string departmentName)
+    {
+        Administrator newAdministrator = new Administrator(identificationNumber, fullName, emailAddress);
+        await ValidateAdministratorIntegrityAsync(newAdministrator);
+        await AddAdministratorAsync(newAdministrator);
+    }
+
+    public async Task ValidateAdministratorIntegrityAsync(Administrator administratorEntity)
+    {
+        ArgumentNullException.ThrowIfNull(administratorEntity);
+
+        if ((await GetAllAdministratorsAsync()).Any(a => a.Id == administratorEntity.Id && administratorEntity.Id != 0))
+        {
+            throw new ArgumentException("Administrator already exists");
+        }
+        if (string.IsNullOrEmpty(administratorEntity.RetrieveConfiguredDisplayFullNameForBot()))
+        {
+            throw new ArgumentException("Name cannot be null or empty");
+        }
+        if (string.IsNullOrEmpty(administratorEntity.RetrieveConfiguredEmailAddressForBotContact()))
+        {
+            throw new ArgumentException("Email cannot be null or empty");
+        }
     }
 }

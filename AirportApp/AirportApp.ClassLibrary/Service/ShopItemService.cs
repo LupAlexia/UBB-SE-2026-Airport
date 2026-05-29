@@ -25,11 +25,12 @@ public class ShopItemService(IShopItemRepository shopItemRepository) : IShopItem
         return all.Where(i => i.Shop?.Id == shopId).ToList();
     }
 
-    public async Task<IEnumerable<ShopItem>> SearchItemsByNameAsync(string name)
+    public async Task<IEnumerable<ShopItem>> SearchItemsByNameAsync(int shopId, string searchText)
     {
         var all = await shopItemRepository.GetAsync();
-        if (string.IsNullOrWhiteSpace(name)) return all;
-        return all.Where(i => i.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
+        var shopItems = all.Where(i => i.Shop?.Id == shopId);
+        if (string.IsNullOrWhiteSpace(searchText)) return shopItems.ToList();
+        return shopItems.Where(i => i.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
     }
 
     public async Task AddShopItemAsync(ShopItem shopItem)
@@ -56,15 +57,15 @@ public class ShopItemService(IShopItemRepository shopItemRepository) : IShopItem
         await shopItemRepository.DeleteAsync(shopItemId);
     }
 
-    public async Task<IEnumerable<ShopItem>> GetItemsSortedByPriceAsync()
+    public async Task<IEnumerable<ShopItem>> GetItemsSortedByPriceAsync(int shopId)
     {
         var all = await shopItemRepository.GetAsync();
-        return all.OrderBy(i => i.Price).ToList();
+        return all.Where(i => i.Shop?.Id == shopId).OrderBy(i => i.Price).ToList();
     }
 
-    public async Task<IEnumerable<ShopItem>> GetItemsSortedAlphabeticallyAsync()
+    public async Task<IEnumerable<ShopItem>> GetItemsSortedAlphabeticallyAsync(int shopId)
     {
         var all = await shopItemRepository.GetAsync();
-        return all.OrderBy(i => i.Name).ToList();
+        return all.Where(i => i.Shop?.Id == shopId).OrderBy(i => i.Name).ToList();
     }
 }

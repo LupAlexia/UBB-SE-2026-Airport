@@ -10,5 +10,6 @@ public interface IRunwayService
     Task UpdateRunwayAsync(Runway runway);
     Task DeleteRunwayAsync(int runwayId);
     Task<bool> HasFlightsAsync(int runwayId);
-    Task SaveRunwayAsync(string name, string handleTimeText, int existingId = 0);
+    Task SaveRunwayAsync(int runwayId, string name, string handleTimeText);
+    Task<string> GetDeleteWarningMessageAsync(int runwayId);
 }

@@ -4,9 +4,11 @@ namespace AirportApp.ClassLibrary.Service.Interface;
 
 public interface IAdministratorService
 {
-    Task<IEnumerable<Administrator>> GetAllAsync();
-    Task<Administrator?> GetByIdAsync(int administratorId);
-    Task AddAsync(Administrator administrator);
-    Task UpdateAsync(Administrator administrator);
-    Task DeleteAsync(int administratorId);
+    Task<Administrator?> GetAdministratorByIdAsync(int identificationNumber);
+    Task<int> AddAdministratorAsync(Administrator administratorEntity);
+    Task UpdateAdministratorByIdAsync(int identificationNumber, Administrator administratorEntity);
+    Task DeleteAdministratorByIdAsync(int identificationNumber);
+    Task<List<Administrator>> GetAllAdministratorsAsync();
+    Task CreateNewAdministratorAsync(int identificationNumber, string fullName, string emailAddress, string departmentName);
+    Task ValidateAdministratorIntegrityAsync(Administrator administratorEntity);
 }

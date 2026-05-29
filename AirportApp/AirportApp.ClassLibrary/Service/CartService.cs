@@ -6,6 +6,11 @@ namespace AirportApp.ClassLibrary.Service;
 
 public class CartService(ICartRepository cartRepository, IClientRepository clientRepository, IShopItemRepository shopItemRepository) : ICartService
 {
+    public async Task<Cart?> GetCartByIdAsync(int cartId)
+    {
+        return await cartRepository.GetByIdAsync(cartId);
+    }
+
     public async Task<Cart> GetOrCreateCartAsync(int clientId)
     {
         var allCarts = await cartRepository.GetAsync();
@@ -110,5 +115,14 @@ public class CartService(ICartRepository cartRepository, IClientRepository clien
     public async Task DeleteCartAsync(int cartId)
     {
         await cartRepository.DeleteAsync(cartId);
+    }
+    public async Task RemoveItemFromCartAsync(int cartId, int cartItemId)
+    {
+        Cart? cart = await cartRepository.GetByIdAsync(cartId);
+        if (cart == null) throw new KeyNotFoundException($"Cart {cartId} not found.");
+        CartItem? item = cart.CartItems.FirstOrDefault(ci => ci.Id == cartItemId);
+        if (item == null) throw new KeyNotFoundException($"CartItem {cartItemId} not found in cart.");
+        cart.CartItems.Remove(item);
+        await cartRepository.UpdateAsync(cart);
     }
 }

@@ -12,7 +12,7 @@ public class EmployeeFlightService(
     IGateService gateService,
     IRunwayService runwayService) : IEmployeeFlightService
 {
-    public async Task AssignEmployeeToFlightUsingIdsAsync(int employeeId, int flightId)
+    public async Task AssignEmployeeToFlightUsingIdsAsync(int flightId, int employeeId)
     {
         if (employeeId <= 0) throw new ArgumentException("Invalid employee ID.");
         if (flightId <= 0) throw new ArgumentException("Invalid flight ID.");
@@ -27,36 +27,56 @@ public class EmployeeFlightService(
         if (assigned.Contains(employeeId))
             throw new InvalidOperationException($"Employee {employeeId} is already assigned to flight {flightId}.");
 
-        bool available = await IsEmployeeAvailableAsync(employeeId, flightId);
+        int routeId = flight.Route?.Id ?? 0;
+        bool available = await IsEmployeeAvailableAsync(employeeId, flight.Date, routeId);
         if (!available)
             throw new InvalidOperationException($"Employee {employeeId} is not available for flight {flightId} due to a schedule conflict.");
 
         await employeeFlightRepository.AssignAsync(employeeId, flightId);
     }
 
-    public async Task UnassignEmployeeFromFlightAsync(int employeeId, int flightId)
+    public async Task RemoveEmployeeFromFlightUsingIdsAsync(int flightId, int employeeId)
     {
         await employeeFlightRepository.UnassignAsync(employeeId, flightId);
     }
 
-    public async Task<IEnumerable<int>> GetFlightIdsByEmployeeIdAsync(int employeeId)
+    public async Task RemoveAllCrewAssignmentsForFlightAsync(int flightId)
     {
-        return await employeeFlightRepository.GetFlightIdsByEmployeeIdAsync(employeeId);
+        await employeeFlightRepository.DeleteByFlightIdAsync(flightId);
     }
 
-    public async Task<IEnumerable<int>> GetEmployeeIdsByFlightIdAsync(int flightId)
+    public async Task RemoveAllFlightsAssignmentsForEmployeeAsync(int employeeId)
     {
-        return await employeeFlightRepository.GetEmployeeIdsByFlightIdAsync(flightId);
+        await employeeFlightRepository.DeleteByEmployeeIdAsync(employeeId);
     }
 
-    public async Task<bool> IsEmployeeAvailableAsync(int employeeId, int targetFlightId)
+    public async Task<IEnumerable<Employee>> GetEmployeesAssignedToFlightAsync(int flightId)
     {
-        var targetFlight = await flightRepository.GetByIdAsync(targetFlightId);
-        if (targetFlight is null) return false;
+        var employeeIds = await employeeFlightRepository.GetEmployeeIdsByFlightIdAsync(flightId);
+        var employees = new List<Employee>();
+        foreach (int empId in employeeIds)
+        {
+            var emp = await employeeRepository.GetByIdAsync(empId);
+            if (emp is not null) employees.Add(emp);
+        }
+        return employees;
+    }
 
-        var targetRoute = targetFlight.Route is not null
-            ? await routeRepository.GetByIdAsync(targetFlight.Route.Id)
-            : null;
+    public async Task<IEnumerable<Flight>> GetEmployeeScheduleAsync(int employeeId)
+    {
+        var flightIds = await employeeFlightRepository.GetFlightIdsByEmployeeIdAsync(employeeId);
+        var flights = new List<Flight>();
+        foreach (int fid in flightIds)
+        {
+            var flight = await flightRepository.GetByIdAsync(fid);
+            if (flight is not null) flights.Add(flight);
+        }
+        return flights;
+    }
+
+    public async Task<bool> IsEmployeeAvailableAsync(int employeeId, DateTime targetDate, int targetRouteId, int? excludedFlightId = null)
+    {
+        var targetRoute = targetRouteId > 0 ? await routeRepository.GetByIdAsync(targetRouteId) : null;
         if (targetRoute is null) return true;
 
         int targetStart = targetRoute.DepartureTime.Hour * 60 + targetRoute.DepartureTime.Minute;
@@ -66,9 +86,11 @@ public class EmployeeFlightService(
         var assignedFlightIds = await employeeFlightRepository.GetFlightIdsByEmployeeIdAsync(employeeId);
         foreach (int assignedFlightId in assignedFlightIds)
         {
+            if (excludedFlightId.HasValue && assignedFlightId == excludedFlightId.Value) continue;
+
             var assignedFlight = await flightRepository.GetByIdAsync(assignedFlightId);
             if (assignedFlight is null) continue;
-            if (assignedFlight.Date.Date != targetFlight.Date.Date) continue;
+            if (assignedFlight.Date.Date != targetDate.Date) continue;
 
             var assignedRoute = assignedFlight.Route is not null
                 ? await routeRepository.GetByIdAsync(assignedFlight.Route.Id)
@@ -158,22 +180,31 @@ public class EmployeeFlightService(
 
     public async Task<IEnumerable<Employee>> GetAvailableEmployeesGroupedByRoleAsync(int flightId)
     {
+        var flight = await flightRepository.GetByIdAsync(flightId);
         var allEmployees = await employeeRepository.GetAsync();
         var available = new List<Employee>();
         foreach (var employee in allEmployees)
         {
-            bool isAvailable = await IsEmployeeAvailableAsync(employee.Id, flightId);
+            int routeId = flight?.Route?.Id ?? 0;
+            DateTime date = flight?.Date ?? DateTime.MinValue;
+            bool isAvailable = await IsEmployeeAvailableAsync(employee.Id, date, routeId, flightId);
             if (isAvailable)
                 available.Add(employee);
         }
         return available;
     }
 
-    public string FormatCrewList(IEnumerable<string> names)
+    public string FormatCrewListByFlightId(int flightId)
     {
-        var nameList = names.ToList();
-        if (nameList.Count == 0) return "Unassigned";
-        return string.Join(", ", nameList);
+        var employeeIds = employeeFlightRepository.GetEmployeeIdsByFlightIdAsync(flightId).GetAwaiter().GetResult();
+        var names = new List<string>();
+        foreach (int empId in employeeIds)
+        {
+            var emp = employeeRepository.GetByIdAsync(empId).GetAwaiter().GetResult();
+            if (emp is not null) names.Add(emp.Name);
+        }
+        if (names.Count == 0) return "Unassigned";
+        return string.Join(", ", names);
     }
 
     public async Task UpdateEmployeesForFlightUsingIdsAsync(int flightId, IEnumerable<int> newEmployeeIds)
@@ -197,7 +228,7 @@ public class EmployeeFlightService(
         {
             try
             {
-                await AssignEmployeeToFlightUsingIdsAsync(empId, flightId);
+                await AssignEmployeeToFlightUsingIdsAsync(flightId, empId);
             }
             catch
             {

@@ -7,10 +7,10 @@ public interface IShopItemService
     Task<IEnumerable<ShopItem>> GetAllAsync();
     Task<ShopItem> GetByIdAsync(int shopItemId);
     Task<IEnumerable<ShopItem>> GetItemsByShopIdAsync(int shopId);
-    Task<IEnumerable<ShopItem>> SearchItemsByNameAsync(string name);
+    Task<IEnumerable<ShopItem>> SearchItemsByNameAsync(int shopId, string searchText);
     Task AddShopItemAsync(ShopItem shopItem);
     Task UpdateShopItemAsync(ShopItem shopItem);
     Task RemoveShopItemAsync(int shopItemId);
-    Task<IEnumerable<ShopItem>> GetItemsSortedByPriceAsync();
-    Task<IEnumerable<ShopItem>> GetItemsSortedAlphabeticallyAsync();
+    Task<IEnumerable<ShopItem>> GetItemsSortedByPriceAsync(int shopId);
+    Task<IEnumerable<ShopItem>> GetItemsSortedAlphabeticallyAsync(int shopId);
 }

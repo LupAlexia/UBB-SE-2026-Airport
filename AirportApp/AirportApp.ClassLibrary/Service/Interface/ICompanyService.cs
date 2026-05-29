@@ -10,5 +10,5 @@ public interface ICompanyService
     Task UpdateCompanyAsync(Company company);
     Task DeleteCompanyAsync(int companyId);
     Task<string> GenerateFlightCodeUsingCompanyIdAsync(int companyId);
-    Task ValidateFlightCreationInputsAsync(int companyId, int airportId, int gateId, int runwayId, string capacityText);
+    Task<int> ValidateFlightCreationInputsAsync(int companyId, int airportId, string capacityText, int runwayId, int gateId);
 }

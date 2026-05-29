@@ -44,18 +44,25 @@ public class RunwayService(IRunwayRepository runwayRepository, IFlightRepository
         return flights.Any();
     }
 
-    public async Task SaveRunwayAsync(string name, string handleTimeText, int existingId = 0)
+    public async Task SaveRunwayAsync(int runwayId, string name, string handleTimeText)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Runway name cannot be empty.");
         if (!int.TryParse(handleTimeText, out int handleTime) || handleTime <= 0)
             throw new ArgumentException("Handle time must be a positive integer.");
 
-        var runway = new Runway { Id = existingId, Name = name, HandleTime = handleTime };
+        var runway = new Runway { Id = runwayId, Name = name, HandleTime = handleTime };
 
-        if (existingId == 0)
+        if (runwayId == 0)
             await runwayRepository.AddAsync(runway);
         else
             await runwayRepository.UpdateAsync(runway);
+    }
+    public async Task<string> GetDeleteWarningMessageAsync(int runwayId)
+    {
+        bool hasFlights = await HasFlightsAsync(runwayId);
+        if (hasFlights)
+            return "This runway has associated flights and cannot be deleted.";
+        return string.Empty;
     }
 }

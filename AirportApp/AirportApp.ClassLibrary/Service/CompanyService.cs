@@ -82,7 +82,7 @@ public class CompanyService(ICompanyRepository companyRepository, IFlightRouteSe
         return maxNum > 0 ? maxNum + 1 : 1000;
     }
 
-    public async Task ValidateFlightCreationInputsAsync(int companyId, int airportId, int gateId, int runwayId, string capacityText)
+    public async Task<int> ValidateFlightCreationInputsAsync(int companyId, int airportId, string capacityText, int runwayId, int gateId)
     {
         if (companyId <= 0) throw new ArgumentException("Invalid company ID.");
         if (airportId <= 0) throw new ArgumentException("Invalid airport ID.");
@@ -92,5 +92,6 @@ public class CompanyService(ICompanyRepository companyRepository, IFlightRouteSe
             throw new ArgumentException("Capacity must be a positive integer.");
 
         await Task.CompletedTask;
+        return capacity;
     }
 }

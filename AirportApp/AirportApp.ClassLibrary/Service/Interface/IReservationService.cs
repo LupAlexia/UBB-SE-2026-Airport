@@ -9,4 +9,5 @@ public interface IReservationService
     Task ReserveCartAsync(int cartId);
     Task CancelReservationAsync(int reservationId);
     Task<Reservation?> GetActiveReservationForCartAsync(int cartId);
+    Task DeleteReservationAsync(int reservationId);
 }

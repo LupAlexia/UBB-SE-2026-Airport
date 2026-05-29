@@ -46,7 +46,7 @@ public class ComplaintTicketService(IComplaintTicketRepository ticketRepository)
         await ticketRepository.UpdateAsync(ticket);
     }
 
-    public void ValidateTicket(ComplaintTicket ticket)
+    private void ValidateTicket(ComplaintTicket ticket)
     {
         if (ticket == null)
             throw new ArgumentNullException("The newTicket does not have any data.");

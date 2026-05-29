@@ -5,6 +5,7 @@ namespace AirportApp.ClassLibrary.Service.Interface;
 public interface ICartService
 {
     Task<Cart> GetOrCreateCartAsync(int clientId);
+    Task<Cart?> GetCartByIdAsync(int cartId);
     Task AddItemToCartAsync(int cartId, int shopItemId, int quantity);
     Task UpdateItemQuantityAsync(int cartId, int cartItemId, int newQuantity);
     Task DecreaseItemQuantityAsync(int cartId, int cartItemId);
@@ -15,4 +16,5 @@ public interface ICartService
     Task<IEnumerable<Cart>> GetAllCartsAsync();
     Task AddCartAsync(Cart cart);
     Task DeleteCartAsync(int cartId);
+    Task RemoveItemFromCartAsync(int cartId, int cartItemId);
 }

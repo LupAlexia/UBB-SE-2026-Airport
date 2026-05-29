@@ -11,4 +11,5 @@ public interface IFlightService
     Task DeleteFlightAsync(int flightId);
     Task<IEnumerable<Flight>> SearchFlightsAsync(string location, string routeType, DateTime? date);
     Task<int> GetOccupiedSeatCountAsync(int flightId);
+    Task<IEnumerable<Flight>> GetFlightsByRouteIdAsync(int routeId);
 }
