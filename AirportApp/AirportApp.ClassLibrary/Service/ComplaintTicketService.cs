@@ -1,77 +1,97 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Entity.Dto;
 using AirportApp.ClassLibrary.Repository.Interface;
 using AirportApp.ClassLibrary.Service.Interface;
 
 namespace AirportApp.ClassLibrary.Service;
 
-public class ComplaintTicketService(
-    IComplaintTicketRepository complaintTicketRepository,
-    IComplaintTicketCategoryRepository categoryRepository,
-    IComplaintTicketSubcategoryRepository subcategoryRepository) : IComplaintTicketService
+public class ComplaintTicketService(IComplaintTicketRepository ticketRepository) : IComplaintTicketService
 {
-    public async Task<IEnumerable<ComplaintTicket>> GetAllAsync()
+    public async Task CreateTicketAsync(int ticketId, User ticketCreator, ComplaintTicketStatusEnum initialStatus,
+        ComplaintTicketCategory category, ComplaintTicketSubcategory subcategory,
+        string subject, string description, DateTime creationTimestamp,
+        ComplaintTicketUrgencyLevelEnum? initialUrgencyLevel = null)
     {
-        return await complaintTicketRepository.GetAsync();
+        ComplaintTicket newTicket = new ComplaintTicket(ticketId, ticketCreator, initialStatus, category, subcategory, subject, description, creationTimestamp, initialUrgencyLevel);
+        ValidateTicket(newTicket);
+        await AddTicketAsync(newTicket);
     }
 
-    public async Task<ComplaintTicket?> GetByIdAsync(int complaintTicketId)
+    public async Task AddTicketAsync(ComplaintTicket ticketEntity)
     {
-        return await complaintTicketRepository.GetByIdAsync(complaintTicketId);
+        await ticketRepository.AddAsync(ticketEntity);
     }
 
-    public async Task AddAsync(ComplaintTicket complaintTicket)
+    public async Task DeleteTicketByIdAsync(int ticketId)
     {
-        await complaintTicketRepository.AddAsync(complaintTicket);
+        await ticketRepository.DeleteAsync(ticketId);
     }
 
-    public async Task UpdateAsync(ComplaintTicket complaintTicket)
+    public async Task<ComplaintTicket> GetTicketByIdAsync(int ticketId)
     {
-        await complaintTicketRepository.UpdateAsync(complaintTicket);
+        return await ticketRepository.GetByIdAsync(ticketId) ?? throw new KeyNotFoundException($"Ticket {ticketId} not found.");
     }
 
-    public async Task DeleteAsync(int complaintTicketId)
+    public async Task<IEnumerable<ComplaintTicket>> GetAllTicketsAsync()
     {
-        await complaintTicketRepository.DeleteAsync(complaintTicketId);
+        return await ticketRepository.GetAsync();
     }
 
-    public async Task UpdateStatusAsync(int complaintTicketId, ComplaintTicketStatusEnum newStatus)
+    public async Task UpdateTicketByIdAsync(int identificationNumber, ComplaintTicket ticket)
     {
-        await complaintTicketRepository.UpdateStatusAsync(complaintTicketId, newStatus);
+        await ticketRepository.UpdateAsync(ticket);
     }
 
-    public async Task UpdateUrgencyAsync(int complaintTicketId, ComplaintTicketUrgencyLevelEnum newUrgencyLevel)
+    public void ValidateTicket(ComplaintTicket ticket)
     {
-        await complaintTicketRepository.UpdateUrgencyAsync(complaintTicketId, newUrgencyLevel);
+        if (ticket == null)
+            throw new ArgumentNullException("The newTicket does not have any data.");
+        if (ticket.Creator == null)
+            throw new ArgumentNullException("The ticketCreator does not have any data.");
+        if (ticket.Category == null)
+            throw new ArgumentNullException("Null Category.");
+        if (ticket.Subcategory == null)
+            throw new ArgumentNullException("Null Subcategory.");
+        if (ticket.Subcategory.ParentCategory.Id != ticket.Category.Id)
+            throw new ArgumentException($"The subcategory '{ticket.Subcategory.SubcategoryName}' does not belong to the category '{ticket.Category.CategoryName}'");
+        if (string.IsNullOrWhiteSpace(ticket.Subject))
+            throw new ArgumentNullException("The Subject is empty.");
+        if (string.IsNullOrWhiteSpace(ticket.Description))
+            throw new ArgumentNullException("The Description is empty.");
     }
 
-    public async Task<IEnumerable<ComplaintTicketCategory>> GetAllCategoriesAsync()
+    public async Task UpdateUrgencyLevelAsync(int ticketId, ComplaintTicketUrgencyLevelEnum newUrgencyLevel)
     {
-        return await categoryRepository.GetAsync();
+        await ticketRepository.UpdateUrgencyAsync(ticketId, newUrgencyLevel);
     }
 
-    public async Task<ComplaintTicketCategory?> GetCategoryByIdAsync(int categoryId)
+    public async Task UpdateStatusAsync(int ticketId, ComplaintTicketStatusEnum newStatus)
     {
-        return await categoryRepository.GetByIdAsync(categoryId);
+        await ticketRepository.UpdateStatusAsync(ticketId, newStatus);
     }
 
-    public async Task<IEnumerable<ComplaintTicketSubcategory>> GetAllSubcategoriesAsync()
+    public Task<IEnumerable<TicketDTO>> FilterTicketsByStatusAsync(IEnumerable<TicketDTO> tickets, TicketFilterStatusEnum filter)
     {
-        return await subcategoryRepository.GetAsync();
-    }
-
-    public async Task<IEnumerable<ComplaintTicketSubcategory>> GetSubcategoriesByCategoryIdAsync(int categoryId)
-    {
-        return await subcategoryRepository.GetByCategoryIdAsync(categoryId);
-    }
-
-    public async Task<ComplaintTicketSubcategory?> GetSubcategoryByIdAsync(int subcategoryId)
-    {
-        return await subcategoryRepository.GetByIdAsync(subcategoryId);
-    }
-
-    public async Task<int> CountBySubcategoryNameAsync(string subcategoryName)
-    {
-        var all = await complaintTicketRepository.GetAsync();
-        return all.Count(t => t.Subcategory?.SubcategoryName.Equals(subcategoryName, StringComparison.OrdinalIgnoreCase) ?? false);
+        IEnumerable<TicketDTO> filteredTickets;
+        switch (filter)
+        {
+            case TicketFilterStatusEnum.OPEN:
+                filteredTickets = tickets.Where(t => t.currentStatus == ComplaintTicketStatusEnum.OPEN);
+                break;
+            case TicketFilterStatusEnum.IN_PROGRESS:
+                filteredTickets = tickets.Where(t => t.currentStatus == ComplaintTicketStatusEnum.IN_PROGRESS);
+                break;
+            case TicketFilterStatusEnum.RESOLVED:
+                filteredTickets = tickets.Where(t => t.currentStatus == ComplaintTicketStatusEnum.RESOLVED);
+                break;
+            default:
+                filteredTickets = tickets;
+                break;
+        }
+        return Task.FromResult(filteredTickets);
     }
 }

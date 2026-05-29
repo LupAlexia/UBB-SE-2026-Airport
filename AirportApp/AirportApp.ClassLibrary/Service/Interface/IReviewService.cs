@@ -1,12 +1,17 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Domain;
 
 namespace AirportApp.ClassLibrary.Service.Interface;
 
 public interface IReviewService
 {
-    Task<IEnumerable<Review>> GetAllAsync();
-    Task<Review?> GetByIdAsync(int reviewId);
-    Task AddAsync(Review review);
-    Task UpdateAsync(Review review);
-    Task DeleteAsync(int reviewId);
+    Task<Review> GetByIdAsync(int identificationNumber);
+    Task<int> AddAsync(Review review);
+    Task UpdateByIdAsync(int identificationNumber, Review review);
+    Task DeleteByIdAsync(int identificationNumber);
+    Task<List<Review>?> GetAllAsync();
+    Task CreateReviewAsync(int identificationNumber, User user, string message, int dutyFreeRating, int flightExperienceRating, int staffFriendlinessRating, int cleanlinessRating);
+    Task ValidateReviewAsync(Review review);
+    Task<float> CalculateAverageRatingAsync(Review review);
 }

@@ -1,0 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AirportApp.ClassLibrary.Entity.Domain;
+
+namespace AirportApp.ClassLibrary.Service.Interface;
+
+public interface IFlightSearchService
+{
+    Task<IEnumerable<Flight>> SearchFlightsAsync(string location, bool isDeparture, DateTime? date, int? passengers);
+    int? ParsePassengerCount(string input);
+    Task<Flight?> GetFlightByIdAsync(int id);
+    Task<IEnumerable<Flight>> GetFlightsByRouteAsync(string location, string routeType, DateTime? date);
+    Task<int> GetOccupiedSeatCountAsync(int flightId);
+}

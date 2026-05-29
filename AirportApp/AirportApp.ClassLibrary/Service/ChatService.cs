@@ -1,63 +1,82 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Repository.Interface;
 using AirportApp.ClassLibrary.Service.Interface;
 
 namespace AirportApp.ClassLibrary.Service;
 
-public class ChatService(IChatRepository chatRepository, IMessageRepository messageRepository) : IChatService
+public class ChatService(IChatRepository chatRepository, IUserRepository userRepository) : IChatService
 {
+    public const int UNASSIGNED_CHAT_ID = 0;
+
+    public async Task<Chat> OpenChatAsync(User userToOpenChatFor)
+    {
+        try
+        {
+            Chat newChat = new Chat(UNASSIGNED_CHAT_ID, userToOpenChatFor, ChatStatus.Active);
+            int newIdentificationNumber = Convert.ToInt32(await chatRepository.AddAsync(newChat));
+            newChat.Id = newIdentificationNumber;
+            return newChat;
+        }
+        catch (Exception exceptionThrown)
+        {
+            throw new Exception(exceptionThrown.Message);
+        }
+    }
+
+    public async Task CloseChatAsync(int chatId)
+    {
+        try
+        {
+            Chat chat = await chatRepository.GetByIdAsync(chatId) ?? throw new KeyNotFoundException($"Chat {chatId} not found.");
+            chat.CloseChat();
+            await chatRepository.UpdateAsync(chat);
+        }
+        catch (Exception exceptionThrown)
+        {
+            throw new Exception(exceptionThrown.Message);
+        }
+    }
+
     public async Task<IEnumerable<Chat>> GetAllChatsAsync()
     {
-        return await chatRepository.GetAsync();
+        try
+        {
+            return await chatRepository.GetAsync();
+        }
+        catch (Exception exceptionThrown)
+        {
+            throw new Exception(exceptionThrown.Message);
+        }
     }
 
-    public async Task<Chat?> GetChatByIdAsync(int chatId)
+    public async Task<Chat> GetChatByIdAsync(int id)
     {
-        return await chatRepository.GetByIdAsync(chatId);
+        try
+        {
+            return await chatRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"Chat {id} not found.");
+        }
+        catch (KeyNotFoundException)
+        {
+            throw;
+        }
+        catch (Exception exceptionThrown)
+        {
+            throw new Exception(exceptionThrown.Message);
+        }
     }
 
-    public async Task AddChatAsync(Chat chat)
+    public async Task UpdateChatAsync(int id, Chat chat)
     {
-        await chatRepository.AddAsync(chat);
-    }
-
-    public async Task UpdateChatAsync(Chat chat)
-    {
-        await chatRepository.UpdateAsync(chat);
-    }
-
-    public async Task DeleteChatAsync(int chatId)
-    {
-        await chatRepository.DeleteAsync(chatId);
-    }
-
-    public async Task<IEnumerable<Message>> GetAllMessagesAsync()
-    {
-        return await messageRepository.GetAsync();
-    }
-
-    public async Task<Message?> GetMessageByIdAsync(int messageId)
-    {
-        return await messageRepository.GetByIdAsync(messageId);
-    }
-
-    public async Task<IEnumerable<Message>> GetMessagesByChatIdAsync(int chatId)
-    {
-        return await messageRepository.GetByChatIdAsync(chatId);
-    }
-
-    public async Task<IEnumerable<Message>> GetMessagesSinceAsync(int chatId, int startMessageId)
-    {
-        return await messageRepository.GetMessagesSinceAsync(chatId, startMessageId);
-    }
-
-    public async Task AddMessageAsync(Message message)
-    {
-        await messageRepository.AddAsync(message);
-    }
-
-    public async Task DeleteMessageAsync(int messageId)
-    {
-        await messageRepository.DeleteAsync(messageId);
+        try
+        {
+            await chatRepository.UpdateAsync(chat);
+        }
+        catch (Exception exceptionThrown)
+        {
+            throw new Exception(exceptionThrown.Message);
+        }
     }
 }

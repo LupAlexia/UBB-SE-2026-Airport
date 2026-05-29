@@ -1,78 +1,71 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Repository.Interface;
 using AirportApp.ClassLibrary.Service.Interface;
 
 namespace AirportApp.ClassLibrary.Service;
 
-public class FAQService(IFAQRepository faqRepository, IDecisionTreeRepository decisionTreeRepository) : IFAQService
+public class FAQService(IFAQRepository faqRepository) : IFAQService
 {
-    public async Task<IEnumerable<FAQEntry>> GetAllAsync()
+    public async Task<List<FAQEntry>> GetAllAsync()
     {
-        return await faqRepository.GetAsync();
+        return (await faqRepository.GetAsync()).ToList();
     }
 
-    public async Task<FAQEntry?> GetByIdAsync(int faqEntryId)
+    public async Task<List<FAQEntry>> GetByCategoryAsync(FAQCategoryEnum category)
     {
-        return await faqRepository.GetByIdAsync(faqEntryId);
+        return (await faqRepository.GetByCategoryAsync(category)).ToList();
     }
 
-    public async Task<IEnumerable<FAQEntry>> GetByCategoryAsync(FAQCategoryEnum category)
+    public async Task AddFAQEntryAsync(FAQEntry newElem)
     {
-        return await faqRepository.GetByCategoryAsync(category);
+        await faqRepository.AddAsync(newElem);
     }
 
-    public async Task AddAsync(FAQEntry faqEntry)
+    public async Task EditFAQEntryAsync(FAQEntry tempEntry, int faqEntryId)
     {
-        await faqRepository.AddAsync(faqEntry);
+        await faqRepository.UpdateAsync(tempEntry);
     }
 
-    public async Task UpdateAsync(FAQEntry faqEntry)
+    public async Task DeleteFAQEntryAsync(int entryId)
     {
-        await faqRepository.UpdateAsync(faqEntry);
+        await faqRepository.DeleteAsync(entryId);
     }
 
-    public async Task DeleteAsync(int faqEntryId)
+    public async Task IncrementViewCountAsync(FAQEntry entry)
     {
-        await faqRepository.DeleteAsync(faqEntryId);
+        await faqRepository.IncrementViewCountAsync(entry.Id);
     }
 
-    public async Task IncrementViewCountAsync(int faqEntryId)
+    public async Task IncrementWasHelpfulVotesAsync(FAQEntry entry)
     {
-        await faqRepository.IncrementViewCountAsync(faqEntryId);
+        await faqRepository.IncrementHelpfulCountAsync(entry.Id);
     }
 
-    public async Task IncrementHelpfulCountAsync(int faqEntryId)
+    public async Task IncrementWasNotHelpfulVotesAsync(FAQEntry entry)
     {
-        await faqRepository.IncrementHelpfulCountAsync(faqEntryId);
+        await faqRepository.IncrementNotHelpfulCountAsync(entry.Id);
     }
 
-    public async Task IncrementNotHelpfulCountAsync(int faqEntryId)
+    public async Task<List<FAQEntry>> FilterFAQEntryAsync(FAQCategoryEnum category, string? searchQuery)
     {
-        await faqRepository.IncrementNotHelpfulCountAsync(faqEntryId);
-    }
+        IEnumerable<FAQEntry> frequentlyAskedQuestions;
 
-    public async Task<IEnumerable<FAQNode>> GetAllNodesAsync()
-    {
-        return await decisionTreeRepository.GetAsync();
-    }
+        if (category != FAQCategoryEnum.All)
+            frequentlyAskedQuestions = await this.GetByCategoryAsync(category);
+        else
+            frequentlyAskedQuestions = await this.GetAllAsync();
 
-    public async Task<FAQNode?> GetNodeByIdAsync(int nodeId)
-    {
-        return await decisionTreeRepository.GetByIdAsync(nodeId);
-    }
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+        {
+            frequentlyAskedQuestions = frequentlyAskedQuestions.Where(question =>
+                (question.Question?.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (question.Answer?.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ?? false));
+        }
 
-    public async Task AddNodeAsync(FAQNode faqNode)
-    {
-        await decisionTreeRepository.AddAsync(faqNode);
-    }
-
-    public async Task UpdateNodeAsync(FAQNode faqNode)
-    {
-        await decisionTreeRepository.UpdateAsync(faqNode);
-    }
-
-    public async Task DeleteNodeAsync(int nodeId)
-    {
-        await decisionTreeRepository.DeleteAsync(nodeId);
+        return frequentlyAskedQuestions.ToList();
     }
 }
