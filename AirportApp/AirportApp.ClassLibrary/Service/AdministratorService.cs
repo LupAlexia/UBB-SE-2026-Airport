@@ -33,8 +33,8 @@ public class AdministratorService(IAdministratorRepository administratorReposito
 
     public async Task CreateNewAdministratorAsync(int identificationNumber, string fullName, string emailAddress, string departmentName)
     {
-        EmployeeDepartment departmentEnum = (EmployeeDepartment)Enum.Parse(typeof(EmployeeDepartment), departmentName);
-        Administrator newAdministrator = new Administrator(identificationNumber, fullName, emailAddress, departmentEnum);
+        // trebuie sters parametrul department name din metoda, ca nu mai exista in clasa admin
+        Administrator newAdministrator = new Administrator(identificationNumber, fullName, emailAddress);
         await ValidateAdministratorIntegrityAsync(newAdministrator);
         await AddAdministratorAsync(newAdministrator);
     }
@@ -54,10 +54,6 @@ public class AdministratorService(IAdministratorRepository administratorReposito
         if (string.IsNullOrEmpty(administratorEntity.RetrieveConfiguredEmailAddressForBotContact()))
         {
             throw new ArgumentException("Email cannot be null or empty");
-        }
-        if (!Enum.IsDefined(typeof(EmployeeDepartment), administratorEntity.GetDepartmentName()))
-        {
-            throw new ArgumentException("Invalid group");
         }
     }
 }
