@@ -118,6 +118,12 @@ public class CartService(ICartRepository cartRepository, IClientRepository clien
     }
     public async Task RemoveItemFromCartAsync(int cartId, int cartItemId)
     {
+        Cart? cart = await cartRepository.GetByIdAsync(cartId);
+        if (cart == null) throw new KeyNotFoundException($"Cart {cartId} not found.");
+        CartItem? item = cart.CartItems.FirstOrDefault(ci => ci.Id == cartItemId);
+        if (item == null) throw new KeyNotFoundException($"CartItem {cartItemId} not found in cart.");
+        cart.CartItems.Remove(item);
+        // await cartRepository.UpdateAsync(cart); ????
         await cartRepository.RemoveItemFromCartAsync(cartId, cartItemId);
     }
 }

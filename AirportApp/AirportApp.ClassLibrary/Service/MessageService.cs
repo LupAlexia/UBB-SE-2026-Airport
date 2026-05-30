@@ -73,7 +73,7 @@ public class MessageService(
     {
         Chat chat = await chatRepository.GetByIdAsync(chatId) ?? throw new KeyNotFoundException($"Chat {chatId} not found.");
         Sender sender = await messageRepository.GetSenderByIdAsync(senderId);
-
+        
         var message = new Message(chat, text, sender)
         {
             Timestamp = timestamp == default ? DateTimeOffset.UtcNow : timestamp
