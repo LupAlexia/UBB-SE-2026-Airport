@@ -9,6 +9,6 @@ public interface IAdministratorService
     Task UpdateAdministratorByIdAsync(int identificationNumber, Administrator administratorEntity);
     Task DeleteAdministratorByIdAsync(int identificationNumber);
     Task<List<Administrator>> GetAllAdministratorsAsync();
-    Task CreateNewAdministratorAsync(int identificationNumber, string fullName, string emailAddress, string departmentName);
+    Task CreateNewAdministratorAsync(int identificationNumber, string fullName, string emailAddress);
     Task ValidateAdministratorIntegrityAsync(Administrator administratorEntity);
 }
