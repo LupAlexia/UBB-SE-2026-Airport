@@ -46,16 +46,10 @@ public class RunwaysController(IRunwayService runwayService) : ControllerBase
             return this.BadRequest(InvalidHandleTimeErrorMessage);
         }
 
-        try
-        {
-            var runway = new Runway { Name = dto.Name, HandleTime = dto.HandleTime ?? 0 };
-            await runwayService.AddRunwayAsync(runway);
-            return this.Ok(runway.Id);
-        }
-        catch (ArgumentException ex)
-        {
-            return this.BadRequest(ex.Message);
-        }
+        var runway = new Runway { Name = dto.Name, HandleTime = dto.HandleTime ?? 0 };
+        await runwayService.AddRunwayAsync(runway);
+        return this.Ok(runway.Id);
+ 
     }
 
     [HttpPut("{runwayId:int}")]
@@ -76,16 +70,10 @@ public class RunwaysController(IRunwayService runwayService) : ControllerBase
             return this.BadRequest(InvalidHandleTimeErrorMessage);
         }
 
-        try
-        {
-            var runway = new Runway { Id = runwayId, Name = dto.Name!, HandleTime = dto.HandleTime ?? 0 };
-            await runwayService.UpdateRunwayAsync(runway);
-            return this.NoContent();
-        }
-        catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
-        {
-            return this.BadRequest(ex.Message);
-        }
+        var runway = new Runway { Id = runwayId, Name = dto.Name!, HandleTime = dto.HandleTime ?? 0 };
+        await runwayService.UpdateRunwayAsync(runway);
+        return this.NoContent();
+
     }
 
     [HttpDelete("{runwayId:int}")]
@@ -96,15 +84,9 @@ public class RunwaysController(IRunwayService runwayService) : ControllerBase
             return NotFound();
         }
 
-        try
-        {
-            await runwayService.DeleteRunwayAsync(runwayId);
-            return NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            return this.BadRequest(ex.Message);
-        }
+        await runwayService.DeleteRunwayAsync(runwayId);
+        return NoContent();
+
     }
 
     [HttpGet("{runwayId:int}/has-flights")]

@@ -99,7 +99,7 @@ public class EmployeeFlightsController(IEmployeeFlightService employeeFlightServ
     }
 
     [HttpDelete("flights/{flightId:int}/employees/{employeeId:int}")]
-public async Task<IActionResult> RemoveEmployeeFromFlight(int flightId, int employeeId)    {
+    public async Task<IActionResult> RemoveEmployeeFromFlight(int flightId, int employeeId)    {
         await employeeFlightService.RemoveEmployeeFromFlightUsingIdsAsync(flightId, employeeId);
         return this.NoContent();
     }

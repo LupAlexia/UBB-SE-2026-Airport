@@ -40,15 +40,8 @@ public class ManagersController(IManagerService managerService) : ControllerBase
             return this.BadRequest(MissingManagerDataErrorMessage);
         }
 
-        try
-        {
-            await managerService.AddManagerAsync(manager);
-            return this.CreatedAtAction(nameof(this.GetById), new { managerId = manager.Id }, manager);
-        }
-        catch (ArgumentException ex)
-        {
-            return this.BadRequest(ex.Message);
-        }
+        await managerService.AddManagerAsync(manager);
+        return this.CreatedAtAction(nameof(this.GetById), new { managerId = manager.Id }, manager);
     }
 
     [HttpPut("{managerId:int}")]

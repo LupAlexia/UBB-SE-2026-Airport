@@ -40,16 +40,9 @@ public class GatesController(IGateService gateService) : ControllerBase
             return this.BadRequest(EmptyGateNameErrorMessage);
         }
 
-        try
-        {
-            var gate = new Gate { GateName = gateName };
-            await gateService.AddGateAsync(gate);
-            return this.Ok(gate.Id);
-        }
-        catch (ArgumentException ex)
-        {
-            return this.BadRequest(ex.Message);
-        }
+        var gate = new Gate { GateName = gateName };
+        await gateService.AddGateAsync(gate);
+        return this.Ok(gate.Id);
     }
 
     [HttpPut("{gateId:int}")]
@@ -65,16 +58,9 @@ public class GatesController(IGateService gateService) : ControllerBase
             return this.BadRequest(EmptyGateNameErrorMessage);
         }
 
-        try
-        {
-            var gate = new Gate { Id = gateId, GateName = updatedGateName };
-            await gateService.UpdateGateAsync(gate);
-            return this.NoContent();
-        }
-        catch (ArgumentException ex)
-        {
-            return this.BadRequest(ex.Message);
-        }
+        var gate = new Gate { Id = gateId, GateName = updatedGateName };
+        await gateService.UpdateGateAsync(gate);
+        return this.NoContent();
     }
 
     [HttpDelete("{gateId:int}")]

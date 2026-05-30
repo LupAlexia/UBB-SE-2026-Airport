@@ -20,15 +20,8 @@ public class ShopItemsController(IShopItemService shopItemService) : ControllerB
     [HttpGet("{shopItemId:int}")]
     public async Task<ActionResult<ShopItem>> GetById(int shopItemId)
     {
-        try
-        {
-            ShopItem shopItem = await shopItemService.GetByIdAsync(shopItemId);
-            return this.Ok(shopItem);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return this.NotFound(ex.Message);
-        }
+        ShopItem shopItem = await shopItemService.GetByIdAsync(shopItemId);
+        return this.Ok(shopItem);
     }
 
     [HttpGet("shop/{shopId:int}/")]
@@ -62,32 +55,19 @@ public class ShopItemsController(IShopItemService shopItemService) : ControllerB
     [HttpPost]
     public async Task<ActionResult> Add([FromBody] ShopItemRequest shopItemRequest)
     {
-        try
-        {
-            await shopItemService.AddShopItemAsync(ToShopItem(shopItemRequest));
-            return this.Ok();
-        }
-        catch (ArgumentException ex)
-        {
-            return this.BadRequest(ex.Message);
-        }
+         await shopItemService.AddShopItemAsync(ToShopItem(shopItemRequest));
+         return this.Ok();
+        
     }
 
     [HttpPut("{shopItemId:int}")]
     public async Task<ActionResult> Update(int shopItemId, [FromBody] ShopItemRequest shopItemRequest)
     {
-        try
-        {
-            ShopItem shopItem = ToShopItem(shopItemRequest);
-            shopItem.Id = shopItemId;
+        ShopItem shopItem = ToShopItem(shopItemRequest);
+        shopItem.Id = shopItemId;
 
-            await shopItemService.UpdateShopItemAsync(shopItem);
-            return this.NoContent();
-        }
-        catch (ArgumentException ex)
-        {
-            return this.BadRequest(ex.Message);
-        }
+        await shopItemService.UpdateShopItemAsync(shopItem);
+        return this.NoContent();
     }
 
     [HttpDelete("{shopItemId:int}")]

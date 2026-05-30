@@ -44,21 +44,14 @@ public class FlightsController(IFlightService flightService) : ControllerBase
             return this.BadRequest(NullFlightDataErrorMessage);
         }
 
-        try
-        {
-            int flightId = await flightService.AddFlightAsync(
-                flight.FlightNumber,
-                flight.Route.Id,
-                flight.Date,
-                flight.Runway.Id,
-                flight.Gate.Id);
+        int flightId = await flightService.AddFlightAsync(
+             flight.FlightNumber,
+             flight.Route.Id,
+             flight.Date,
+             flight.Runway.Id,
+             flight.Gate.Id);
 
-            return this.Ok(flightId);
-        }
-        catch (ArgumentException ex)
-        {
-            return this.BadRequest(ex.Message);
-        }
+         return this.Ok(flightId);
     }
 
     [HttpPut("{flightId:int}")]
@@ -74,21 +67,14 @@ public class FlightsController(IFlightService flightService) : ControllerBase
             return this.NotFound();
         }
 
-        try
-        {
-            await flightService.UpdateFlightAsync(
-                flightId,
-                flight.Date,
-                flight.FlightNumber,
-                flight.Runway?.Id,
-                flight.Gate?.Id);
+         await flightService.UpdateFlightAsync(
+             flightId,
+             flight.Date,
+             flight.FlightNumber,
+             flight.Runway?.Id,
+             flight.Gate?.Id);
 
-            return this.NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            return this.BadRequest(ex.Message);
-        }
+          return this.NoContent(); 
     }
 
     [HttpDelete("{flightId:int}")]
@@ -98,15 +84,7 @@ public class FlightsController(IFlightService flightService) : ControllerBase
         {
             return this.NotFound();
         }
-
-        try
-        {
-            await flightService.DeleteFlightAsync(flightId);
-            return this.NoContent();
-        }
-        catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
-        {
-            return this.BadRequest(ex.Message);
-        }
+         await flightService.DeleteFlightAsync(flightId);
+         return this.NoContent(); 
     }
 }

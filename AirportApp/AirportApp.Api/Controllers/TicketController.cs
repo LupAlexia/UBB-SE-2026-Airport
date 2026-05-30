@@ -108,6 +108,24 @@ namespace AirportApp.Api.Controllers
             IEnumerable<TicketDTO> filteredTickets = await ticketService.FilterTicketsByStatusAsync(tickets, filter);
             return Ok(filteredTickets);
         }
+
+        // EXTRA METHOD FOR 921s CONTROLLER - SHOULD BE IN SERVICE TOO
+        // here i just calculate locally, but in the og code it is in the service
+        [HttpGet("count/subcategory")]
+        public async Task<ActionResult<int>> GetTicketCountBySubcategory([FromQuery] string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return BadRequest("Subcategory name cannot be null or empty.");
+            }
+
+            var allTickets = await ticketService.GetAllTicketsAsync();
+
+            int count = allTickets.Count(t => t.Subcategory != null &&
+                string.Equals(t.Subcategory.SubcategoryName, name, StringComparison.OrdinalIgnoreCase));
+
+            return Ok(count);
+        }
     }
 
     public class UpdateStatusRequest

@@ -45,20 +45,9 @@ public class ShopsController : ControllerBase
             return BadRequest("Shop data is null.");
         }
 
-        try
-        {
-            Shop shop = ToShop(shopRequest);
-            await shopService.AddShopAsync(shop);
-            return CreatedAtAction(nameof(GetAllShops), new { id = shop.Id }, shop);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return Conflict(ex.Message);
-        }
+        Shop shop = ToShop(shopRequest);
+        await shopService.AddShopAsync(shop);
+        return CreatedAtAction(nameof(GetAllShops), new { id = shop.Id }, shop);
     }
 
     [HttpPut("{id}")]
@@ -69,21 +58,10 @@ public class ShopsController : ControllerBase
             return BadRequest("Shop data is null.");
         }
 
-        try
-        {
-            Shop shop = ToShop(shopRequest);
-            shop.Id = id;
-            await shopService.UpdateShopAsync(shop);
-            return NoContent();
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return Conflict(ex.Message);
-        }
+        Shop shop = ToShop(shopRequest);
+        shop.Id = id;
+        await shopService.UpdateShopAsync(shop);
+        return NoContent();
     }
 
     [HttpDelete("{id}")]
