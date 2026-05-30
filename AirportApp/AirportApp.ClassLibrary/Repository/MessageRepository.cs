@@ -82,6 +82,30 @@ public class MessageRepository(AppDbContext databaseContext) : IMessageRepositor
         return message.Id;
     }
 
+    public async Task UpdateAsync(Message message)
+    {
+        var existing = await databaseContext.Messages.FindAsync(message.Id);
+        if (existing is null)
+        {
+            return;
+        }
+
+        existing.Text = message.Text;
+        existing.Timestamp = message.Timestamp;
+        await databaseContext.SaveChangesAsync();
+    }
+
+    public async Task<Sender> GetSenderByIdAsync(int senderId)
+    {
+        if (senderId == BotSystemUserId)
+        {
+            return new BotEngineIdentity(null!);
+        }
+
+        return await databaseContext.Senders.FindAsync(senderId)
+               ?? throw new KeyNotFoundException($"Sender with ID {senderId} not found.");
+    }
+
     public async Task DeleteAsync(int messageId)
     {
         var messageToRemove = await databaseContext.Messages.FindAsync(messageId);
