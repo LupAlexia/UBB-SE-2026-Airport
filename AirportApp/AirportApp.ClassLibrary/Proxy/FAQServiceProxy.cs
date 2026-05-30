@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Entity.Dto;
 using AirportApp.ClassLibrary.Service.Interface;
 
 namespace AirportApp.ClassLibrary.Proxy;
@@ -13,22 +15,24 @@ public class FAQServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClien
 
     public async Task<List<FAQEntry>> GetAllAsync()
     {
-        return await GetListAsync<FAQEntry>(BaseUrl);
+        var dtos = await GetListAsync<FAQEntryDTO>(BaseUrl);
+        return dtos.Select(MapToEntity).ToList();
     }
 
     public async Task<List<FAQEntry>> GetByCategoryAsync(FAQCategoryEnum category)
     {
-        return await GetListAsync<FAQEntry>($"{BaseUrl}/category/{category}");
+        var dtos = await GetListAsync<FAQEntryDTO>($"{BaseUrl}/category/{category}");
+        return dtos.Select(MapToEntity).ToList();
     }
 
     public async Task AddFAQEntryAsync(FAQEntry newElem)
     {
-        await PostAsync(BaseUrl, newElem);
+        await PostAsync(BaseUrl, MapToDto(newElem));
     }
 
     public async Task EditFAQEntryAsync(FAQEntry tempEntry, int faqEntryId)
     {
-        await PutAsync($"{BaseUrl}/{faqEntryId}", tempEntry);
+        await PutAsync($"{BaseUrl}/{faqEntryId}", MapToDto(tempEntry));
     }
 
     public async Task DeleteFAQEntryAsync(int entryId)
@@ -53,6 +57,17 @@ public class FAQServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClien
 
     public async Task<List<FAQEntry>> FilterFAQEntryAsync(FAQCategoryEnum category, string? searchQuery)
     {
-        return await GetListAsync<FAQEntry>($"{BaseUrl}/filter?category={category}&searchQuery={Uri.EscapeDataString(searchQuery ?? "")}");
+        var dtos = await GetListAsync<FAQEntryDTO>($"{BaseUrl}/filter?category={category}&searchQuery={Uri.EscapeDataString(searchQuery ?? "")}");
+        return dtos.Select(MapToEntity).ToList();
+    }
+
+    private static FAQEntry MapToEntity(FAQEntryDTO dto)
+    {
+        return new FAQEntry(dto.Id, dto.Question, dto.Answer, dto.Category, dto.ViewCount, dto.HelpfulVotesCount, dto.NotHelpfulVotesCount);
+    }
+
+    private static FAQEntryDTO MapToDto(FAQEntry entry)
+    {
+        return new FAQEntryDTO(entry.Id, entry.Question, entry.Answer, entry.Category, entry.ViewCount, entry.HelpfulVotesCount, entry.NotHelpfulVotesCount);
     }
 }

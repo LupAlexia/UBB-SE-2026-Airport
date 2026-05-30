@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Entity.Dto;
 using AirportApp.ClassLibrary.Service.Interface;
 
 namespace AirportApp.ClassLibrary.Proxy;
@@ -13,17 +15,20 @@ public class ReviewServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpCl
 
     public async Task<Review> GetByIdAsync(int identificationNumber)
     {
-        return await GetRequiredAsync<Review>($"{BaseUrl}/{identificationNumber}");
+        var dto = await GetRequiredAsync<ReviewDTO>($"{BaseUrl}/{identificationNumber}");
+        return MapToEntity(dto);
     }
 
     public async Task<int> AddAsync(Review review)
     {
-        return await PostForResultAsync<Review, int>(BaseUrl, review);
+        var dto = new CreateReviewDTO(review.User.Id, review.Message, review.DutyFreeRating, review.FlightExperienceRating, review.StaffFriendlinessRating, review.CleanlinessRating);
+        return await PostForResultAsync<CreateReviewDTO, int>(BaseUrl, dto);
     }
 
     public async Task UpdateByIdAsync(int identificationNumber, Review review)
     {
-        await PutAsync($"{BaseUrl}/{identificationNumber}", review);
+        var dto = new CreateReviewDTO(review.User.Id, review.Message, review.DutyFreeRating, review.FlightExperienceRating, review.StaffFriendlinessRating, review.CleanlinessRating);
+        await PutAsync($"{BaseUrl}/{identificationNumber}", dto);
     }
 
     public async Task DeleteByIdAsync(int identificationNumber)
@@ -33,7 +38,8 @@ public class ReviewServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpCl
 
     public async Task<List<Review>?> GetAllAsync()
     {
-        return await GetListAsync<Review>(BaseUrl);
+        var dtos = await GetListAsync<ReviewDTO>(BaseUrl);
+        return dtos.Select(MapToEntity).ToList();
     }
 
     public Task CreateReviewAsync(int identificationNumber, User user, string message, int dutyFreeRating, int flightExperienceRating, int staffFriendlinessRating, int cleanlinessRating)
@@ -49,5 +55,10 @@ public class ReviewServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpCl
     public Task<float> CalculateAverageRatingAsync(Review review)
     {
         return Task.FromResult((review.DutyFreeRating + review.FlightExperienceRating + review.StaffFriendlinessRating + review.CleanlinessRating) / 4.0f);
+    }
+
+    private static Review MapToEntity(ReviewDTO dto)
+    {
+        return new Review(dto.reviewId, new User(dto.userId, dto.userName, ""), dto.message, dto.dutyFreeRating, dto.flightExperienceRating, dto.staffFriendlinessRating, dto.cleanlinessRating);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Entity.Dto;
 using AirportApp.ClassLibrary.Service.Interface;
 
 namespace AirportApp.ClassLibrary.Proxy;
@@ -28,7 +29,7 @@ public class EmployeeServiceProxy(HttpClient httpClient) : ServiceProxyBase(http
 
     public async Task SaveEmployeeAsync(Employee employee, DateTimeOffset? birthday, DateTimeOffset? hiringDate, string salaryText)
     {
-        var request = new { Employee = employee, Birthday = birthday, HiringDate = hiringDate, SalaryText = salaryText };
+        var request = new SaveEmployeeDto { Employee = employee, Birthday = birthday, HiringDate = hiringDate, SalaryText = salaryText };
         await PostAsync($"{BaseUrl}/save", request);
     }
 

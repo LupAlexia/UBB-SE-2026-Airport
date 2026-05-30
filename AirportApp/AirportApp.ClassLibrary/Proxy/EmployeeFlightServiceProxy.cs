@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Entity.Dto;
 using AirportApp.ClassLibrary.Service.Interface;
 
 namespace AirportApp.ClassLibrary.Proxy;
@@ -13,7 +14,8 @@ public class EmployeeFlightServiceProxy(HttpClient httpClient) : ServiceProxyBas
 
     public async Task AssignEmployeeToFlightUsingIdsAsync(int flightId, int employeeId)
     {
-        await PostAsync<object>($"{BaseUrl}/assign?flightId={flightId}&employeeId={employeeId}", null!);
+        var dto = new AssignEmployeeDto { FlightId = flightId, EmployeeId = employeeId };
+        await PostAsync($"{BaseUrl}/assign", dto);
     }
 
     public async Task RemoveEmployeeFromFlightUsingIdsAsync(int flightId, int employeeId)

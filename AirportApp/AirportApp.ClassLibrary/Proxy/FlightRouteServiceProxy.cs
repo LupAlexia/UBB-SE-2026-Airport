@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Entity.Dto;
 using AirportApp.ClassLibrary.Service.Interface;
 
 namespace AirportApp.ClassLibrary.Proxy;
@@ -13,12 +15,14 @@ public class FlightRouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
 
     public async Task<IEnumerable<Flight>> GetAllFlightsAsync()
     {
-        return await GetListAsync<Flight>($"{BaseUrl}/flights");
+        var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}/flights");
+        return dtos.Select(FlightServiceProxy.MapToEntity).ToList();
     }
 
     public async Task<Flight?> GetFlightByIdAsync(int flightId)
     {
-        return await GetOptionalAsync<Flight>($"{BaseUrl}/flights/{flightId}");
+        var dto = await GetOptionalAsync<FlightDTO>($"{BaseUrl}/flights/{flightId}");
+        return dto is null ? null : FlightServiceProxy.MapToEntity(dto);
     }
 
     public async Task DeleteFlightUsingIdAsync(int flightId)
@@ -28,12 +32,14 @@ public class FlightRouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
 
     public async Task<IEnumerable<Route>> GetAllRoutesAsync()
     {
-        return await GetListAsync<Route>($"{BaseUrl}/routes");
+        var dtos = await GetListAsync<RouteDTO>($"{BaseUrl}/routes");
+        return dtos.Select(RouteServiceProxy.MapToEntity).ToList();
     }
 
     public async Task<Route?> GetRouteByIdAsync(int routeId)
     {
-        return await GetOptionalAsync<Route>($"{BaseUrl}/routes/{routeId}");
+        var dto = await GetOptionalAsync<RouteDTO>($"{BaseUrl}/routes/{routeId}");
+        return dto is null ? null : RouteServiceProxy.MapToEntity(dto);
     }
 
     public async Task<int> AddFlightToRouteAsync(int companyId, int airportId, string routeType, int recurrenceInterval,
@@ -69,31 +75,39 @@ public class FlightRouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
 
     public async Task<IEnumerable<Flight>> GetAllFlightsWithDetailsAsync()
     {
-        return await GetListAsync<Flight>($"{BaseUrl}/flights-details");
+        var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}/flights-details");
+        return dtos.Select(FlightServiceProxy.MapToEntity).ToList();
     }
 
     public async Task<IEnumerable<Flight>> GetFlightsByCompanyIdAsync(int companyId)
     {
-        return await GetListAsync<Flight>($"{BaseUrl}/company/{companyId}/flights");
+        var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}/company/{companyId}/flights");
+        return dtos.Select(FlightServiceProxy.MapToEntity).ToList();
     }
 
     public async Task<string> GetDestinationTextAsync(Flight flight)
     {
-        return await PostForResultAsync<Flight, string>($"{BaseUrl}/destination-text", flight);
+        var dto = FlightServiceProxy.MapToDto(flight);
+        return await PostForResultAsync<FlightDTO, string>($"{BaseUrl}/destination-text", dto);
     }
 
     public async Task<FlightSummary> BuildFlightSummaryAsync(Flight flight, string crewText)
     {
-        return await PostForResultAsync<Flight, FlightSummary>($"{BaseUrl}/summary?crewText={Uri.EscapeDataString(crewText)}", flight);
+        var dto = FlightServiceProxy.MapToDto(flight);
+        return await PostForResultAsync<FlightDTO, FlightSummary>($"{BaseUrl}/summary?crewText={Uri.EscapeDataString(crewText)}", dto);
     }
 
     public async Task<IEnumerable<Flight>> SearchFlightsAsync(IEnumerable<Flight> flights, string query)
     {
-        return await PostForResultAsync<IEnumerable<Flight>, IEnumerable<Flight>>($"{BaseUrl}/search?query={Uri.EscapeDataString(query)}", flights);
+        var dtos = flights.Select(FlightServiceProxy.MapToDto).ToList();
+        var resultDtos = await PostForResultAsync<IEnumerable<FlightDTO>, IEnumerable<FlightDTO>>($"{BaseUrl}/search?query={Uri.EscapeDataString(query)}", dtos);
+        return resultDtos.Select(FlightServiceProxy.MapToEntity).ToList();
     }
 
     public async Task<IEnumerable<Flight>> SearchFlightsByNumberAsync(IEnumerable<Flight> flights, string query)
     {
-        return await PostForResultAsync<IEnumerable<Flight>, IEnumerable<Flight>>($"{BaseUrl}/search-by-number?query={Uri.EscapeDataString(query)}", flights);
+        var dtos = flights.Select(FlightServiceProxy.MapToDto).ToList();
+        var resultDtos = await PostForResultAsync<IEnumerable<FlightDTO>, IEnumerable<FlightDTO>>($"{BaseUrl}/search-by-number?query={Uri.EscapeDataString(query)}", dtos);
+        return resultDtos.Select(FlightServiceProxy.MapToEntity).ToList();
     }
 }

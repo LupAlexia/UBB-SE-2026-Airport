@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Entity.Dto;
 using AirportApp.ClassLibrary.Service.Interface;
 
 namespace AirportApp.ClassLibrary.Proxy;
@@ -13,12 +15,14 @@ public class MembershipServiceProxy(HttpClient httpClient) : ServiceProxyBase(ht
 
     public async Task<IEnumerable<Membership>> GetAllMembershipsAsync()
     {
-        return await GetListAsync<Membership>(BaseUrl);
+        var dtos = await GetListAsync<MembershipDTO>(BaseUrl);
+        return dtos.Select(MapToEntity).ToList();
     }
 
     public async Task<Membership?> GetMembershipByIdAsync(int id)
     {
-        return await GetOptionalAsync<Membership>($"{BaseUrl}/{id}");
+        var dto = await GetOptionalAsync<MembershipDTO>($"{BaseUrl}/{id}");
+        return dto is null ? null : MapToEntity(dto);
     }
 
     public async Task<IEnumerable<MembershipAddonDiscount>> GetAddonDiscountsAsync(int membershipId)
@@ -28,11 +32,17 @@ public class MembershipServiceProxy(HttpClient httpClient) : ServiceProxyBase(ht
 
     public async Task<Membership?> UpgradeUserMembershipAsync(int userId, int newMembershipId)
     {
-        return await PostForResultAsync<object, Membership?>($"{BaseUrl}/upgrade?userId={userId}&newMembershipId={newMembershipId}", null!);
+        var dto = await PostForResultAsync<object, MembershipDTO?>($"{BaseUrl}/upgrade?userId={userId}&newMembershipId={newMembershipId}", null!);
+        return dto is null ? null : MapToEntity(dto);
     }
 
     public async Task<MembershipPurchaseResult> PurchaseMembershipAsync(int userId, int membershipId)
     {
         return await PostForResultAsync<object, MembershipPurchaseResult>($"{BaseUrl}/purchase?userId={userId}&membershipId={membershipId}", null!);
+    }
+
+    private static Membership MapToEntity(MembershipDTO dto)
+    {
+        return new Membership(dto.id, dto.name, dto.flightDiscountPercentage);
     }
 }

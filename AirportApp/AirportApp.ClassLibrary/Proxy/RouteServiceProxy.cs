@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Entity.Dto;
 using AirportApp.ClassLibrary.Service.Interface;
 
 namespace AirportApp.ClassLibrary.Proxy;
@@ -13,12 +15,14 @@ public class RouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpCli
 
     public async Task<IEnumerable<Route>> GetAllRoutesAsync()
     {
-        return await GetListAsync<Route>(BaseUrl);
+        var dtos = await GetListAsync<RouteDTO>(BaseUrl);
+        return dtos.Select(MapToEntity).ToList();
     }
 
     public async Task<Route?> GetRouteByIdAsync(int routeId)
     {
-        return await GetOptionalAsync<Route>($"{BaseUrl}/{routeId}");
+        var dto = await GetOptionalAsync<RouteDTO>($"{BaseUrl}/{routeId}");
+        return dto is null ? null : MapToEntity(dto);
     }
 
     public async Task<int> AddWithInitialFlightAsync(int companyId, int airportId, string routeType, int recurrenceInterval,
@@ -53,5 +57,42 @@ public class RouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpCli
     {
         if (route is null) return string.Empty;
         return route.DepartureTime.ToString("HH:mm");
+    }
+
+    public static Route MapToEntity(RouteDTO dto)
+    {
+        var route = new Route
+        {
+            Id = dto.id,
+            RouteType = dto.routeType,
+            StartDate = DateOnly.FromDateTime(dto.departureTime),
+            EndDate = DateOnly.FromDateTime(dto.arrivalTime),
+            DepartureTime = TimeOnly.FromDateTime(dto.departureTime),
+            ArrivalTime = TimeOnly.FromDateTime(dto.arrivalTime),
+            Capacity = dto.capacity
+        };
+
+        if (dto.airport is not null)
+        {
+            route.Airport = new Airport(dto.airport.id, dto.airport.airportCode, dto.airport.city, "");
+        }
+
+        if (dto.company is not null)
+        {
+            route.Company = new Company(dto.company.id, dto.company.name);
+        }
+
+        return route;
+    }
+
+    public static RouteDTO MapToDto(Route route)
+    {
+        var airportDto = route.Airport is not null ? new AirportDTO(route.Airport.Id, route.Airport.AirportCode, route.Airport.City) : null;
+        var companyDto = route.Company is not null ? new CompanyDTO(route.Company.Id, route.Company.Name) : null;
+
+        var depDateTime = route.StartDate.ToDateTime(route.DepartureTime);
+        var arrDateTime = route.EndDate.ToDateTime(route.ArrivalTime);
+
+        return new RouteDTO(route.Id, route.RouteType, depDateTime, arrDateTime, route.Capacity, airportDto, companyDto);
     }
 }

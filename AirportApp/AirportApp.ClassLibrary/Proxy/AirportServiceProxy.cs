@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Entity.Dto;
 using AirportApp.ClassLibrary.Service.Interface;
 
 namespace AirportApp.ClassLibrary.Proxy;
@@ -13,22 +15,24 @@ public class AirportServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpC
 
     public async Task<IEnumerable<Airport>> GetAllAirportsAsync()
     {
-        return await GetListAsync<Airport>(BaseUrl);
+        var dtos = await GetListAsync<AirportDTO>(BaseUrl);
+        return dtos.Select(MapToEntity).ToList();
     }
 
     public async Task<Airport?> GetAirportByIdAsync(int airportId)
     {
-        return await GetOptionalAsync<Airport>($"{BaseUrl}/{airportId}");
+        var dto = await GetOptionalAsync<AirportDTO>($"{BaseUrl}/{airportId}");
+        return dto is null ? null : MapToEntity(dto);
     }
 
     public async Task AddAirportAsync(Airport airport)
     {
-        await PostAsync(BaseUrl, airport);
+        await PostAsync(BaseUrl, MapToDto(airport));
     }
 
     public async Task UpdateAirportAsync(Airport airport)
     {
-        await PutAsync($"{BaseUrl}/{airport.Id}", airport);
+        await PutAsync($"{BaseUrl}/{airport.Id}", MapToDto(airport));
     }
 
     public async Task DeleteAirportAsync(int airportId)
@@ -49,7 +53,17 @@ public class AirportServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpC
 
     public async Task SaveAirportAsync(Airport airport)
     {
-        await PutAsync($"{BaseUrl}/{airport.Id}", airport);
+        await PutAsync($"{BaseUrl}/{airport.Id}", MapToDto(airport));
+    }
+
+    private static Airport MapToEntity(AirportDTO dto)
+    {
+        return new Airport(dto.id, dto.airportCode, dto.city, "");
+    }
+
+    private static AirportDTO MapToDto(Airport airport)
+    {
+        return new AirportDTO(airport.Id, airport.AirportCode, airport.City);
     }
 
     public record DeleteWarningResponse(string WarningMessage);
