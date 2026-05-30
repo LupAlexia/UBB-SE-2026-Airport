@@ -31,9 +31,8 @@ public class AdministratorService(IAdministratorRepository administratorReposito
         return (await administratorRepository.GetAsync()).ToList();
     }
 
-    public async Task CreateNewAdministratorAsync(int identificationNumber, string fullName, string emailAddress, string departmentName)
+    public async Task CreateNewAdministratorAsync(int identificationNumber, string fullName, string emailAddress)
     {
-        // trebuie sters parametrul department name din metoda, ca nu mai exista in clasa admin
         Administrator newAdministrator = new Administrator(identificationNumber, fullName, emailAddress);
         await ValidateAdministratorIntegrityAsync(newAdministrator);
         await AddAdministratorAsync(newAdministrator);
