@@ -5,7 +5,7 @@ using AirportApp.ClassLibrary.Entity.Dto;
 using AirportApp.ClassLibrary.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Airport.Web.Controllers
+namespace AirportApp.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
