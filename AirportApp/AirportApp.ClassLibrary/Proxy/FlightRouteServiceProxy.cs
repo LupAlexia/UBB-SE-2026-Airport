@@ -149,12 +149,12 @@ public class FlightRouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
             return Task.FromResult(EmptyFieldPlaceholder);
         }
 
-        return Task.FromResult($"{flight.Route.Airport.Code} - {flight.Route.Airport.Name}");
+        return Task.FromResult($"{flight.Route.Airport.AirportCode} - {flight.Route.Airport.Name}");
     }
 
     public Task<FlightSummary> BuildFlightSummaryAsync(Flight flight, string crewText)
     {
-        string destinationText = flight.Route?.Airport != null ? $"{flight.Route.Airport.Code} - {flight.Route.Airport.Name}" : EmptyFieldPlaceholder;
+        string destinationText = flight.Route?.Airport != null ? $"{flight.Route.Airport.AirportCode} - {flight.Route.Airport.Name}" : EmptyFieldPlaceholder;
         return Task.FromResult(new FlightSummary
         {
             Id = flight.Id,
@@ -162,7 +162,7 @@ public class FlightRouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
             DateText = flight.Date.ToString(FlightDateTimeFormat),
             DestinationText = destinationText,
             RunwayText = flight.Runway?.Name ?? EmptyFieldPlaceholder,
-            GateText = flight.Gate?.Name ?? EmptyFieldPlaceholder,
+            GateText = flight.Gate?.GateName ?? EmptyFieldPlaceholder,
             CrewText = crewText
         });
     }
@@ -235,7 +235,7 @@ public class FlightRouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
             return true;
         }
 
-        string destination = (flight.Route?.Airport != null ? $"{flight.Route.Airport.Code} - {flight.Route.Airport.Name}" : EmptyFieldPlaceholder).ToLowerInvariant();
+        string destination = (flight.Route?.Airport != null ? $"{flight.Route.Airport.AirportCode} - {flight.Route.Airport.Name}" : EmptyFieldPlaceholder).ToLowerInvariant();
         if (destination.Contains(queryLower))
         {
             return true;
@@ -246,7 +246,7 @@ public class FlightRouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
             return true;
         }
 
-        if (flight.Gate?.Name != null && flight.Gate.Name.ToLowerInvariant().Contains(queryLower))
+        if (flight.Gate?.GateName != null && flight.Gate.GateName.ToLowerInvariant().Contains(queryLower))
         {
             return true;
         }

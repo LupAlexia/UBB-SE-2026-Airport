@@ -123,6 +123,7 @@ public class CartService(ICartRepository cartRepository, IClientRepository clien
         CartItem? item = cart.CartItems.FirstOrDefault(ci => ci.Id == cartItemId);
         if (item == null) throw new KeyNotFoundException($"CartItem {cartItemId} not found in cart.");
         cart.CartItems.Remove(item);
-        await cartRepository.UpdateAsync(cart);
+        // await cartRepository.UpdateAsync(cart); ????
+        await cartRepository.RemoveItemFromCartAsync(cartId, cartItemId);
     }
 }

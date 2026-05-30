@@ -15,7 +15,7 @@ public class ChatServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClie
 
     public async Task<Chat> OpenChatAsync(User userToOpenChatFor)
     {
-        var req = new CreateChatDTO(userToOpenChatFor.Id, ChatStatus.Open);
+        var req = new CreateChatDTO(userToOpenChatFor.Id, ChatStatus.Active);
         var dto = await PostForResultAsync<CreateChatDTO, ChatDTO>($"{BaseUrl}/open", req);
         return MapToEntity(dto);
     }
