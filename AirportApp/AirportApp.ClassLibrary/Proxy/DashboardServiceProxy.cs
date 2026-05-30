@@ -7,7 +7,7 @@ using AirportApp.ClassLibrary.Service.Interface;
 
 namespace AirportApp.ClassLibrary.Proxy;
 
-public class DashboardServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClient), IDashBoardService
+public class DashboardServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClient), IDashboardService
 {
     private const string BaseUrl = "api/dashboard";
 

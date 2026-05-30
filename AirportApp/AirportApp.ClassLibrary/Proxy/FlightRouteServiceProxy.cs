@@ -13,6 +13,18 @@ public class FlightRouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
 {
     private const string BaseUrl = "api/flightroutes";
 
+    private const int MinutesInADay = 1440;
+    private const int MinutesInAnHour = 60;
+    private const string ArrivalText = "Arrival";
+    private const string ArrivalCode = "ARR";
+    private const string DepartureCode = "DEP";
+    private const string FlightDateTimeFormat = "dd.MM.yyyy HH:mm";
+    private const string EmptyFieldPlaceholder = "-";
+
+    private const int DailyIntervalDays = 1;
+    private const int WeeklyIntervalDays = 7;
+    private const int MonthlyIntervalDays = 30;
+
     public async Task<IEnumerable<Flight>> GetAllFlightsAsync()
     {
         var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}/flights");
@@ -64,13 +76,58 @@ public class FlightRouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
         return await PostForResultAsync<object, int>($"{BaseUrl}/add-flight", payload);
     }
 
-    public Task CreateFlightWithScheduleAsync(int companyId, string? routeTypeDisplayName, int airportId, int capacity,
+    public async Task CreateFlightWithScheduleAsync(int companyId, string? routeTypeDisplayName, int airportId, int capacity,
         TimeSpan departureOffset, TimeSpan arrivalOffset, bool isRecurrent,
         DateTime? startDate, DateTime? endDate, DateTime? singleDate,
         string recurrenceType, string customDaysText, int runwayId, int gateId,
         Func<int, string> flightCodeGenerator)
     {
-        throw new NotSupportedException("CreateFlightWithScheduleAsync with a delegate parameter is not supported over HTTP.");
+        if (companyId <= 0)
+        {
+            throw new InvalidOperationException("A company must be selected before adding a flight.");
+        }
+        if (airportId <= 0 || runwayId <= 0 || gateId <= 0)
+        {
+            throw new InvalidOperationException("Please ensure all required fields are populated.");
+        }
+        if (capacity <= 0)
+        {
+            throw new InvalidOperationException("The provided capacity value is invalid.");
+        }
+
+        string routeType = routeTypeDisplayName == ArrivalText ? ArrivalCode : DepartureCode;
+
+        DateTime start = isRecurrent ? startDate?.Date ?? DateTime.Today : singleDate?.Date ?? DateTime.Today;
+        DateTime end = isRecurrent ? endDate?.Date ?? start : start;
+
+        if (isRecurrent && end < start)
+        {
+            throw new InvalidOperationException("The end date must be after the start date.");
+        }
+
+        int interval = 0;
+        if (isRecurrent)
+        {
+            interval = recurrenceType switch
+            {
+                nameof(RecurrenceType.Daily) => DailyIntervalDays,
+                nameof(RecurrenceType.Weekly) => WeeklyIntervalDays,
+                nameof(RecurrenceType.Monthly) => MonthlyIntervalDays,
+                nameof(RecurrenceType.Custom) => ParseCustomInterval(customDaysText),
+                _ => throw new InvalidOperationException("A recurrence type is required for recurrent flights.")
+            };
+        }
+
+        TimeOnly departureTime = TimeOnly.FromTimeSpan(departureOffset);
+        TimeOnly arrivalTime = TimeOnly.FromTimeSpan(arrivalOffset);
+
+        if (departureTime == arrivalTime)
+        {
+            throw new InvalidOperationException("Arrival time cannot be identical to departure time.");
+        }
+
+        string flightNumber = flightCodeGenerator(companyId);
+        await AddFlightToRouteAsync(companyId, airportId, routeType, interval, start, end, departureTime, arrivalTime, capacity, flightNumber, runwayId, gateId);
     }
 
     public async Task<IEnumerable<Flight>> GetAllFlightsWithDetailsAsync()
@@ -85,29 +142,115 @@ public class FlightRouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
         return dtos.Select(FlightServiceProxy.MapToEntity).ToList();
     }
 
-    public async Task<string> GetDestinationTextAsync(Flight flight)
+    public Task<string> GetDestinationTextAsync(Flight flight)
     {
-        var dto = FlightServiceProxy.MapToDto(flight);
-        return await PostForResultAsync<FlightDTO, string>($"{BaseUrl}/destination-text", dto);
+        if (flight.Route == null || flight.Route.Airport == null)
+        {
+            return Task.FromResult(EmptyFieldPlaceholder);
+        }
+
+        return Task.FromResult($"{flight.Route.Airport.Code} - {flight.Route.Airport.Name}");
     }
 
-    public async Task<FlightSummary> BuildFlightSummaryAsync(Flight flight, string crewText)
+    public Task<FlightSummary> BuildFlightSummaryAsync(Flight flight, string crewText)
     {
-        var dto = FlightServiceProxy.MapToDto(flight);
-        return await PostForResultAsync<FlightDTO, FlightSummary>($"{BaseUrl}/summary?crewText={Uri.EscapeDataString(crewText)}", dto);
+        string destinationText = flight.Route?.Airport != null ? $"{flight.Route.Airport.Code} - {flight.Route.Airport.Name}" : EmptyFieldPlaceholder;
+        return Task.FromResult(new FlightSummary
+        {
+            Id = flight.Id,
+            FlightNumber = flight.FlightNumber ?? string.Empty,
+            DateText = flight.Date.ToString(FlightDateTimeFormat),
+            DestinationText = destinationText,
+            RunwayText = flight.Runway?.Name ?? EmptyFieldPlaceholder,
+            GateText = flight.Gate?.Name ?? EmptyFieldPlaceholder,
+            CrewText = crewText
+        });
     }
 
-    public async Task<IEnumerable<Flight>> SearchFlightsAsync(IEnumerable<Flight> flights, string query)
+    public Task<IEnumerable<Flight>> SearchFlightsAsync(IEnumerable<Flight> flights, string query)
     {
-        var dtos = flights.Select(FlightServiceProxy.MapToDto).ToList();
-        var resultDtos = await PostForResultAsync<IEnumerable<FlightDTO>, IEnumerable<FlightDTO>>($"{BaseUrl}/search?query={Uri.EscapeDataString(query)}", dtos);
-        return resultDtos.Select(FlightServiceProxy.MapToEntity).ToList();
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return Task.FromResult(flights);
+        }
+
+        List<Flight> matching = new List<Flight>();
+        foreach (Flight flight in flights)
+        {
+            if (IsFlightMatch(flight, query))
+            {
+                matching.Add(flight);
+            }
+        }
+
+        return Task.FromResult<IEnumerable<Flight>>(matching);
     }
 
-    public async Task<IEnumerable<Flight>> SearchFlightsByNumberAsync(IEnumerable<Flight> flights, string query)
+    public Task<IEnumerable<Flight>> SearchFlightsByNumberAsync(IEnumerable<Flight> flights, string query)
     {
-        var dtos = flights.Select(FlightServiceProxy.MapToDto).ToList();
-        var resultDtos = await PostForResultAsync<IEnumerable<FlightDTO>, IEnumerable<FlightDTO>>($"{BaseUrl}/search-by-number?query={Uri.EscapeDataString(query)}", dtos);
-        return resultDtos.Select(FlightServiceProxy.MapToEntity).ToList();
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return Task.FromResult(flights);
+        }
+
+        string queryLower = query.ToLowerInvariant();
+        List<Flight> matching = new List<Flight>();
+        foreach (Flight flight in flights)
+        {
+            if (flight.FlightNumber != null && flight.FlightNumber.ToLowerInvariant().Contains(queryLower))
+            {
+                matching.Add(flight);
+            }
+        }
+
+        return Task.FromResult<IEnumerable<Flight>>(matching);
+    }
+
+    private static int ParseCustomInterval(string? customDaysText)
+    {
+        if (string.IsNullOrWhiteSpace(customDaysText))
+        {
+            throw new InvalidOperationException("Custom days are required when recurrence type is Custom.");
+        }
+
+        if (!int.TryParse(customDaysText, out int custom) || custom <= 0)
+        {
+            throw new InvalidOperationException("Invalid custom interval.");
+        }
+
+        return custom;
+    }
+
+    private bool IsFlightMatch(Flight flight, string query)
+    {
+        string queryLower = query.ToLowerInvariant();
+
+        if (flight.FlightNumber != null && flight.FlightNumber.ToLowerInvariant().Contains(queryLower))
+        {
+            return true;
+        }
+
+        if (flight.Date.ToString(FlightDateTimeFormat).ToLowerInvariant().Contains(queryLower))
+        {
+            return true;
+        }
+
+        string destination = (flight.Route?.Airport != null ? $"{flight.Route.Airport.Code} - {flight.Route.Airport.Name}" : EmptyFieldPlaceholder).ToLowerInvariant();
+        if (destination.Contains(queryLower))
+        {
+            return true;
+        }
+
+        if (flight.Runway?.Name != null && flight.Runway.Name.ToLowerInvariant().Contains(queryLower))
+        {
+            return true;
+        }
+
+        if (flight.Gate?.Name != null && flight.Gate.Name.ToLowerInvariant().Contains(queryLower))
+        {
+            return true;
+        }
+
+        return false;
     }
 }
