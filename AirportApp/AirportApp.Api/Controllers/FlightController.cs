@@ -1,0 +1,84 @@
+﻿using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Repository.Interface;
+using AirportApp.ClassLibrary.Service.Interface;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Airport.Web.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class FlightController : ControllerBase
+    {
+        private readonly IFlightSearchService flightService;
+
+        public FlightController(IFlightSearchService flightService)
+        {
+            this.flightService = flightService;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<AirportApp.ClassLibrary.Entity.Dto.FlightDTO>> GetByIdAsync(int id)
+        {
+            Flight? flight = await flightService.GetFlightByIdAsync(id);
+            if (flight == null)
+            {
+                return NotFound();
+            }
+
+            var flightTransferObject = new AirportApp.ClassLibrary.Entity.Dto.FlightDTO(
+                flight.Id,
+                flight.Route.Id,
+                flight.Gate.Id,
+                flight.Date,
+                flight.FlightNumber,
+                flight.Route != null ? new AirportApp.ClassLibrary.Entity.Dto.RouteDTO(
+                    flight.Route.Id,
+                    flight.Route.RouteType,
+                    flight.Date.Date.Add(flight.Route.DepartureTime.ToTimeSpan()),
+                    flight.Date.Date.Add(flight.Route.ArrivalTime.ToTimeSpan()),
+                    flight.Route.Capacity,
+                    flight.Route.Airport != null ? new AirportApp.ClassLibrary.Entity.Dto.AirportDTO(flight.Route.Airport.Id, flight.Route.Airport.AirportCode, flight.Route.Airport.City) : null,
+                    flight.Route.Company != null ? new AirportApp.ClassLibrary.Entity.Dto.CompanyDTO(flight.Route.Company.Id, flight.Route.Company.Name) : null) : null);
+
+            return Ok(flightTransferObject);
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<AirportApp.ClassLibrary.Entity.Dto.FlightDTO>>> GetByRouteAsync(
+            [FromQuery] string location,
+            [FromQuery] string routeType,
+            [FromQuery] DateTime? date)
+        {
+            IEnumerable<Flight> flights = await flightService.GetFlightsByRouteAsync(location, routeType, date);
+            var flightTransferObjectList = new List<AirportApp.ClassLibrary.Entity.Dto.FlightDTO>();
+            foreach (var flight in flights)
+            {
+                flightTransferObjectList.Add(new AirportApp.ClassLibrary.Entity.Dto.FlightDTO(
+                    flight.Id,
+                    flight.Route.Id,
+                    flight.Gate.Id,
+                    flight.Date,
+                    flight.FlightNumber,
+                    flight.Route != null ? new AirportApp.ClassLibrary.Entity.Dto.RouteDTO(
+                        flight.Route.Id,
+                        flight.Route.RouteType,
+                        flight.Date.Date.Add(flight.Route.DepartureTime.ToTimeSpan()),
+                        flight.Date.Date.Add(flight.Route.ArrivalTime.ToTimeSpan()),
+                        flight.Route.Capacity,
+                        flight.Route.Airport != null ? new AirportApp.ClassLibrary.Entity.Dto.AirportDTO(flight.Route.Airport.Id, flight.Route.Airport.AirportCode, flight.Route.Airport.City) : null,
+                        flight.Route.Company != null ? new AirportApp.ClassLibrary.Entity.Dto.CompanyDTO(flight.Route.Company.Id, flight.Route.Company.Name) : null) : null));
+            }
+            return Ok(flightTransferObjectList);
+        }
+
+        [HttpGet("{flightId}/occupied-seat-count")]
+        public async Task<ActionResult<int>> GetOccupiedSeatCountAsync(int flightId)
+        {
+            int count = await flightService.GetOccupiedSeatCountAsync(flightId);
+            return Ok(count);
+        }
+    }
+}
