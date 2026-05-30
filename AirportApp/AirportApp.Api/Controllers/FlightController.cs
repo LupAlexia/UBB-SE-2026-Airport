@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Airport.Web.Controllers
+namespace AirportApp.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
