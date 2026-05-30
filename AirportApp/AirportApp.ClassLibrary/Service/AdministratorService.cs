@@ -31,7 +31,7 @@ public class AdministratorService(IAdministratorRepository administratorReposito
         return (await administratorRepository.GetAsync()).ToList();
     }
 
-    public async Task CreateNewAdministratorAsync(int identificationNumber, string fullName, string emailAddress, string departmentName)
+    public async Task CreateNewAdministratorAsync(int identificationNumber, string fullName, string emailAddress)
     {
         Administrator newAdministrator = new Administrator(identificationNumber, fullName, emailAddress);
         await ValidateAdministratorIntegrityAsync(newAdministrator);
