@@ -109,22 +109,6 @@ namespace AirportApp.Api.Controllers
             return Ok(filteredTickets);
         }
 
-        [HttpGet("count/subcategory")]
-        public async Task<ActionResult<int>> GetTicketCountBySubcategory([FromQuery] string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return BadRequest("Subcategory name cannot be null or empty.");
-            }
-
-            IEnumerable<ComplaintTicket> allTickets = await ticketService.GetAllTicketsAsync();
-
-            int count = allTickets.Count(ticket => ticket.Subcategory != null &&
-                string.Equals(ticket.Subcategory.SubcategoryName, name, StringComparison.OrdinalIgnoreCase));
-
-            return Ok(count);
-        }
-
         [HttpGet("by-shop/{shopId:int}")]
         public async Task<ActionResult<IEnumerable<ComplaintTicket>>> GetByShopAsync(int shopId)
         {

@@ -3,7 +3,7 @@ using AirportApp.ClassLibrary.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Route = AirportApp.ClassLibrary.Entity.Domain.Route;
 
-namespace AirportAPI.Controllers.A5_Controllers;
+namespace AirportApp.Api.Controllers;
 
 [ApiController]
 [Route("api/routes")]

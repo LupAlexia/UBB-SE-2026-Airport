@@ -70,8 +70,7 @@ public class AuthService(ICustomerRepository userRepository) : IAuthService
 
     public void Logout()
     {
-        UserSession.CurrentUser = null;
-        UserSession.PendingBookingParameters = null;
+        UserSession.Clear();
     }
 
     private void ValidateRegistrationData(string? email, string? phone, string? username, string password)

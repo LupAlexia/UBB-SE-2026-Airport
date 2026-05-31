@@ -1,4 +1,5 @@
 using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Entity.Dto;
 using AirportApp.ClassLibrary.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,9 +7,11 @@ namespace AirportApp.Api.Controllers;
 
 [ApiController]
 [Route("api/flights")]
-public class FlightsController(IFlightService flightService) : ControllerBase
+public class FlightsController(IFlightService flightService, IFlightSearchService flightSearchService) : ControllerBase
 {
     private const string NullFlightDataErrorMessage = "Flight data cannot be null.";
+
+    // ── CRUD (from 921) ──────────────────────────────────────────────────────
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Flight>>> GetAllFlights()
@@ -17,16 +20,15 @@ public class FlightsController(IFlightService flightService) : ControllerBase
     }
 
     [HttpGet("{flightId:int}")]
-    public async Task<ActionResult<Flight>> GetFlightById(int flightId)
+    public async Task<ActionResult<FlightDTO>> GetFlightById(int flightId)
     {
-        Flight? flight = await flightService.GetFlightByIdAsync(flightId);
-
+        Flight? flight = await flightSearchService.GetFlightByIdAsync(flightId);
         if (flight == null)
         {
             return NotFound();
         }
 
-        return Ok(flight);
+        return Ok(MapToFlightDTO(flight));
     }
 
     [HttpGet("by-route/{routeId:int}")]
@@ -43,14 +45,14 @@ public class FlightsController(IFlightService flightService) : ControllerBase
             return BadRequest(NullFlightDataErrorMessage);
         }
 
-        int newFlightIdentifier = await flightService.AddFlightAsync(
+        int newFlightId = await flightService.AddFlightAsync(
             flightRequestData.FlightNumber,
             flightRequestData.RouteId,
             flightRequestData.DepartureDate,
             flightRequestData.RunwayId,
             flightRequestData.GateId);
 
-        return Ok(newFlightIdentifier);
+        return Ok(newFlightId);
     }
 
     [HttpPut("{flightId:int}")]
@@ -86,6 +88,68 @@ public class FlightsController(IFlightService flightService) : ControllerBase
 
         await flightService.DeleteFlightAsync(flightId);
         return NoContent();
+    }
+
+    // ── Search / booking (from 924) ──────────────────────────────────────────
+
+    [HttpGet("search")]
+    public async Task<ActionResult<IEnumerable<FlightDTO>>> SearchFlights(
+        [FromQuery] string location,
+        [FromQuery] string routeType,
+        [FromQuery] DateTime? date)
+    {
+        IEnumerable<Flight> flights = await flightSearchService.GetFlightsByRouteAsync(location, routeType, date);
+        return Ok(flights.Select(MapToFlightDTO));
+    }
+
+    [HttpGet("{flightId:int}/occupied-seat-count")]
+    public async Task<ActionResult<int>> GetOccupiedSeatCount(int flightId)
+    {
+        int count = await flightSearchService.GetOccupiedSeatCountAsync(flightId);
+        return Ok(count);
+    }
+
+    // ── Mapping ──────────────────────────────────────────────────────────────
+
+    private static FlightDTO MapToFlightDTO(Flight flight)
+    {
+        RouteDTO? routeDTO = null;
+
+        if (flight.Route != null)
+        {
+            AirportDTO? airportDTO = flight.Route.Airport != null
+                ? new AirportDTO(
+                    flight.Route.Airport.Id,
+                    flight.Route.Airport.AirportCode,
+                    flight.Route.Airport.City,
+                    flight.Route.Airport.Name)
+                : null;
+
+            CompanyDTO? companyDTO = flight.Route.Company != null
+                ? new CompanyDTO(flight.Route.Company.Id, flight.Route.Company.Name)
+                : null;
+
+            routeDTO = new RouteDTO(
+                flight.Route.Id,
+                flight.Route.RouteType,
+                flight.Route.StartDate,
+                flight.Route.EndDate,
+                flight.Route.DepartureTime,
+                flight.Route.ArrivalTime,
+                flight.Route.Capacity,
+                flight.Route.RecurrenceInterval,
+                airportDTO,
+                companyDTO);
+        }
+
+        return new FlightDTO(
+            flight.Id,
+            flight.Route?.Id ?? 0,
+            flight.Gate?.Id ?? 0,
+            flight.Runway?.Id ?? 0,
+            flight.Date,
+            flight.FlightNumber,
+            routeDTO);
     }
 }
 
