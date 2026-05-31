@@ -1,0 +1,481 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Service.Interface;
+using AirportApp.Services.Interfaces;
+
+namespace AirportApp.Src.ViewModel
+{
+    public class BookingViewModel : ViewModelBase
+    {
+        private const int DefaultFlightCapacity = 180;
+        private readonly IBookingService bookingService;
+        private readonly IPricingService pricingService;
+        private readonly INavigationService navigationService;
+        private readonly RelayCommand confirmBookingCommand;
+        private readonly Func<PassengerFormViewModel> passengerFactory;
+        private bool isSaving;
+        private bool passengersValid;
+
+        private Flight currentFlight = null!;
+        public Flight CurrentFlight
+        {
+            get => currentFlight;
+            set
+            {
+                currentFlight = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Customer currentUser = null!;
+        public Customer CurrentUser
+        {
+            get => currentUser;
+            set
+            {
+                currentUser = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private ObservableCollection<PassengerFormViewModel> passengersList = new ObservableCollection<PassengerFormViewModel>();
+        public ObservableCollection<PassengerFormViewModel> Passengers
+        {
+            get => passengersList;
+            set
+            {
+                passengersList = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private ObservableCollection<AddOn> availableAddOns = new ObservableCollection<AddOn>();
+        public ObservableCollection<AddOn> AvailableAddOns
+        {
+            get => availableAddOns;
+            set
+            {
+                availableAddOns = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private ObservableCollection<string> occupiedSeats = new ObservableCollection<string>();
+        public ObservableCollection<string> OccupiedSeats
+        {
+            get => occupiedSeats;
+            set
+            {
+                occupiedSeats = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private float basePriceTotal;
+        public float BasePriceTotal
+        {
+            get => basePriceTotal;
+            set
+            {
+                basePriceTotal = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private float basePricePerPerson;
+        public float BasePricePerPerson
+        {
+            get => basePricePerPerson;
+            set
+            {
+                basePricePerPerson = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private float finalTotalPrice;
+        public float FinalTotalPrice
+        {
+            get => finalTotalPrice;
+            set
+            {
+                finalTotalPrice = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private float addOnsTotal;
+        public float AddOnsTotal
+        {
+            get => addOnsTotal;
+            set
+            {
+                addOnsTotal = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private float membershipSavings;
+        public float MembershipSavings
+        {
+            get => membershipSavings;
+            set
+            {
+                membershipSavings = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string BasePricePerPersonDisplay => $"{BasePricePerPerson:0.00} €";
+        public string BasePriceTotalDisplay => $"{BasePriceTotal:0.00} €";
+        public string AddOnsTotalDisplay => $"{AddOnsTotal:0.00} €";
+        public string MembershipSavingsDisplay => $"-{MembershipSavings:0.00} €";
+        public string FinalTotalPriceDisplay => $"{FinalTotalPrice:0.00} €";
+
+        private string validationMessage = string.Empty;
+        public string ValidationMessage
+        {
+            get => validationMessage;
+            set
+            {
+                validationMessage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int maximumPassengers;
+        public int MaximumPassengers
+        {
+            get => maximumPassengers;
+            set
+            {
+                maximumPassengers = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(CanAddPassenger));
+            }
+        }
+
+        public bool CanAddPassenger => Passengers.Count < MaximumPassengers;
+        public bool CanRemovePassenger => Passengers.Count > 1;
+        public bool CanConfirmBooking =>
+            !isSaving &&
+            CurrentUser != null &&
+            CurrentFlight != null &&
+            Passengers.Count > 0 &&
+            passengersValid;
+
+        public event EventHandler? BookingConfirmed;
+
+        public BookingViewModel(IBookingService bookingService, IPricingService pricingService, INavigationService navigationService, Func<PassengerFormViewModel> passengerFactory)
+        {
+            this.bookingService = bookingService;
+            this.pricingService = pricingService;
+            this.navigationService = navigationService;
+            this.passengerFactory = passengerFactory;
+
+            AddPassengerCommand = new RelayCommand(async parameter => await AddPassengerAsync());
+            RemovePassengerCommand = new RelayCommand(async parameter => await RemovePassengerAsync(parameter as PassengerFormViewModel));
+            confirmBookingCommand = new RelayCommand(async parameter => await ConfirmBookingAsync(), parameter => CanConfirmBooking);
+            ConfirmBookingCommand = confirmBookingCommand;
+        }
+
+        public ICommand AddPassengerCommand { get; }
+        public ICommand RemovePassengerCommand { get; }
+        public ICommand ConfirmBookingCommand { get; }
+
+        public List<SeatDescriptor> SeatMapLayout { get; private set; } = new List<SeatDescriptor>();
+
+        public int SeatMapRowCount { get; private set; }
+
+        public async Task<bool> OnNavigatedToAsync(object parameter)
+        {
+            var parsed = bookingService.ParseBookingParameters(parameter);
+
+            if (parsed == null)
+            {
+                if (parameter is object[] array && array.Length > 0 && array[0] is Flight fallbackFlight)
+                {
+                    Customer? fallbackUser = null;
+                    int requested = 0;
+                    foreach (var item in array)
+                    {
+                        if (fallbackUser == null && item is Customer user)
+                        {
+                            fallbackUser = user;
+                        }
+                        else if (requested == 0 && item is int requestedParameter)
+                        {
+                            requested = requestedParameter;
+                        }
+                    }
+
+                    parsed = new BookingParametersResult
+                    {
+                        Flight = fallbackFlight,
+                        User = fallbackUser,
+                        RequestedPassengers = requested
+                    };
+                }
+                else if (parameter is Flight singleFlight)
+                {
+                    parsed = new BookingParametersResult
+                    {
+                        Flight = singleFlight,
+                        User = UserSession.CurrentUser,
+                        RequestedPassengers = 0
+                    };
+                }
+            }
+
+            if (parsed == null || parsed.Flight == null)
+            {
+                return false;
+            }
+
+            if (parsed.User == null)
+            {
+                bookingService.StorePendingBooking(parsed.Flight, parsed.RequestedPassengers);
+                navigationService.NavigateTo(typeof(View.AuthPage));
+                return false;
+            }
+
+            await InitializeAsync(parsed.Flight, parsed.User, parsed.RequestedPassengers);
+            return true;
+        }
+
+        public async Task InitializeAsync(Flight flight, Customer user, int requestedPassengerCount = 0)
+        {
+            CurrentFlight = flight;
+            CurrentUser = user;
+
+            var addOns = await bookingService.GetAvailableAddOnsAsync();
+            AvailableAddOns.Clear();
+            foreach (var addOn in addOns)
+            {
+                AvailableAddOns.Add(addOn);
+            }
+
+            var seats = await bookingService.GetOccupiedSeatsAsync(flight?.Id ?? 0);
+            OccupiedSeats.Clear();
+            foreach (var seat in seats)
+            {
+                OccupiedSeats.Add(seat);
+            }
+
+            int capacity = flight?.Route?.Capacity ?? DefaultFlightCapacity;
+            MaximumPassengers = await bookingService.CalculateMaxPassengersAsync(capacity, OccupiedSeats.Count, requestedPassengerCount);
+
+            Passengers.Clear();
+            int initialCount = await bookingService.GetInitialPassengerCountAsync(MaximumPassengers, requestedPassengerCount);
+
+            if (initialCount < 1)
+            {
+                initialCount = Math.Min(MaximumPassengers, Math.Max(1, requestedPassengerCount));
+            }
+
+            for (int index = 0; index < initialCount; index++)
+            {
+                var passenger = passengerFactory();
+                RegisterPassenger(passenger);
+                Passengers.Add(passenger);
+            }
+
+            UpdatePassengerLabels();
+            await UpdatePricesAsync();
+            OnPropertyChanged(nameof(CanAddPassenger));
+            OnPropertyChanged(nameof(CanRemovePassenger));
+            await RefreshBookingStateAsync();
+            await BuildSeatMapLayoutAsync();
+        }
+
+        public async Task BuildSeatMapLayoutAsync()
+        {
+            int capacity = CurrentFlight?.Route?.Capacity ?? DefaultFlightCapacity;
+            var (layout, rowCount) = await bookingService.BuildSeatMapLayoutAsync(capacity);
+            SeatMapLayout = layout;
+            SeatMapRowCount = rowCount;
+            OnPropertyChanged(nameof(SeatMapLayout));
+            OnPropertyChanged(nameof(SeatMapRowCount));
+        }
+
+        private async Task AddPassengerAsync()
+        {
+            if (!CanAddPassenger)
+            {
+                return;
+            }
+
+            var passenger = passengerFactory();
+            RegisterPassenger(passenger);
+            Passengers.Add(passenger);
+            UpdatePassengerLabels();
+            _ = UpdatePricesAsync();
+            OnPropertyChanged(nameof(CanAddPassenger));
+            OnPropertyChanged(nameof(CanRemovePassenger));
+            await RefreshBookingStateAsync();
+        }
+
+        private async Task RemovePassengerAsync(PassengerFormViewModel? passenger)
+        {
+            if (passenger != null && Passengers.Count > 1)
+            {
+                Passengers.Remove(passenger);
+                UpdatePassengerLabels();
+                _ = UpdatePricesAsync();
+                OnPropertyChanged(nameof(CanAddPassenger));
+                OnPropertyChanged(nameof(CanRemovePassenger));
+                await RefreshBookingStateAsync();
+            }
+        }
+
+        private void UpdatePassengerLabels()
+        {
+            for (int index = 0; index < Passengers.Count; index++)
+            {
+                Passengers[index].PassengerLabel = $"Passenger {index + 1}";
+            }
+        }
+
+        private void RegisterPassenger(PassengerFormViewModel passenger)
+        {
+            if (passenger.SelectedAddOns == null)
+            {
+                passenger.SelectedAddOns = new ObservableCollection<AddOn>();
+            }
+
+            passenger.SelectedAddOns.CollectionChanged += (sender, eventArgs) => _ = UpdatePricesAsync();
+            passenger.PropertyChanged += async (sender, eventArgs) =>
+            {
+                if (eventArgs.PropertyName == nameof(passenger.SelectedSeat) ||
+                    eventArgs.PropertyName == nameof(passenger.FirstName) ||
+                    eventArgs.PropertyName == nameof(passenger.LastName) ||
+                    eventArgs.PropertyName == nameof(passenger.Email))
+                {
+                    await RefreshBookingStateAsync();
+                }
+
+                if (eventArgs.PropertyName == nameof(passenger.SelectedSeat))
+                {
+                    _ = UpdatePricesAsync();
+                }
+            };
+        }
+
+        private System.Collections.Generic.List<PassengerData> MapPassengersToData()
+        {
+            return Passengers.Select(passenger => new PassengerData
+            {
+                FirstName = passenger.FirstName,
+                LastName = passenger.LastName,
+                Email = passenger.Email,
+                Phone = passenger.Phone,
+                SelectedSeat = passenger.SelectedSeat,
+                SelectedAddOns = passenger.SelectedAddOns != null ? passenger.SelectedAddOns.ToList() : new List<AddOn>()
+            }).ToList();
+        }
+
+        private async Task RefreshBookingStateAsync()
+        {
+            ValidationMessage = string.Empty;
+
+            if (CurrentUser == null)
+            {
+                ValidationMessage = "Please sign in to continue.";
+                passengersValid = false;
+            }
+            else
+            {
+                var passengerData = MapPassengersToData();
+                ValidationMessage = await bookingService.ValidatePassengersAsync(passengerData);
+                passengersValid = string.IsNullOrEmpty(ValidationMessage);
+            }
+
+            OnPropertyChanged(nameof(CanConfirmBooking));
+            confirmBookingCommand.RaiseCanExecuteChanged();
+        }
+
+        public async Task UpdatePricesAsync()
+        {
+            if (CurrentFlight == null)
+            {
+                return;
+            }
+
+            float basePrice = await pricingService.CalculateBasePriceAsync(CurrentFlight);
+            var passengerData = MapPassengersToData();
+            var tickets = bookingService.CreateTickets(CurrentFlight, CurrentUser, passengerData, basePrice);
+            var breakdown = await pricingService.CalculatePriceBreakdownAsync(CurrentFlight, CurrentUser, tickets);
+
+            BasePricePerPerson = breakdown.BasePricePerPerson;
+            BasePriceTotal = breakdown.BasePriceTotal;
+            AddOnsTotal = breakdown.AddOnsTotal;
+            MembershipSavings = breakdown.MembershipSavings;
+            FinalTotalPrice = breakdown.FinalTotal;
+
+            OnPropertyChanged(nameof(BasePricePerPersonDisplay));
+            OnPropertyChanged(nameof(BasePriceTotalDisplay));
+            OnPropertyChanged(nameof(AddOnsTotalDisplay));
+            OnPropertyChanged(nameof(MembershipSavingsDisplay));
+            OnPropertyChanged(nameof(FinalTotalPriceDisplay));
+
+            await RefreshBookingStateAsync();
+        }
+
+        private async Task ConfirmBookingAsync()
+        {
+            if (!CanConfirmBooking)
+            {
+                return;
+            }
+
+            float basePrice = await pricingService.CalculateBasePriceAsync(CurrentFlight);
+            var passengerData = MapPassengersToData();
+            var tickets = bookingService.CreateTickets(CurrentFlight, CurrentUser, passengerData, basePrice);
+            foreach (var ticket in tickets)
+            {
+                ticket.Price = await pricingService.CalculateTotalPriceAsync(ticket);
+            }
+
+            isSaving = true;
+            OnPropertyChanged(nameof(CanConfirmBooking));
+            confirmBookingCommand.RaiseCanExecuteChanged();
+
+            bool success = await bookingService.SaveTicketsAsync(tickets);
+
+            isSaving = false;
+            OnPropertyChanged(nameof(CanConfirmBooking));
+            confirmBookingCommand.RaiseCanExecuteChanged();
+
+            ValidationMessage = success ? "Booking confirmed successfully." : "Booking could not be saved. Please try again.";
+
+            if (success)
+            {
+                BookingConfirmed?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public void SelectSeat(PassengerFormViewModel targetPassenger, string seat)
+        {
+            var currentSeats = Passengers.Select(passengerEntity => passengerEntity.SelectedSeat ?? string.Empty).ToList();
+            int targetIndex = Passengers.IndexOf(targetPassenger);
+            var updatedSeats = bookingService.ApplySeatSelection(currentSeats, targetIndex, seat);
+            for (int index = 0; index < Passengers.Count; index++)
+            {
+                Passengers[index].SelectedSeat = updatedSeats[index];
+            }
+        }
+
+        public void UpdatePassengerAddOns(PassengerFormViewModel passenger, IEnumerable<AddOn> addedAddOns, IEnumerable<AddOn> removedAddOns)
+        {
+            // Update the existing collection directly so that the CollectionChanged event fires
+            // and triggers UpdatePrices() automatically.
+            bookingService.ApplyAddOnUpdates(passenger.SelectedAddOns, addedAddOns, removedAddOns);
+        }
+    }
+}

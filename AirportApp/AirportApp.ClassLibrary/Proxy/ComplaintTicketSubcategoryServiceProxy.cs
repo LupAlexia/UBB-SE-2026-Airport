@@ -9,7 +9,7 @@ namespace AirportApp.ClassLibrary.Proxy;
 
 public class ComplaintTicketSubcategoryServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClient), IComplaintTicketSubcategoryService
 {
-    private const string BaseUrl = "api/complaintsubcategory";
+    private const string BaseUrl = "api/ticketsubcategory";
 
     public async Task<IEnumerable<ComplaintTicketSubcategory>> GetAllSubcategoriesAsync()
     {
@@ -23,6 +23,6 @@ public class ComplaintTicketSubcategoryServiceProxy(HttpClient httpClient) : Ser
 
     public async Task<IEnumerable<ComplaintTicketSubcategory>> GetSubcategoriesByCategoryIdAsync(int categoryId)
     {
-        return await GetListAsync<ComplaintTicketSubcategory>($"{BaseUrl}/category/{categoryId}");
+        return await GetListAsync<ComplaintTicketSubcategory>($"{BaseUrl}/by-category/{categoryId}");
     }
 }

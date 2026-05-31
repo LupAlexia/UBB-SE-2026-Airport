@@ -21,7 +21,7 @@ public class FAQServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClien
 
     public async Task<List<FAQEntry>> GetByCategoryAsync(FAQCategoryEnum category)
     {
-        var dtos = await GetListAsync<FAQEntryDTO>($"{BaseUrl}/category/{category}");
+        var dtos = await GetListAsync<FAQEntryDTO>($"{BaseUrl}/by-category?category={category}");
         return dtos.Select(MapToEntity).ToList();
     }
 
@@ -42,17 +42,17 @@ public class FAQServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClien
 
     public async Task IncrementViewCountAsync(FAQEntry entry)
     {
-        await PutAsync<object>($"{BaseUrl}/{entry.Id}/increment-view", null!);
+        await PostAsync<object>($"{BaseUrl}/{entry.Id}/increment-view", null!);
     }
 
     public async Task IncrementWasHelpfulVotesAsync(FAQEntry entry)
     {
-        await PutAsync<object>($"{BaseUrl}/{entry.Id}/increment-helpful", null!);
+        await PostAsync<object>($"{BaseUrl}/{entry.Id}/increment-helpful", null!);
     }
 
     public async Task IncrementWasNotHelpfulVotesAsync(FAQEntry entry)
     {
-        await PutAsync<object>($"{BaseUrl}/{entry.Id}/increment-nothelpful", null!);
+        await PostAsync<object>($"{BaseUrl}/{entry.Id}/increment-not-helpful", null!);
     }
 
     public async Task<List<FAQEntry>> FilterFAQEntryAsync(FAQCategoryEnum category, string? searchQuery)

@@ -11,7 +11,7 @@ namespace AirportApp.ClassLibrary.Proxy;
 
 public class FlightRouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClient), IFlightRouteService
 {
-    private const string BaseUrl = "api/flightroutes";
+    private const string BaseUrl = "api/flight-routes";
 
     private const int MinutesInADay = 1440;
     private const int MinutesInAnHour = 60;
@@ -73,7 +73,7 @@ public class FlightRouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
             RunwayId = runwayId,
             GateId = gateId
         };
-        return await PostForResultAsync<object, int>($"{BaseUrl}/add-flight", payload);
+        return await PostForResultAsync<object, int>(BaseUrl, payload);
     }
 
     public async Task CreateFlightWithScheduleAsync(int companyId, string? routeTypeDisplayName, int airportId, int capacity,
@@ -132,13 +132,13 @@ public class FlightRouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
 
     public async Task<IEnumerable<Flight>> GetAllFlightsWithDetailsAsync()
     {
-        var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}/flights-details");
+        var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}/flights/details");
         return dtos.Select(FlightServiceProxy.MapToEntity).ToList();
     }
 
     public async Task<IEnumerable<Flight>> GetFlightsByCompanyIdAsync(int companyId)
     {
-        var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}/company/{companyId}/flights");
+        var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}/flights/by-company/{companyId}");
         return dtos.Select(FlightServiceProxy.MapToEntity).ToList();
     }
 

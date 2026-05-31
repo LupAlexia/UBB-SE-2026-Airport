@@ -1,0 +1,16 @@
+<Page
+    x:Class="AirportApp.WinUI.Pages.AirportRootPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Background="{ThemeResource PageBackgroundBrush}" Padding="24">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
+            <TextBlock Text="Airport module"
+                       HorizontalAlignment="Center"
+                       FontSize="20"
+                       FontWeight="SemiBold" />
+            <Button Content="Open Airport Experience"
+                    Click="OpenAirportExperience_Click"
+                    HorizontalAlignment="Center" />
+        </StackPanel>
+    </Grid>
+</Page>
