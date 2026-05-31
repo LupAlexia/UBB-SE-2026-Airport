@@ -1,10 +1,10 @@
-﻿using AirportApp.ClassLibrary.Service.Interface;
-using Microsoft.AspNetCore.Mvc;
 using AirportApp.ClassLibrary.Entity.Domain;
-using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Dto;
+using AirportApp.ClassLibrary.Service.Interface;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AirportApp.Api.Controllers;
+
 [ApiController]
 [Route("api/[controller]")]
 public class AirportsController : ControllerBase
@@ -17,23 +17,23 @@ public class AirportsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Airport>>> GetAllAirports()
+    public async Task<ActionResult<IEnumerable<AirportDTO>>> GetAllAirports()
     {
-        // return this.Ok(this.airportService.GetAllAirports());
-        var airports = await this.airportService.GetAllAirportsAsync();
-        return this.Ok(airports);
+        IEnumerable<Airport> airports = await airportService.GetAllAirportsAsync();
+        return Ok(airports.Select(airport =>
+            new AirportDTO(airport.Id, airport.AirportCode, airport.City, airport.Name)));
     }
 
     [HttpGet("{airportId}")]
-    public async Task<ActionResult<Airport>> GetAirportById(int airportId)
+    public async Task<ActionResult<AirportDTO>> GetAirportById(int airportId)
     {
-        var airport = await this.airportService.GetAirportByIdAsync(airportId);
+        Airport? airport = await airportService.GetAirportByIdAsync(airportId);
         if (airport == null)
         {
-            return this.NotFound();
+            return NotFound();
         }
 
-        return this.Ok(airport);
+        return Ok(new AirportDTO(airport.Id, airport.AirportCode, airport.City, airport.Name));
     }
 
     [HttpPost]
@@ -41,52 +41,45 @@ public class AirportsController : ControllerBase
     {
         try
         {
-            var newAirport = new AirportApp.ClassLibrary.Entity.Domain.Airport(request.AirportCode, request.City, request.AirportName);
-
-            await this.airportService.AddAirportAsync(newAirport);
-            return this.Ok(newAirport.Id);
+            Airport newAirport = new Airport(request.AirportCode, request.City, request.AirportName);
+            await airportService.AddAirportAsync(newAirport);
+            return Ok(newAirport.Id);
         }
-        catch (ArgumentException ex)
+        catch (ArgumentException argumentException)
         {
-            return this.BadRequest(ex.Message);
+            return BadRequest(argumentException.Message);
         }
     }
 
     [HttpPut("{airportId}")]
     public async Task<IActionResult> UpdateAirport(int airportId, [FromBody] SaveAirportRequest request)
     {
-        // this.airportService.SaveAirport(airportId, request.AirportCode, request.AirportName, request.City);
-        var airportToSave = new Airport(airportId, request.AirportCode, request.City, request.AirportName);
-
-        await this.airportService.SaveAirportAsync(airportToSave);
-        return this.Ok();
+        Airport airportToSave = new Airport(airportId, request.AirportCode, request.City, request.AirportName);
+        await airportService.SaveAirportAsync(airportToSave);
+        return Ok();
     }
 
     [HttpDelete("{airportId}")]
     public async Task<IActionResult> DeleteAirportUsingId(int airportId)
     {
-        await this.airportService.DeleteAirportAsync(airportId);
-        return this.Ok();
+        await airportService.DeleteAirportAsync(airportId);
+        return Ok();
     }
 
     [HttpGet("{airportId}/has-flights")]
     public async Task<ActionResult<bool>> HasFlights(int airportId)
     {
-        // return this.Ok(this.airportService.HasFlights(airportId));
-        bool hasFlights = await this.airportService.HasFlightsAsync(airportId);
-        return this.Ok(hasFlights);
+        bool hasFlights = await airportService.HasFlightsAsync(airportId);
+        return Ok(hasFlights);
     }
 
     [HttpGet("{airportId}/delete-warning")]
     public async Task<ActionResult<string>> GetDeleteWarningMessage(int airportId)
     {
-        string message = await this.airportService.GetDeleteWarningMessageAsync(airportId);
-        return this.Ok(new { WarningMessage = message });
+        string warningMessage = await airportService.GetDeleteWarningMessageAsync(airportId);
+        return Ok(new { WarningMessage = warningMessage });
     }
 
     public record AddAirportRequest(string AirportCode, string AirportName, string City);
-
-    public record UpdateAirportRequest(string? NewCity, string? NewName, string? NewCode);
-
     public record SaveAirportRequest(string AirportCode, string AirportName, string City);
 }
