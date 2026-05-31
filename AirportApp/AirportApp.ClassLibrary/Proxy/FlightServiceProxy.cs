@@ -74,6 +74,6 @@ public class FlightServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpCl
     public static FlightDTO MapToDto(Flight flight)
     {
         var routeDto = flight.Route is not null ? RouteServiceProxy.MapToDto(flight.Route) : null;
-        return new FlightDTO(flight.Id, flight.Route?.Id ?? 0, flight.Gate?.Id ?? 0, flight.Date, flight.FlightNumber, routeDto);
+        return new FlightDTO(flight.Id, flight.Route?.Id ?? 0, flight.Gate?.Id ?? 0, flight.Runway?.Id ?? 0, flight.Date, flight.FlightNumber, routeDto);
     }
 }

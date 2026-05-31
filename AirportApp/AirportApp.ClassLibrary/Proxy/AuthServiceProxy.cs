@@ -39,8 +39,7 @@ public class AuthServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClie
 
     public void Logout()
     {
-        UserSession.CurrentUser = null;
-        UserSession.PendingBookingParameters = null;
+        UserSession.Clear();
     }
 
     public async Task<Customer> GetByIdAsync(int id)

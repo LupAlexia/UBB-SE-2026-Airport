@@ -65,16 +65,17 @@ public class RouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpCli
         {
             Id = dto.id,
             RouteType = dto.routeType,
-            StartDate = DateOnly.FromDateTime(dto.departureTime),
-            EndDate = DateOnly.FromDateTime(dto.arrivalTime),
-            DepartureTime = TimeOnly.FromDateTime(dto.departureTime),
-            ArrivalTime = TimeOnly.FromDateTime(dto.arrivalTime),
-            Capacity = dto.capacity
+            StartDate = dto.startDate,
+            EndDate = dto.endDate,
+            DepartureTime = dto.departureTime,
+            ArrivalTime = dto.arrivalTime,
+            Capacity = dto.capacity,
+            RecurrenceInterval = dto.recurrenceInterval
         };
 
         if (dto.airport is not null)
         {
-            route.Airport = new Airport(dto.airport.id, dto.airport.airportCode, dto.airport.city, "");
+            route.Airport = new Airport(dto.airport.id, dto.airport.airportCode, dto.airport.city, dto.airport.name);
         }
 
         if (dto.company is not null)
@@ -87,12 +88,23 @@ public class RouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpCli
 
     public static RouteDTO MapToDto(Route route)
     {
-        var airportDto = route.Airport is not null ? new AirportDTO(route.Airport.Id, route.Airport.AirportCode, route.Airport.City) : null;
-        var companyDto = route.Company is not null ? new CompanyDTO(route.Company.Id, route.Company.Name) : null;
+        var airportDto = route.Airport is not null
+            ? new AirportDTO(route.Airport.Id, route.Airport.AirportCode, route.Airport.City, route.Airport.Name)
+            : null;
+        var companyDto = route.Company is not null
+            ? new CompanyDTO(route.Company.Id, route.Company.Name)
+            : null;
 
-        var depDateTime = route.StartDate.ToDateTime(route.DepartureTime);
-        var arrDateTime = route.EndDate.ToDateTime(route.ArrivalTime);
-
-        return new RouteDTO(route.Id, route.RouteType, depDateTime, arrDateTime, route.Capacity, airportDto, companyDto);
+        return new RouteDTO(
+            route.Id,
+            route.RouteType,
+            route.StartDate,
+            route.EndDate,
+            route.DepartureTime,
+            route.ArrivalTime,
+            route.Capacity,
+            route.RecurrenceInterval,
+            airportDto,
+            companyDto);
     }
 }
