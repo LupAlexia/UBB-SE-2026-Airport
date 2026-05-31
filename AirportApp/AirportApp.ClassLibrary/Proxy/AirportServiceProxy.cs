@@ -63,7 +63,7 @@ public class AirportServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpC
 
     private static AirportDTO MapToDto(Airport airport)
     {
-        return new AirportDTO(airport.Id, airport.AirportCode, airport.City);
+        return new AirportDTO(airport.Id, airport.AirportCode, airport.City, airport.Name);
     }
 
     public record DeleteWarningResponse(string WarningMessage);

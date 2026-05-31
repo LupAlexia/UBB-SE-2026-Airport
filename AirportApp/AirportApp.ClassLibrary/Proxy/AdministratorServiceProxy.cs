@@ -40,7 +40,7 @@ public class AdministratorServiceProxy(HttpClient httpClient) : ServiceProxyBase
         return dtos.Select(MapToEntity).ToList();
     }
 
-    public Task CreateNewAdministratorAsync(int identificationNumber, string fullName, string emailAddress, string departmentName)
+    public Task CreateNewAdministratorAsync(int identificationNumber, string fullName, string emailAddress) 
     {
         throw new NotSupportedException("CreateNewAdministratorAsync is not available through the service proxy.");
     }

@@ -20,14 +20,14 @@ public class ComplaintTicketServiceProxy(HttpClient httpClient) : ServiceProxyBa
         var ticket = new ComplaintTicket
         {
             Id = ticketId,
-            TicketCreator = ticketCreator,
+            Creator = ticketCreator,
             CurrentStatus = initialStatus,
             Category = category,
             Subcategory = subcategory,
             Subject = subject,
             Description = description,
             CreationTimestamp = creationTimestamp,
-            CurrentUrgencyLevel = initialUrgencyLevel ?? ComplaintTicketUrgencyLevelEnum.LOW
+            UrgencyLevel = initialUrgencyLevel ?? ComplaintTicketUrgencyLevelEnum.LOW
         };
         await AddTicketAsync(ticket);
     }

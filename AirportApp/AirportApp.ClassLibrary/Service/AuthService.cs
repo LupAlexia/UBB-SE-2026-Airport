@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Repository.Interface;
 using AirportApp.ClassLibrary.Service.Interface;
+using AirportApp.ClassLibrary.Utility;
 using Microsoft.AspNetCore.Identity;
 
 namespace AirportApp.ClassLibrary.Service;
@@ -69,8 +70,7 @@ public class AuthService(ICustomerRepository userRepository) : IAuthService
 
     public void Logout()
     {
-        UserSession.CurrentUser = null;
-        UserSession.PendingBookingParameters = null;
+        UserSession.Clear();
     }
 
     private void ValidateRegistrationData(string? email, string? phone, string? username, string password)
