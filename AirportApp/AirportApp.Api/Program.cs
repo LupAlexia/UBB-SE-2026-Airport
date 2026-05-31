@@ -1,7 +1,6 @@
 using AirportApp.ClassLibrary;
 using AirportApp.ClassLibrary.DataAccess;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 
 WebApplicationBuilder applicationBuilder = WebApplication.CreateBuilder(args);
 
@@ -24,22 +23,26 @@ applicationBuilder.Services.AddCors(corsOptions =>
 
 applicationBuilder.Services.AddControllers();
 applicationBuilder.Services.AddEndpointsApiExplorer();
-applicationBuilder.Services.AddSwaggerGen(swaggerOptions =>
-    swaggerOptions.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Airport API",
-        Version = "v1"
-    }));
+applicationBuilder.Services.AddSwaggerGen();
 
 WebApplication application = applicationBuilder.Build();
 
 application.UseSwagger();
 application.UseSwaggerUI(swaggerUiOptions =>
-    swaggerUiOptions.SwaggerEndpoint("/swagger/v1/swagger.json", "Airport API v1"));
+{
+    swaggerUiOptions.SwaggerEndpoint("/swagger/v1/swagger.json", "Airport API v1");
+    swaggerUiOptions.RoutePrefix = string.Empty;
+});
 
 application.UseCors("AirportCorsPolicy");
 application.UseHttpsRedirection();
 application.UseAuthorization();
 application.MapControllers();
+
+application.Lifetime.ApplicationStarted.Register(() =>
+{
+    string swaggerUrl = "http://localhost:5043";
+    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(swaggerUrl) { UseShellExecute = true });
+});
 
 application.Run();

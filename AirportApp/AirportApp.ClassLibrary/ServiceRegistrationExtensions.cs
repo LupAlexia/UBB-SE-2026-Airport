@@ -1,7 +1,9 @@
+using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Repository;
 using AirportApp.ClassLibrary.Repository.Interface;
 using AirportApp.ClassLibrary.Service;
 using AirportApp.ClassLibrary.Service.Interface;
+using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AirportApp.ClassLibrary;
@@ -11,8 +13,10 @@ public static class ServiceRegistrationExtensions
     public static IServiceCollection AddAirportServices(this IServiceCollection services)
     {
         RegisterRepositories(services);
+        services.AddScoped<IBotStrategy, NullBotStrategy>();
+        services.AddScoped<BotEngineIdentity>();
         RegisterServices(services);
-        services.AddAutoMapper(typeof(ServiceRegistrationExtensions).Assembly);
+        services.AddAutoMapper(cfg => cfg.AddMaps(typeof(ServiceRegistrationExtensions).Assembly));
         return services;
     }
 
@@ -20,13 +24,13 @@ public static class ServiceRegistrationExtensions
     {
         services.AddScoped<IAddOnRepository, AddOnRepository>();
         services.AddScoped<IAdministratorRepository, AdministratorRepository>();
-        services.AddScoped<IAirportRepository, AirportRepository>();
+        services.AddScoped<IAirportRepository, EfAirportRepository>();
         services.AddScoped<ICartRepository, CartRepository>();
         services.AddScoped<IChatRepository, ChatRepository>();
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<IComplaintTicketCategoryRepository, ComplaintTicketCategoryRepository>();
-        services.AddScoped<IComplaintTicketRepository, ComplaintTicketRepostitory>();
+        services.AddScoped<IComplaintTicketRepository, ComplaintTicketRepository>();
         services.AddScoped<IComplaintTicketSubcategoryRepository, ComplaintTicketSubcategoryRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IDecisionTreeRepository, DecisionTreeRepository>();
