@@ -1,7 +1,6 @@
-﻿using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace AirportApp.Api.Controllers;
 
@@ -14,7 +13,7 @@ public class FlightsController(IFlightService flightService) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Flight>>> GetAllFlights()
     {
-        return this.Ok(await flightService.GetAllFlightsAsync());
+        return Ok(await flightService.GetAllFlightsAsync());
     }
 
     [HttpGet("{flightId:int}")]
@@ -24,57 +23,57 @@ public class FlightsController(IFlightService flightService) : ControllerBase
 
         if (flight == null)
         {
-            return this.NotFound();
+            return NotFound();
         }
 
-        return this.Ok(flight);
+        return Ok(flight);
     }
 
     [HttpGet("by-route/{routeId:int}")]
     public async Task<ActionResult<IEnumerable<Flight>>> GetFlightsByRouteId(int routeId)
     {
-        return this.Ok(await flightService.GetFlightsByRouteIdAsync(routeId));
+        return Ok(await flightService.GetFlightsByRouteIdAsync(routeId));
     }
 
     [HttpPost]
-    public async Task<ActionResult<int>> AddFlight([FromBody] Flight flight)
+    public async Task<ActionResult<int>> AddFlight([FromBody] FlightRequestDTO flightRequestData)
     {
-        if (flight == null)
+        if (flightRequestData == null)
         {
-            return this.BadRequest(NullFlightDataErrorMessage);
+            return BadRequest(NullFlightDataErrorMessage);
         }
 
-        int flightId = await flightService.AddFlightAsync(
-             flight.FlightNumber,
-             flight.Route.Id,
-             flight.Date,
-             flight.Runway.Id,
-             flight.Gate.Id);
+        int newFlightIdentifier = await flightService.AddFlightAsync(
+            flightRequestData.FlightNumber,
+            flightRequestData.RouteId,
+            flightRequestData.DepartureDate,
+            flightRequestData.RunwayId,
+            flightRequestData.GateId);
 
-         return this.Ok(flightId);
+        return Ok(newFlightIdentifier);
     }
 
     [HttpPut("{flightId:int}")]
-    public async Task<IActionResult> UpdateFlight(int flightId, [FromBody] Flight flight)
+    public async Task<IActionResult> UpdateFlight(int flightId, [FromBody] FlightRequestDTO flightRequestData)
     {
-        if (flight == null)
+        if (flightRequestData == null)
         {
-            return this.BadRequest(NullFlightDataErrorMessage);
+            return BadRequest(NullFlightDataErrorMessage);
         }
 
         if (await flightService.GetFlightByIdAsync(flightId) == null)
         {
-            return this.NotFound();
+            return NotFound();
         }
 
-         await flightService.UpdateFlightAsync(
-             flightId,
-             flight.Date,
-             flight.FlightNumber,
-             flight.Runway?.Id,
-             flight.Gate?.Id);
+        await flightService.UpdateFlightAsync(
+            flightId,
+            flightRequestData.DepartureDate,
+            flightRequestData.FlightNumber,
+            flightRequestData.RunwayId,
+            flightRequestData.GateId);
 
-          return this.NoContent(); 
+        return NoContent();
     }
 
     [HttpDelete("{flightId:int}")]
@@ -82,9 +81,17 @@ public class FlightsController(IFlightService flightService) : ControllerBase
     {
         if (await flightService.GetFlightByIdAsync(flightId) == null)
         {
-            return this.NotFound();
+            return NotFound();
         }
-         await flightService.DeleteFlightAsync(flightId);
-         return this.NoContent(); 
+
+        await flightService.DeleteFlightAsync(flightId);
+        return NoContent();
     }
 }
+
+public record FlightRequestDTO(
+    string FlightNumber,
+    int RouteId,
+    DateTime DepartureDate,
+    int RunwayId,
+    int GateId);

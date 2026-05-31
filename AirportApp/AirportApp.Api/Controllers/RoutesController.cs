@@ -1,8 +1,6 @@
-﻿using AirportApp.ClassLibrary.Service.Interface;
+using AirportApp.ClassLibrary.Entity.Dto;
+using AirportApp.ClassLibrary.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Route = AirportApp.ClassLibrary.Entity.Domain.Route;
 
 namespace AirportAPI.Controllers.A5_Controllers;
@@ -14,22 +12,23 @@ public class RoutesController(IRouteService routeService) : ControllerBase
     private const string NullRouteDataErrorMessage = "Route data cannot be null.";
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Route>>> GetAll()
+    public async Task<ActionResult<IEnumerable<RouteDTO>>> GetAll()
     {
-        return this.Ok(await routeService.GetAllRoutesAsync());
+        IEnumerable<Route> routes = await routeService.GetAllRoutesAsync();
+        return Ok(routes.Select(MapToRouteDataTransferObject));
     }
 
     [HttpGet("{routeId:int}")]
-    public async Task<ActionResult<Route>> GetById(int routeId)
+    public async Task<ActionResult<RouteDTO>> GetById(int routeId)
     {
         Route? route = await routeService.GetRouteByIdAsync(routeId);
 
         if (route == null)
         {
-            return this.NotFound();
+            return NotFound();
         }
 
-        return this.Ok(route);
+        return Ok(MapToRouteDataTransferObject(route));
     }
 
     [HttpPost]
@@ -37,37 +36,37 @@ public class RoutesController(IRouteService routeService) : ControllerBase
     {
         if (request == null)
         {
-            return this.BadRequest(NullRouteDataErrorMessage);
+            return BadRequest(NullRouteDataErrorMessage);
         }
 
         try
         {
-            int routeId = await routeService.AddWithInitialFlightAsync(
+            int routeIdentifier = await routeService.AddWithInitialFlightAsync(
                 request.CompanyId,
                 request.AirportId,
                 request.RouteType,
-                request.Interval,
-                request.Start,
-                request.End,
-                request.Dep,
-                request.Arr,
+                request.RecurrenceInterval,
+                request.StartDate.ToDateTime(TimeOnly.MinValue),
+                request.EndDate.ToDateTime(TimeOnly.MinValue),
+                request.DepartureTime,
+                request.ArrivalTime,
                 request.Capacity,
-                request.FlightNum,
+                request.FlightNumber,
                 request.RunwayId,
                 request.GateId);
 
-            return this.Ok(routeId);
+            return Ok(routeIdentifier);
         }
         catch (InvalidOperationException conflictException)
         {
-            return this.Conflict(conflictException.Message);
+            return Conflict(conflictException.Message);
         }
     }
 
     [HttpGet("normalize-type")]
     public ActionResult<string> NormalizeFlightType([FromQuery] string? routeType)
     {
-        return this.Ok(new { value = routeService.NormalizeFlightType(routeType) });
+        return Ok(new { value = routeService.NormalizeFlightType(routeType) });
     }
 
     [HttpPost("relevant-time")]
@@ -80,7 +79,34 @@ public class RoutesController(IRouteService routeService) : ControllerBase
             ArrivalTime = request.ArrivalTime
         };
 
-        return this.Ok(new { value = routeService.GetRelevantTime(route) });
+        return Ok(new { value = routeService.GetRelevantTime(route) });
+    }
+
+    private static RouteDTO MapToRouteDataTransferObject(Route route)
+    {
+        AirportDTO? airportDataTransferObject = route.Airport != null
+            ? new AirportDTO(
+                route.Airport.Id,
+                route.Airport.AirportCode,
+                route.Airport.City,
+                route.Airport.Name)
+            : null;
+
+        CompanyDTO? companyDataTransferObject = route.Company != null
+            ? new CompanyDTO(route.Company.Id, route.Company.Name)
+            : null;
+
+        return new RouteDTO(
+            route.Id,
+            route.RouteType,
+            route.StartDate,
+            route.EndDate,
+            route.DepartureTime,
+            route.ArrivalTime,
+            route.Capacity,
+            route.RecurrenceInterval,
+            airportDataTransferObject,
+            companyDataTransferObject);
     }
 }
 
@@ -88,13 +114,13 @@ public sealed record AddRouteWithFlightRequest(
     int CompanyId,
     int AirportId,
     string RouteType,
-    int Interval,
-    DateTime Start,
-    DateTime End,
-    TimeOnly Dep,
-    TimeOnly Arr,
+    int RecurrenceInterval,
+    DateOnly StartDate,
+    DateOnly EndDate,
+    TimeOnly DepartureTime,
+    TimeOnly ArrivalTime,
     int Capacity,
-    string FlightNum,
+    string FlightNumber,
     int RunwayId,
     int GateId);
 

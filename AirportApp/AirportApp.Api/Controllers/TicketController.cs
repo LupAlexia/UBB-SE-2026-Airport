@@ -109,8 +109,6 @@ namespace AirportApp.Api.Controllers
             return Ok(filteredTickets);
         }
 
-        // EXTRA METHOD FOR 921s CONTROLLER - SHOULD BE IN SERVICE TOO
-        // here i just calculate locally, but in the og code it is in the service
         [HttpGet("count/subcategory")]
         public async Task<ActionResult<int>> GetTicketCountBySubcategory([FromQuery] string name)
         {
@@ -119,12 +117,36 @@ namespace AirportApp.Api.Controllers
                 return BadRequest("Subcategory name cannot be null or empty.");
             }
 
-            var allTickets = await ticketService.GetAllTicketsAsync();
+            IEnumerable<ComplaintTicket> allTickets = await ticketService.GetAllTicketsAsync();
 
-            int count = allTickets.Count(t => t.Subcategory != null &&
-                string.Equals(t.Subcategory.SubcategoryName, name, StringComparison.OrdinalIgnoreCase));
+            int count = allTickets.Count(ticket => ticket.Subcategory != null &&
+                string.Equals(ticket.Subcategory.SubcategoryName, name, StringComparison.OrdinalIgnoreCase));
 
             return Ok(count);
+        }
+
+        [HttpGet("by-shop/{shopId:int}")]
+        public async Task<ActionResult<IEnumerable<ComplaintTicket>>> GetByShopAsync(int shopId)
+        {
+            IEnumerable<ComplaintTicket> allTickets = await ticketService.GetAllTicketsAsync();
+
+            IEnumerable<ComplaintTicket> ticketsForShop = allTickets
+                .Where(ticket => ticket.Subcategory != null &&
+                                 ticket.Subcategory.SubcategoryExternalReferenceId == shopId);
+
+            return Ok(ticketsForShop);
+        }
+
+        [HttpGet("count/by-shop/{shopId:int}")]
+        public async Task<ActionResult<int>> GetTicketCountByShopAsync(int shopId)
+        {
+            IEnumerable<ComplaintTicket> allTickets = await ticketService.GetAllTicketsAsync();
+
+            int ticketCount = allTickets
+                .Count(ticket => ticket.Subcategory != null &&
+                                 ticket.Subcategory.SubcategoryExternalReferenceId == shopId);
+
+            return Ok(ticketCount);
         }
     }
 

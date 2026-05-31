@@ -69,6 +69,7 @@ namespace AirportApp.Api.Controllers
                 flight.Id,
                 flight.Route?.Id ?? 0,
                 flight.Gate?.Id ?? 0,
+                flight.Runway?.Id ?? 0,
                 flight.Date,
                 flight.FlightNumber,
                 MapRouteToDTO(flight.Route));
@@ -82,7 +83,7 @@ namespace AirportApp.Api.Controllers
             }
 
             AirportDTO? airportDto = route.Airport != null
-                ? new AirportDTO(route.Airport.Id, route.Airport.AirportCode, route.Airport.City)
+                ? new AirportDTO(route.Airport.Id, route.Airport.AirportCode, route.Airport.City, route.Airport.Name)
                 : null;
 
             CompanyDTO? companyDto = route.Company != null
@@ -92,9 +93,12 @@ namespace AirportApp.Api.Controllers
             return new RouteDTO(
                 route.Id,
                 route.RouteType,
-                DateTime.Today.Add(route.DepartureTime.ToTimeSpan()),
-                DateTime.Today.Add(route.ArrivalTime.ToTimeSpan()),
+                route.StartDate,
+                route.EndDate,
+                route.DepartureTime,
+                route.ArrivalTime,
                 route.Capacity,
+                route.RecurrenceInterval,
                 airportDto,
                 companyDto);
         }
