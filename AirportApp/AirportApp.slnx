@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="AirportApp.Api/AirportApp.Api.csproj" Id="a7261025-36e6-4974-aca1-70c06e768b4d" />
   <Project Path="AirportApp.ClassLibrary/AirportApp.ClassLibrary.csproj" />
+  <Project Path="AirportApp.Web/AirportApp.Web.csproj" Id="368698bc-d5c3-41f5-af4b-1779eee1330e" />
 </Solution>
