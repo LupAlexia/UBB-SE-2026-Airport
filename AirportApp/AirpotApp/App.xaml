@@ -34,8 +34,12 @@
 
             <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#C7C7C7" />
             <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="Black" />
+            <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="#2bb8c0" />
             <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#E5E5E5" />
             <SolidColorBrush x:Key="ButtonForegroundPressed" Color="Black" />
+            <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="#2bb8c0" />
+
+            <SolidColorBrush x:Key="CustomAccentBrush" Color="#2bb8c0" />
 
             <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}" />
             <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
@@ -66,6 +70,21 @@
                 <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="CornerRadius" Value="6" />
+            </Style>
+
+            <Style x:Key="DashboardButtonStyle" TargetType="Button">
+                <Setter Property="Width" Value="260" />
+                <Setter Property="Height" Value="140" />
+                <Setter Property="Margin" Value="15" />
+                <Setter Property="Background" Value="Black" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="BorderBrush" Value="White" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="FontSize" Value="24" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
 
             <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />

@@ -87,10 +87,10 @@ public class EmployeeFlightServiceProxy(HttpClient httpClient) : ServiceProxyBas
     public async Task<IEnumerable<CrewMemberSelectionData>> GetCrewSelectionDataByIdAsync(int flightId)
     {
         return await GetListAsync<CrewMemberSelectionData>($"{BaseUrl}/flights/{flightId}/crew-selection-data");
+    }
 
     private sealed class CrewListResponse
     {
         public string? Result { get; set; }
-    }
     }
 }
