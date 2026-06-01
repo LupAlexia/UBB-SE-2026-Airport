@@ -1,6 +1,8 @@
 using AirportApp.Services.Interfaces;
 using AirportApp.Src.View.General;
+
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 namespace AirportApp.WinUI.Pages
@@ -15,9 +17,14 @@ namespace AirportApp.WinUI.Pages
             navigationService = App.Services.GetRequiredService<INavigationService>();
         }
 
-        private void OpenAirportExperience_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void OpenAirportExperience_Click(object sender, RoutedEventArgs e)
         {
             navigationService.NavigateTo(typeof(ChoosingPage));
+        }
+
+        private void OpenAirportManagement_Click(object sender, RoutedEventArgs e)
+        {
+            navigationService.NavigateTo(typeof(WinUI.HomePage));
         }
     }
 }

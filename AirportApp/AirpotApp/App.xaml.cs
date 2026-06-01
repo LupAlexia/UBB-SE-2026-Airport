@@ -77,6 +77,7 @@ namespace AirportApp
 
             services.AddAutoMapper(cfg => cfg.AddMaps(typeof(AirportApp.ClassLibrary.ServiceRegistrationExtensions).Assembly));
 
+            // 924 services
             services.AddSingleton<IAuthService, AuthServiceProxy>();
             services.AddSingleton<IBookingService, BookingServiceProxy>();
             services.AddSingleton<ICancellationService, CancellationServiceProxy>();
@@ -95,10 +96,28 @@ namespace AirportApp
             services.AddSingleton<IReviewService, ReviewServiceProxy>();
             services.AddSingleton<IUserService, UserServiceProxy>();
 
+            // 921 services
+            services.AddSingleton<IAirportService, AirportServiceProxy>();
+            services.AddSingleton<ICartService, CartServiceProxy>();
+            services.AddSingleton<IClientService, ClientServiceProxy>();
+            services.AddSingleton<ICompanyService, CompanyServiceProxy>();
+            services.AddSingleton<IEmployeeFlightService, EmployeeFlightServiceProxy>();
+            services.AddSingleton<IFlightRouteService, FlightRouteServiceProxy>();
+            services.AddSingleton<IGateService, GateServiceProxy>();
+            services.AddSingleton<IManagerService, ManagerServiceProxy>();
+            services.AddSingleton<IReservationService, ReservationServiceProxy>();
+            services.AddSingleton<IRunwayService, RunwayServiceProxy>();
+            services.AddSingleton<IShopItemService, ShopItemServiceProxy>();
+            services.AddSingleton<IShopService, ShopServiceProxy>();
+
             services.AddSingleton<INavigationService, Services.NavigationService>();
             services.AddSingleton<ShellViewModel>();
             services.AddSingleton<MainWindow>();
 
+            // Shared user session for DutyFree
+            services.AddSingleton<AirportLib.Domain.User.UserSession>();
+
+            // 924 ViewModels
             services.AddTransient<AirportApp.Src.ViewModel.AddReviewViewModel>();
             services.AddTransient<AirportApp.Src.ViewModel.AllReviewsViewModel>();
             services.AddTransient<AirportApp.Src.ViewModel.AuthViewModel>();
@@ -118,6 +137,45 @@ namespace AirportApp
             services.AddTransient<Func<AirportApp.Src.ViewModel.PassengerFormViewModel>>(sp => () => sp.GetRequiredService<AirportApp.Src.ViewModel.PassengerFormViewModel>());
             services.AddTransient<AirportApp.Src.ViewModel.UpperBarViewModel>();
             services.AddTransient<AirportApp.Src.ViewModel.YouSureViewModel>();
+
+            // 921 ViewModels
+            services.AddTransient<AirportApp.Src.ViewModel.HomeViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.SelectCompanyViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.HeaderViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.StaffLoginViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.StaffPageViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.CompanyViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.AirportAdminViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.AirportDashboardViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.EmployeesDashboardViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.FlightsDashboardViewModel>();
+
+            // DutyFree ViewModels and interfaces
+            services.AddTransient<AirportApp.Src.ViewModel.DutyFreeShops.Interface.ILandingViewModel,
+                AirportApp.Src.ViewModel.DutyFreeShops.LandingViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.DutyFreeShops.Interface.IShopPageViewModel,
+                AirportApp.Src.ViewModel.DutyFreeShops.ShopPageViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.DutyFreeShops.Interface.ICartViewModel,
+                AirportApp.Src.ViewModel.DutyFreeShops.CartViewModel>();
+
+            // DutyFree factory registrations for shop-context ViewModels
+            services.AddTransient<Func<AirportApp.ClassLibrary.Entity.Domain.Shop,
+                AirportApp.Src.ViewModel.DutyFreeShops.Interface.IShopItemsViewModel>>(sp => (shop) =>
+                new AirportApp.Src.ViewModel.DutyFreeShops.ShopItemsViewModel(
+                    sp.GetRequiredService<IShopItemService>(),
+                    sp.GetRequiredService<ICartService>(),
+                    sp.GetRequiredService<AirportLib.Domain.User.UserSession>(),
+                    shop));
+
+            services.AddTransient<Func<AirportApp.ClassLibrary.Entity.Domain.ShopItem,
+                AirportApp.ClassLibrary.Entity.Domain.Shop,
+                AirportApp.Src.ViewModel.DutyFreeShops.Interface.IItemDetailsViewModel>>(sp => (item, shop) =>
+                new AirportApp.Src.ViewModel.DutyFreeShops.ItemDetailsViewModel(
+                    sp.GetRequiredService<ICartService>(),
+                    sp.GetRequiredService<IShopItemService>(),
+                    sp.GetRequiredService<AirportLib.Domain.User.UserSession>(),
+                    item,
+                    shop));
 
             var provider = services.BuildServiceProvider();
 

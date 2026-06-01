@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="AirportApp.WinUI.StaffLogin.StaffLoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="#1E293B">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="20"
+                    Width="300">
+
+            <TextBlock Text="STAFF LOGIN"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       HorizontalAlignment="Center"/>
+
+            <TextBox PlaceholderText="Enter Employee ID"
+                     HorizontalContentAlignment="Center"
+                     Text="{x:Bind ViewModel.EmployeeIdText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <Button Content="Login"
+                    HorizontalAlignment="Stretch"
+                    Background="#2bb8c0"
+                    Foreground="White"
+                    Command="{x:Bind ViewModel.LoginCommand}"/>
+
+            <TextBlock Foreground="Red"
+                       HorizontalAlignment="Center"
+                       Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+                       Visibility="{x:Bind ViewModel.ErrorVisibility, Mode=OneWay}"/>
+        </StackPanel>
+    </Grid>
+</Page>

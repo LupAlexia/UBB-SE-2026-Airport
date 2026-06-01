@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="AirportApp.WinUI.Pages.AirportRootPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -7,10 +8,13 @@
             <TextBlock Text="Airport module"
                        HorizontalAlignment="Center"
                        FontSize="20"
-                       FontWeight="SemiBold" />
-            <Button Content="Open Airport Experience"
+                       FontWeight="SemiBold"/>
+            <Button Content="Book a Flight"
                     Click="OpenAirportExperience_Click"
-                    HorizontalAlignment="Center" />
+                    HorizontalAlignment="Center"/>
+            <Button Content="Airport Management"
+                    Click="OpenAirportManagement_Click"
+                    HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>
 </Page>

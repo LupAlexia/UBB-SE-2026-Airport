@@ -1,6 +1,8 @@
 using AirportApp.Services.Interfaces;
-using AirportApp.Src.View.General;
+using AirportApp.WinUI.DutyFreeShops;
+
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 namespace AirportApp.WinUI.Pages
@@ -15,7 +17,7 @@ namespace AirportApp.WinUI.Pages
             navigationService = App.Services.GetRequiredService<INavigationService>();
         }
 
-        private void OpenDutyFreeExperience_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void OpenDutyFreeExperience_Click(object sender, RoutedEventArgs e)
         {
             navigationService.NavigateTo(typeof(LandingPage));
         }

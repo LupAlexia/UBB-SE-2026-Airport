@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="AirportApp.WinUI.StaffPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:components="using:AirportApp.WinUI.Components"
+    xmlns:data="using:AirportApp.ClassLibrary.Entity.Domain"
+    mc:Ignorable="d"
+    Background="#0F172A">
+
+    <Page.Resources>
+        <SolidColorBrush x:Key="CustomAccentBrush" Color="#2bb8c0"/>
+    </Page.Resources>
+
+    <Grid Padding="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <components:Header Grid.Row="0"/>
+
+        <Border Grid.Row="1"
+                BorderBrush="#1E293B"
+                BorderThickness="1"
+                CornerRadius="8"
+                Background="#1E293B"
+                Width="980"
+                Height="620"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="20,20,20,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="MY SCHEDULED FLIGHTS"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               VerticalAlignment="Center"/>
+
+                    <Button Grid.Column="1"
+                            Content="Refresh"
+                            Background="{StaticResource CustomAccentBrush}"
+                            Foreground="White"
+                            Padding="16,8"
+                            CornerRadius="4"
+                            Command="{x:Bind ViewModel.RefreshCommand}"/>
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="20,0,20,15" ColumnSpacing="15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Background="#0F172A" CornerRadius="8" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="EMPLOYEE ID" Foreground="#A0A0A0" FontSize="12"/>
+                            <TextBlock Text="{x:Bind ViewModel.EmployeeIdText, Mode=OneWay}" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Background="#0F172A" CornerRadius="8" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="ROLE" Foreground="#A0A0A0" FontSize="12"/>
+                            <TextBlock Text="{x:Bind ViewModel.RoleText, Mode=OneWay}" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="2" Background="#0F172A" CornerRadius="8" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="ASSIGNED FLIGHTS" Foreground="#A0A0A0" FontSize="12"/>
+                            <TextBlock Text="{x:Bind ViewModel.FlightsCountText, Mode=OneWay}" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Grid Grid.Row="2" Background="{StaticResource CustomAccentBrush}" Padding="15,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.6*"/>
+                        <ColumnDefinition Width="1.4*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1.4*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="ID" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="FLIGHT NO." Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="TYPE" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="3" Text="DATE" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="4" Text="GATE" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="5" Text="RUNWAY" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="6" Text="TIME" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                </Grid>
+
+                <Grid Grid.Row="3">
+                    <ListView SelectionMode="None"
+                              BorderThickness="0"
+                              ItemsSource="{x:Bind ViewModel.ScheduledFlights, Mode=OneWay}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="data:EmployeeScheduleItem">
+                                <Grid Padding="15,12" BorderThickness="0,0,0,1" BorderBrush="#334155">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0.6*"/>
+                                        <ColumnDefinition Width="1.4*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1.4*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" Foreground="#888888" HorizontalAlignment="Center" Text="{Binding Id}"/>
+                                    <TextBlock Grid.Column="1" Foreground="#E0E0E0" FontWeight="Bold" HorizontalAlignment="Center" Text="{Binding FlightNumber}"/>
+                                    <TextBlock Grid.Column="2" Foreground="#E0E0E0" HorizontalAlignment="Center" Text="{Binding FlightType}"/>
+                                    <TextBlock Grid.Column="3" Foreground="#E0E0E0" HorizontalAlignment="Center" Text="{Binding Date}"/>
+                                    <TextBlock Grid.Column="4" Foreground="#E0E0E0" HorizontalAlignment="Center" Text="{Binding GateName}"/>
+                                    <TextBlock Grid.Column="5" Foreground="#E0E0E0" HorizontalAlignment="Center" Text="{Binding RunwayName}"/>
+                                    <TextBlock Grid.Column="6" Foreground="#2bb8c0" FontWeight="SemiBold" HorizontalAlignment="Center" Text="{Binding FlightTime}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <TextBlock Text="This employee has no scheduled flights."
+                               Foreground="#A0A0A0"
+                               FontSize="18"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Visibility="{x:Bind ViewModel.EmptyStateVisibility, Mode=OneWay}"/>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

@@ -16,6 +16,13 @@ namespace AirportApp.Src.ViewModel
             this.canExecute = canExecute;
         }
 
+        public RelayCommand(Action execute, Predicate<object>? canExecute = null)
+        {
+            if (execute == null) throw new ArgumentNullException(nameof(execute));
+            this.execute = _ => execute();
+            this.canExecute = canExecute;
+        }
+
         public bool CanExecute(object? parameter)
         {
             return canExecute == null || canExecute(parameter!);
