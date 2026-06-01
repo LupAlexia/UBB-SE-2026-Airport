@@ -1,0 +1,29 @@
+@{
+    ViewData["Title"] = "Employee Dashboard";
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">Flight Crew Dashboard</h1>
+    <p class="text-muted">Welcome, @User.Identity?.Name</p>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">My Schedule</h5>
+                    <p class="card-text">View your assigned flights and schedule.</p>
+                    <a asp-controller="StaffDashboard" asp-action="Index" class="btn btn-primary">View Schedule</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Flight Details</h5>
+                    <p class="card-text">View detailed information about your flights.</p>
+                    <a asp-controller="StaffDashboard" asp-action="Index" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
