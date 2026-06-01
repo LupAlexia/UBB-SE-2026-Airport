@@ -42,6 +42,17 @@ public class AuthController : Controller
 
     [AllowAnonymous]
     [HttpGet]
+    public IActionResult StaffRoleSelection()
+    {
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            return RedirectToAction("RedirectUser", "Dashboard");
+        }
+        return View();
+    }
+
+    [AllowAnonymous]
+    [HttpGet]
     public IActionResult EnterId(string role)
     {
         if (string.IsNullOrEmpty(role))

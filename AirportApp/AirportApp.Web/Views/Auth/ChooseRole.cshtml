@@ -9,51 +9,27 @@
         <p class="text-white mt-2 mb-0" style="font-size: 16px; opacity: 0.9;">How can we assist you today?</p>
     </div>
 
-    <div class="d-flex flex-column flex-md-row gap-4 justify-content-center align-items-center flex-wrap">
+    <div class="d-flex flex-column flex-md-row gap-4 justify-content-center align-items-center">
 
         <a asp-action="EnterId" asp-route-role="Customer" class="text-decoration-none text-start">
             <div class="card p-3 text-center border-0 shadow-lg"
-                 style="width: 220px; height: 180px; border-radius: 12px; background-color: #FFFFFF; transition: transform 0.2s, background-color 0.2s; cursor: pointer;">
+                 style="width: 280px; height: 200px; border-radius: 12px; background-color: #FFFFFF; transition: transform 0.2s, background-color 0.2s; cursor: pointer;">
                 <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                    <h2 class="fw-semibold mb-2" style="font-size: 18px; color: #201F1E; font-family: 'Segoe UI', sans-serif;">Customer</h2>
-                    <p class="mb-0" style="font-size: 12px; color: #605E5C; line-height: 1.4; padding: 0 5px;">
-                        Flight tickets, customer support, and duty free shopping.
+                    <h2 class="fw-semibold mb-2" style="font-size: 20px; color: #201F1E; font-family: 'Segoe UI', sans-serif;">I'm a Customer</h2>
+                    <p class="mb-0" style="font-size: 13px; color: #605E5C; line-height: 1.4; padding: 0 5px;">
+                        Book flights, customer support, and duty free shopping.
                     </p>
                 </div>
             </div>
         </a>
 
-        <a asp-action="EnterId" asp-route-role="Admin" class="text-decoration-none text-start">
+        <a asp-action="StaffRoleSelection" class="text-decoration-none text-start">
             <div class="card p-3 text-center border-0 shadow-lg"
-                 style="width: 220px; height: 180px; border-radius: 12px; background-color: #FFFFFF; transition: transform 0.2s, background-color 0.2s; cursor: pointer;">
+                 style="width: 280px; height: 200px; border-radius: 12px; background-color: #FFFFFF; transition: transform 0.2s, background-color 0.2s; cursor: pointer;">
                 <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                    <h2 class="fw-semibold mb-2" style="font-size: 18px; color: #201F1E; font-family: 'Segoe UI', sans-serif;">Admin</h2>
-                    <p class="mb-0" style="font-size: 12px; color: #605E5C; line-height: 1.4; padding: 0 5px;">
-                        Manage FAQ, tickets, reviews, employees, routes, and gates.
-                    </p>
-                </div>
-            </div>
-        </a>
-
-        <a asp-action="EnterId" asp-route-role="Manager" class="text-decoration-none text-start">
-            <div class="card p-3 text-center border-0 shadow-lg"
-                 style="width: 220px; height: 180px; border-radius: 12px; background-color: #FFFFFF; transition: transform 0.2s, background-color 0.2s; cursor: pointer;">
-                <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                    <h2 class="fw-semibold mb-2" style="font-size: 18px; color: #201F1E; font-family: 'Segoe UI', sans-serif;">Manager</h2>
-                    <p class="mb-0" style="font-size: 12px; color: #605E5C; line-height: 1.4; padding: 0 5px;">
-                        Flight company manager - add and manage flights.
-                    </p>
-                </div>
-            </div>
-        </a>
-
-        <a asp-action="EnterId" asp-route-role="Employee" class="text-decoration-none text-start">
-            <div class="card p-3 text-center border-0 shadow-lg"
-                 style="width: 220px; height: 180px; border-radius: 12px; background-color: #FFFFFF; transition: transform 0.2s, background-color 0.2s; cursor: pointer;">
-                <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                    <h2 class="fw-semibold mb-2" style="font-size: 18px; color: #201F1E; font-family: 'Segoe UI', sans-serif;">Employee</h2>
-                    <p class="mb-0" style="font-size: 12px; color: #605E5C; line-height: 1.4; padding: 0 5px;">
-                        Flight crew - view schedule and assigned flights.
+                    <h2 class="fw-semibold mb-2" style="font-size: 20px; color: #201F1E; font-family: 'Segoe UI', sans-serif;">I'm Staff</h2>
+                    <p class="mb-0" style="font-size: 13px; color: #605E5C; line-height: 1.4; padding: 0 5px;">
+                        Admin, Manager, or Flight Crew access.
                     </p>
                 </div>
             </div>

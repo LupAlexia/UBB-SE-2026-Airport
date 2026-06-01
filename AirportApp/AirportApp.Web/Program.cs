@@ -44,7 +44,6 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// Service Proxies from ClassLibrary
 builder.Services.AddHttpClient<IUserService, UserServiceProxy>(client =>
     client.BaseAddress = new Uri(apiBaseUrl));
 builder.Services.AddHttpClient<IReviewService, ReviewServiceProxy>(client =>
@@ -78,7 +77,6 @@ builder.Services.AddHttpClient<IPricingService, PricingServiceProxy>(client =>
 builder.Services.AddHttpClient<IBookingService, BookingServiceProxy>(client =>
     client.BaseAddress = new Uri(apiBaseUrl));
 
-// 921 Service Proxies
 builder.Services.AddHttpClient<IAirportService, AirportServiceProxy>(client =>
     client.BaseAddress = new Uri(apiBaseUrl));
 builder.Services.AddHttpClient<ICompanyService, CompanyServiceProxy>(client =>
