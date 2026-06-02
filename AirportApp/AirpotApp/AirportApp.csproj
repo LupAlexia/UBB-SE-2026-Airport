@@ -16,6 +16,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Assets\**\*.*" />
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

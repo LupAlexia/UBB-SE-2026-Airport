@@ -70,6 +70,8 @@ namespace AirportApp
         {
             var services = new ServiceCollection();
 
+            services.AddLogging();
+
             services.AddSingleton(new HttpClient
             {
                 BaseAddress = new Uri(ReadConfiguredApiBaseUrl())
