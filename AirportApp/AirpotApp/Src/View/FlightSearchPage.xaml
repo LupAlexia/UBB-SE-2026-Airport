@@ -20,40 +20,72 @@
 
             <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Bottom">
 
-                <TextBox x:Name="locationInput" Header="Location" PlaceholderText="e.g. Barcelona..." Width="180" 
-                         Text="{x:Bind ViewModel.Location, Mode=TwoWay}" />
+                <!-- Location -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Location" FontSize="12" Foreground="#374151" FontWeight="SemiBold"/>
+                    <TextBox x:Name="locationInput"
+                             PlaceholderText="e.g. Barcelona..."
+                             Width="180"
+                             Foreground="#111827"
+                             BorderBrush="#D1D5DB"
+                             Text="{x:Bind ViewModel.Location, Mode=TwoWay}" />
+                </StackPanel>
 
-                <StackPanel>
-                    <TextBlock Text="Flight Type" Margin="0,0,0,6"/>
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <RadioButton x:Name="flightTypeDeparture" Content="Departure" IsChecked="{x:Bind ViewModel.IsDeparture, Mode=TwoWay}" />
-                        <RadioButton x:Name="flightTypeArrival" Content="Arrival" />
+                <!-- Flight Type -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Flight Type" FontSize="12" Foreground="#374151" FontWeight="SemiBold"/>
+                    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" Height="32">
+                        <RadioButton x:Name="flightTypeDeparture" Content="Departure" Foreground="#111827"
+                                     IsChecked="{x:Bind ViewModel.IsDeparture, Mode=TwoWay}" />
+                        <RadioButton x:Name="flightTypeArrival" Content="Arrival" Foreground="#111827"/>
                     </StackPanel>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Bottom">
-                    <CalendarDatePicker x:Name="datePicker" Header="Date" PlaceholderText="Select date" Width="150" 
-                                        Date="{x:Bind ViewModel.FlightDate, Mode=TwoWay}" 
-                                        CalendarViewDayItemChanging="DatePicker_CalendarViewDayItemChanging" />
-
-                    <Button Content="✕" Background="Transparent" Foreground="Gray" BorderThickness="0" 
-                            VerticalAlignment="Bottom" Height="32" ToolTipService.ToolTip="Clear Date"
-                            Click="ClearDateButton_Click"/>
+                <!-- Date -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Date" FontSize="12" Foreground="#374151" FontWeight="SemiBold"/>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <CalendarDatePicker x:Name="datePicker"
+                                            PlaceholderText="Select date"
+                                            Width="150"
+                                            Date="{x:Bind ViewModel.FlightDate, Mode=TwoWay}"
+                                            CalendarViewDayItemChanging="DatePicker_CalendarViewDayItemChanging"
+                                            BorderBrush="#D1D5DB">
+                                            <CalendarDatePicker.Resources>
+                                                <SolidColorBrush x:Key="CalendarDatePickerBorderBrush" Color="#D1D5DB"/>
+                                                <SolidColorBrush x:Key="CalendarDatePickerForeground" Color="#111827"/>
+                                                <SolidColorBrush x:Key="CalendarDatePickerTextForeground" Color="#111827"/>
+                                                <SolidColorBrush x:Key="CalendarDatePickerBackground" Color="White"/>
+                                            </CalendarDatePicker.Resources>
+                                        </CalendarDatePicker>
+                        <Button Content="✕" Background="Transparent" Foreground="#6B7280"
+                                BorderThickness="0" VerticalAlignment="Center"
+                                Height="32" ToolTipService.ToolTip="Clear Date"
+                                Click="ClearDateButton_Click"/>
+                    </StackPanel>
                 </StackPanel>
 
-                <TextBox x:Name="passengersInput" Header="Passengers" PlaceholderText="Nr" Width="80" 
-                         Text="{x:Bind ViewModel.Passengers, Mode=TwoWay}" 
-                         InputScope="Number" 
-                         BeforeTextChanging="PassengersInput_BeforeTextChanging"/>
+                <!-- Passengers -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Passengers" FontSize="12" Foreground="#374151" FontWeight="SemiBold"/>
+                    <TextBox x:Name="passengersInput"
+                             PlaceholderText="Nr"
+                             Width="80"
+                             Foreground="#111827"
+                             BorderBrush="#D1D5DB"
+                             Text="{x:Bind ViewModel.Passengers, Mode=TwoWay}"
+                             InputScope="Number"
+                             BeforeTextChanging="PassengersInput_BeforeTextChanging"/>
+                </StackPanel>
 
-                <Button x:Name="searchButton" Content="SEARCH" 
-                        Command="{x:Bind ViewModel.SearchCommand}" 
-                        Background="#2bb8c0" 
-                        Foreground="White" 
-                        FontWeight="Bold" 
-                        Height="32" 
-                        VerticalAlignment="Bottom" 
-                        Margin="0,0,0,1"/>
+                <!-- Search Button -->
+                <Button x:Name="searchButton" Content="SEARCH"
+                        Command="{x:Bind ViewModel.SearchCommand}"
+                        Background="#2bb8c0"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        Height="32"
+                        VerticalAlignment="Bottom"/>
 
             </StackPanel>
         </StackPanel>
@@ -65,7 +97,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Text="Available Flights" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
+            <TextBlock Grid.Row="0" Text="Available Flights" FontSize="20" FontWeight="SemiBold" Foreground="#111827" Margin="0,0,0,10"/>
 
             <TextBlock Grid.Row="1" Text="{x:Bind ViewModel.SearchResultMessage, Mode=OneWay}" Foreground="Gray" Margin="0,0,0,10"/>
 
@@ -82,11 +114,11 @@
                                 <ColumnDefinition Width="140"/>
                                 <ColumnDefinition Width="110"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Flight Nr" FontWeight="Bold" />
-                            <TextBlock Grid.Column="1" Text="Route" FontWeight="Bold" />
-                            <TextBlock Grid.Column="2" Text="Date &amp; Time" FontWeight="Bold" />
-                            <TextBlock Grid.Column="3" Text="Base Price / person" FontWeight="Bold" />
-                            <TextBlock Grid.Column="4" Text="Action" FontWeight="Bold" />
+                            <TextBlock Grid.Column="0" Text="Flight Nr" FontWeight="Bold" Foreground="#111827"/>
+                            <TextBlock Grid.Column="1" Text="Route" FontWeight="Bold" Foreground="#111827"/>
+                            <TextBlock Grid.Column="2" Text="Date &amp; Time" FontWeight="Bold" Foreground="#111827"/>
+                            <TextBlock Grid.Column="3" Text="Base Price / person" FontWeight="Bold" Foreground="#111827"/>
+                            <TextBlock Grid.Column="4" Text="Action" FontWeight="Bold" Foreground="#111827"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.HeaderTemplate>
@@ -102,10 +134,10 @@
                                 <ColumnDefinition Width="110"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="0" Text="{x:Bind FlightNumber}" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="1" Text="{x:Bind RouteCity}" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="2" Text="{x:Bind DisplayDate}" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="3" Text="{x:Bind DisplayPrice}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="0" Text="{x:Bind FlightNumber}" VerticalAlignment="Center" Foreground="#111827"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind RouteCity}" VerticalAlignment="Center" Foreground="#111827"/>
+                            <TextBlock Grid.Column="2" Text="{x:Bind DisplayDate}" VerticalAlignment="Center" Foreground="#111827"/>
+                            <TextBlock Grid.Column="3" Text="{x:Bind DisplayPrice}" VerticalAlignment="Center" Foreground="#111827"/>
 
                             <Button Grid.Column="4" Content="Book" Background="#2bb8c0" Foreground="White" CornerRadius="4" Height="30" HorizontalAlignment="Right" Margin="8,0,0,0" 
                                     Command="{Binding DataContext.BookFlightCommand, ElementName=flightsGrid}" CommandParameter="{x:Bind}" />
