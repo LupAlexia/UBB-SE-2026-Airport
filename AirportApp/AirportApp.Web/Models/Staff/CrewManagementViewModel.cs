@@ -1,4 +1,4 @@
-using AirportApp.ClassLibrary.Entity.Domain;
+﻿using AirportApp.ClassLibrary.Entity.Domain;
 
 namespace AirportApp.Web.Models.Staff;
 
@@ -9,3 +9,4 @@ public class CrewManagementViewModel
     public List<CrewMemberSelectionData> CrewCandidates { get; set; } = new();
     public List<int> SelectedEmployeeIds { get; set; } = new();
 }
+

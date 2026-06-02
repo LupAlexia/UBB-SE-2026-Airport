@@ -1,0 +1,42 @@
+﻿@model AirportApp.Web.Models.DutyFree.ShopListViewModel
+@{
+    ViewData["Title"] = "Duty-Free Shops";
+}
+<div class="d-flex align-items-center mb-3">
+    <h1 class="me-auto" style="color: #00bcd4;">DutyFree Shops</h1>
+    <input type="text" id="searchInput" class="form-control w-50 me-3" placeholder="Search shops or categories..." />
+    <div class="d-flex align-items-center">
+        <label class="me-2">Sort by:</label>
+        <select id="sortSelect" class="form-select">
+            <option value="none">None</option>
+            <option value="name">Shop Name</option>
+        </select>
+    </div>
+    @if (!Model.IsManager)
+    {
+        <a asp-controller="DutyFreeCart" asp-action="Index" class="btn btn-primary ms-3">
+            Cart
+        </a>
+    }
+</div>
+
+<div id="shopContainer">
+    @await Html.PartialAsync("_ShopList", Model.Shops)
+</div>
+
+@section Scripts
+{
+    <script>
+        function loadShops() 
+        {
+            var searchText = $('#searchInput').val();
+            var sort = $('#sortSelect').val();
+            $.get('@Url.Action("Search", "DutyFree")', { searchText: searchText, sort: sort }, function (result) {
+                $('#shopContainer').html(result);
+            }); 
+        }
+        $('#searchInput').on('input', loadShops); 
+        $('#sortSelect').on('change', loadShops);
+    </script>
+}
+

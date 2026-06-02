@@ -1,5 +1,6 @@
-using AirportApp.ClassLibrary.Proxy;
+﻿using AirportApp.ClassLibrary.Proxy;
 using AirportApp.ClassLibrary.Service.Interface;
+using AirportApp.Web.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -43,6 +44,8 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+builder.Services.AddScoped<WebUserSession>();
 
 builder.Services.AddHttpClient<IUserService, UserServiceProxy>(client =>
     client.BaseAddress = new Uri(apiBaseUrl));
@@ -128,3 +131,4 @@ app.MapControllerRoute(
     pattern: "{controller=Auth}/{action=ChooseRole}/{id?}");
 
 app.Run();
+

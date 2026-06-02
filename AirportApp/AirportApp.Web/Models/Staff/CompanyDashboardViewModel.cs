@@ -1,4 +1,4 @@
-using AirportApp.ClassLibrary.Entity.Domain;
+﻿using AirportApp.ClassLibrary.Entity.Domain;
 
 namespace AirportApp.Web.Models.Staff
 {
@@ -13,3 +13,4 @@ namespace AirportApp.Web.Models.Staff
         public bool ShowAddFlightForm { get; set; }
     }
 }
+

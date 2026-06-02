@@ -1,0 +1,151 @@
+﻿@model AirportApp.Web.Models.FaqEntries.FaqEntriesIndexViewModel
+@using AirportApp.ClassLibrary.Entity.Domain
+
+@{
+    ViewData["Title"] = "FAQs";
+}
+<partial name="_UpperBar" />
+<div class="faq-page">
+
+<style>
+    .faq-page { font-size: 1.12rem; }
+    .faq-page .btn { font-size: 1.06rem; padding-top: .45rem; padding-bottom: .45rem; }
+    .faq-page .form-control { font-size: 1rem; }
+    .faq-actions { display: flex; gap: .6rem; align-items: center; white-space: nowrap; }
+    .faq-actions a { display: inline-block; }
+</style>
+ 
+
+<div class="card mb-3">
+    <div class="card-header">Popular Questions</div>
+    <div class="card-body">
+        <div class="row g-2">
+            @foreach (var item in Model.PopularFAQs)
+            {
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex justify-content-between align-items-start">
+                            <div class="me-2">
+                                <a asp-action="OpenDetails" asp-route-id="@item.Id" class="h6 d-block text-decoration-none">
+                                    @item.Question
+                                </a>
+                            </div>
+                            <div class="text-nowrap ms-auto align-self-center">
+                                <span class="badge bg-secondary">@item.ViewCount views</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@if (User.IsInRole("Employee"))
+{
+    <p>
+            <a asp-action="Create" class="btn btn-primary">Add New Entity</a>
+    </p>
+}
+<input id="faq-search" type="search" name="searchQuery" value="@Model.SearchQuery"
+    placeholder="Search FAQs by question/answer..."
+    class="form-control mb-3"/>
+
+<div class="mb-3">
+    <a asp-action="Index" asp-route-category="All" data-category="All" class="category-btn btn me-2 @(Model.SelectedCategory == FAQCategoryEnum.All ? "btn-primary": "btn-outline-primary")">
+       All
+   </a>
+    <a asp-action="Index" asp-route-category="CheckIn" data-category="CheckIn" class="category-btn btn me-2 @(Model.SelectedCategory == FAQCategoryEnum.CheckIn ? "btn-primary": "btn-outline-primary")">
+       Check-in Procedures
+   </a>
+    <a asp-action="Index" asp-route-category="Parking" data-category="Parking" class="category-btn btn me-2 @(Model.SelectedCategory == FAQCategoryEnum.Parking ? "btn-primary": "btn-outline-primary")">
+       Parking
+   </a>
+    <a asp-action="Index" asp-route-category="Baggage" data-category="Baggage" class="category-btn btn me-2 @(Model.SelectedCategory == FAQCategoryEnum.Baggage ? "btn-primary": "btn-outline-primary")">
+       Baggage
+   </a>
+    <a asp-action="Index" asp-route-category="Tickets" data-category="Tickets" class="category-btn btn me-2 @(Model.SelectedCategory == FAQCategoryEnum.Tickets ? "btn-primary": "btn-outline-primary")">
+       Tickets
+   </a>
+   <a asp-action="Index" asp-route-category="Facilities" data-category="Facilities" class="category-btn btn me-2 @(Model.SelectedCategory == FAQCategoryEnum.Facilities ? "btn-primary": "btn-outline-primary")">
+       Facilities
+   </a>
+</div>
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table mb-0">
+    <thead>
+        <tr>
+            <th>
+                Question
+            </th>
+            <th>
+                Answer
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Views
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.FilteredFAQs) {
+        <tr>
+            <td>
+                @item.Question
+            </td>
+            <td>
+                @item.Answer
+            </td>
+            <td>
+                @item.Category
+            </td>
+            <td>
+                @item.ViewCount
+            </td>
+            <td>
+                <div class="faq-actions">
+                        <a asp-action="OpenDetails" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+                    @if (User.IsInRole("Employee"))
+                    {
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-info">Delete</a>
+                    }
+                </div>
+            </td>
+        </tr>
+}
+    </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function debounce(fn, wait = 300){
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(...args), wait);
+     };
+    }
+    let currentCategory='@Model.SelectedCategory';
+    const searchEl=document.getElementById('faq-search')
+
+    async function navigate(category, query) {
+        const url=`/FAQEntries/Index?category=${encodeURIComponent(category)}&searchQuery=${encodeURIComponent(query||'')}`;
+        window.location.href=url;
+    }
+    const debouncedNavigate = debounce(() => navigate(currentCategory, searchEl.value), 300);
+      searchEl.addEventListener('input', debouncedNavigate);
+
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.preventDefault();
+          currentCategory = btn.dataset.category;
+          navigate(currentCategory, searchEl.value);
+        });
+      });
+</script>
+</div>

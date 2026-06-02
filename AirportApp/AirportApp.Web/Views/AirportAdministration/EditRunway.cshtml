@@ -1,0 +1,40 @@
+﻿@model AirportApp.ClassLibrary.Entity.Domain.Runway
+@{
+	Layout = "_AdministrationLayout";
+	bool isNew = Model == null || Model.Id == 0;
+	ViewData["Title"] = isNew ? "Register New Runway" : "Edit Runway";
+	ViewData["ActiveSection"] = "Airport";
+}
+
+<div class="d-flex justify-content-center align-items-center mt-5">
+	<div class="card bg-slate border-secondary shadow-lg" style="width: 450px;">
+		<div class="card-header border-secondary py-3">
+			<h4 class="text-white fw-bold mb-0">@ViewData["Title"]</h4>
+		</div>
+		<div class="card-body p-4">
+			<form asp-action="@(isNew ? "CreateRunway" : "EditRunway")" method="post">
+				@if (!isNew)
+				{
+					<input type="hidden" asp-for="Id" />
+				}
+
+				<div class="mb-3">
+					<label class="form-label text-muted small fw-bold">RUNWAY DESIGNATION</label>
+					<input asp-for="Name" class="form-control bg-dark text-white border-secondary" placeholder="e.g. 08L" />
+					<span asp-validation-for="Name" class="text-danger small"></span>
+				</div>
+
+				<div class="mb-4">
+					<label class="form-label text-muted small fw-bold">HANDLE TIME (MINUTES)</label>
+					<input asp-for="HandleTime" type="number" class="form-control bg-dark text-white border-secondary" />
+					<span asp-validation-for="HandleTime" class="text-danger small"></span>
+				</div>
+
+				<div class="d-grid gap-2">
+					<button type="submit" class="btn btn-info fw-bold">Save Configuration</button>
+					<a asp-action="DisplayConfiguration" class="btn btn-outline-secondary">Cancel</a>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

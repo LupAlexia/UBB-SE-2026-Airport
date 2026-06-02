@@ -1,0 +1,53 @@
+﻿@model AirportApp.Web.Models.AirportManagement.EmployeesDashboardViewModel
+@{
+	Layout = "_AdministrationLayout";
+	ViewData["ActiveSection"] = "Employees";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+	<h2 class="fw-bold text-white">EMPLOYEE ADMINISTRATION</h2>
+</div>
+
+@foreach (var role in Model.DisplayedRoles)
+{
+	<div class="card bg-slate border-secondary mb-4 shadow-sm">
+		<div class="card-header border-secondary d-flex justify-content-between align-items-center">
+			<h5 class="mb-0 text-info">@role.ToString()</h5>
+
+			<a asp-action="OpenAddEmployeeForm"
+			   asp-route-role="@role"
+			   class="btn btn-sm btn-outline-info">Add</a>
+		</div>
+		<div class="card-body p-0">
+			<table class="table table-dark table-hover mb-0">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Name</th>
+						<th>Salary</th>
+						<th class="text-end">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var employee in Model.Employees)
+					{
+						if (employee.Role == role)
+						{
+							<tr>
+								<td>@employee.Id</td>
+								<td>@employee.Name</td>
+								<td>@employee.Salary.ToString("C0")</td>
+								<td class="text-end">
+									<a asp-action="OpenEditEmployeeForm" asp-route-employeeId="@employee.Id" class="btn btn-sm btn-outline-warning">Edit</a>
+									<form asp-action="ExecuteRemoveEmployee" asp-route-employeeId="@employee.Id" method="post" class="d-inline">
+										<button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+									</form>
+								</td>
+							</tr>
+						}
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+}

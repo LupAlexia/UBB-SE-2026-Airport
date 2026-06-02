@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using AirportApp.ClassLibrary.Entity.Domain;
 
 namespace AirportApp.Web.Models.Staff;
@@ -58,3 +58,4 @@ public class AddFlightFormModel
     public List<Runway> Runways { get; set; } = new();
     public List<Gate> Gates { get; set; } = new();
 }
+

@@ -1,0 +1,448 @@
+﻿@model AirportApp.Web.Models.Booking.BookingPageViewModel
+
+@{
+    ViewData["Title"] = "Complete Your Booking";
+
+    var occupiedSet = new HashSet<string>(Model.OccupiedSeats);
+    int seatColumnsCount = 6;
+    int aisleColumnIndex = 3;
+}
+
+<div class="booking-page">
+    <h1 class="booking-title">Complete Your Booking</h1>
+
+    <!-- Flight info banner -->
+    <div class="booking-flight-banner">
+        <span class="booking-flight-label">Flight</span>
+        <strong>@Model.Flight.FlightNumber</strong>
+        <span class="booking-flight-sep">&bull;</span>
+        <span>@(Model.Flight.Route?.Airport?.City ?? Model.Flight.Route?.RouteType ?? "Unknown")</span>
+        <span class="booking-flight-sep">&bull;</span>
+        <span>@Model.Flight.Date.ToString("f")</span>
+    </div>
+
+    <form asp-action="Book" method="post" id="bookingForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="FlightId" value="@Model.Form.FlightId" />
+        <input type="hidden" name="RequestedPassengers" value="@Model.Form.RequestedPassengers" />
+
+        <div class="booking-layout">
+
+            <!-- LEFT COLUMN -->
+            <div class="booking-left">
+
+                <!-- PASSENGERS SECTION -->
+                <div class="booking-card" id="passengersCard">
+                    <div class="booking-card-header">
+                        <h2 class="booking-section-title">Passengers</h2>
+                        <span class="booking-max-info">Maximum for this booking: <strong>@Model.MaximumPassengers</strong></span>
+                    </div>
+
+                    <div id="passengerList">
+                        @for (int passengerIndex = 0; passengerIndex < Model.Form.Passengers.Count; passengerIndex++)
+                        {
+                            var passenger = Model.Form.Passengers[passengerIndex];
+                            <div class="passenger-card" data-index="@passengerIndex">
+                                <div class="passenger-card-header">
+                                    <span class="passenger-label">Passenger @(passengerIndex + 1)</span>
+                                    @if (passengerIndex > 0)
+                                    {
+                                        <button type="button" class="btn-remove-passenger" onclick="removePassenger(this)">Remove</button>
+                                    }
+                                </div>
+                                <div class="passenger-fields">
+                                    <div class="passenger-field-group">
+                                        <label>First Name *</label>
+                                        <input type="text" name="Passengers[@passengerIndex].FirstName"
+                                               value="@passenger.FirstName" class="form-control" required />
+                                    </div>
+                                    <div class="passenger-field-group">
+                                        <label>Last Name *</label>
+                                        <input type="text" name="Passengers[@passengerIndex].LastName"
+                                               value="@passenger.LastName" class="form-control" required />
+                                    </div>
+                                    <div class="passenger-field-group">
+                                        <label>Email *</label>
+                                        <input type="email" name="Passengers[@passengerIndex].Email"
+                                               value="@passenger.Email" class="form-control" required />
+                                    </div>
+                                    <div class="passenger-field-group">
+                                        <label>Phone</label>
+                                        <input type="tel" name="Passengers[@passengerIndex].Phone"
+                                               value="@passenger.Phone" class="form-control" />
+                                    </div>
+                                </div>
+                                <!-- Selected seat (hidden, updated by seat map JS) -->
+                                <input type="hidden" name="Passengers[@passengerIndex].SelectedSeat"
+                                       class="passenger-seat-input"
+                                       value="@passenger.SelectedSeat" />
+                                <div class="passenger-seat-display">
+                                    Selected seat: <strong class="seat-label-display">@(string.IsNullOrEmpty(passenger.SelectedSeat) ? "None" : passenger.SelectedSeat)</strong>
+                                </div>
+                                <!-- Add-ons -->
+                                @if (Model.AvailableAddOns.Any())
+                                {
+                                    <div class="passenger-addons">
+                                        <label class="addons-label">Add-ons:</label>
+                                        <div class="addons-list">
+                                            @foreach (var addOn in Model.AvailableAddOns)
+                                            {
+                                                bool isChecked = passenger.SelectedAddOnIds.Contains(addOn.Id);
+                                                <label class="addon-item">
+                                                    <input type="checkbox"
+                                                           name="Passengers[@passengerIndex].SelectedAddOnIds"
+                                                           value="@addOn.Id"
+                                                           class="addon-checkbox"
+                                                           data-price="@addOn.BasePrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
+                                                           @(isChecked ? "checked" : "") />
+                                                    @addOn.Name &ndash; @addOn.BasePrice.ToString("0.00") &euro;
+                                                </label>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <button type="button" id="addPassengerBtn" class="btn-add-passenger"
+                            onclick="addPassenger()"
+                            @(Model.Form.Passengers.Count >= Model.MaximumPassengers ? "disabled" : "")>
+                        + Add Passenger
+                    </button>
+                </div>
+
+                <!-- SEAT MAP SECTION -->
+                <div class="booking-card">
+                    <h2 class="booking-section-title">Interactive Seat Map</h2>
+                    <div class="seat-map-controls">
+                        <label for="seatPassengerSelect">Assign seat to:</label>
+                        <select id="seatPassengerSelect" class="form-select seat-passenger-select">
+                            @for (int passengerIndex = 0; passengerIndex < Model.Form.Passengers.Count; passengerIndex++)
+                            {
+                                <option value="@passengerIndex">Passenger @(passengerIndex + 1)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="seat-map-wrapper">
+                        <div class="seat-map-grid"
+                             style="grid-template-columns: repeat(@aisleColumnIndex, 58px) 24px repeat(@(seatColumnsCount - aisleColumnIndex), 58px); grid-template-rows: repeat(@Model.SeatMapRowCount, 54px);"
+                             id="seatMapGrid">
+                            @{
+                                // Organise seats by row for the grid rendering
+                                var seatsByRow = Model.SeatMapLayout
+                                    .GroupBy(s => s.Row)
+                                    .OrderBy(g => g.Key);
+                            }
+                            @foreach (var seatDescriptor in Model.SeatMapLayout)
+                            {
+                                bool occupied = occupiedSet.Contains(seatDescriptor.Label);
+                                // Shift column index to account for aisle gap in CSS grid
+                                int gridCol = seatDescriptor.Column < aisleColumnIndex
+                                    ? seatDescriptor.Column + 1
+                                    : seatDescriptor.Column + 2;
+                                int gridRow = seatDescriptor.Row + 1;
+
+                                string seatClass = occupied ? "seat-btn seat-occupied" : "seat-btn seat-available";
+                                string disabledAttr = occupied ? "disabled" : "";
+                                <button type="button"
+                                        class="@seatClass"
+                                        data-seat="@seatDescriptor.Label"
+                                        style="grid-column:@gridCol; grid-row:@gridRow;"
+                                        @Html.Raw(disabledAttr)
+                                        onclick="selectSeat(this)">
+                                    @seatDescriptor.Label
+                                </button>
+                            }
+                            <!-- Aisle spacer column -->
+                        </div>
+                    </div>
+                    <div class="seat-map-legend">
+                        <span class="legend-item"><span class="legend-box legend-available"></span> Available</span>
+                        <span class="legend-item"><span class="legend-box legend-selected"></span> Selected</span>
+                        <span class="legend-item"><span class="legend-box legend-occupied"></span> Occupied</span>
+                    </div>
+                </div>
+
+            </div><!-- /booking-left -->
+
+            <!-- RIGHT COLUMN: Order Summary -->
+            <div class="booking-right">
+                <div class="booking-card order-summary-card">
+                    <h2 class="booking-section-title">Order Summary</h2>
+
+                    <div class="summary-row">
+                        <span>Base price / person:</span>
+                        <strong id="summaryBasePerPerson">@Model.BasePrice.ToString("0.00") &euro;</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Passengers:</span>
+                        <strong id="summaryPassengerCount">@Model.Form.Passengers.Count</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Base total:</span>
+                        <strong id="summaryBaseTotal">@((Model.BasePrice * Model.Form.Passengers.Count).ToString("0.00")) &euro;</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Add-ons:</span>
+                        <strong id="summaryAddOnsTotal">0.00 &euro;</strong>
+                    </div>
+                    <div class="summary-row" id="membershipSavingsRow" style="display:none;">
+                        <span>Membership saves:</span>
+                        <strong id="summaryMembershipSavings" style="color:#2bb8c0;">-0.00 &euro;</strong>
+                    </div>
+                    <hr class="summary-divider" />
+                    <div class="summary-row summary-total-row">
+                        <span>TOTAL:</span>
+                        <strong id="summaryTotal">@Model.BasePrice.ToString("0.00") &euro;</strong>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.ValidationMessage))
+                    {
+                        <div class="booking-validation-error">@Model.ValidationMessage</div>
+                    }
+
+                    <button type="submit" class="btn-confirm-booking">Confirm Booking</button>
+                </div>
+            </div>
+
+        </div><!-- /booking-layout -->
+    </form>
+</div>
+
+@section Scripts {
+<script>
+    // --- Configuration passed from server ---
+    const BASE_PRICE = @Model.BasePrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+    const MAX_PASSENGERS = @Model.MaximumPassengers;
+    const AVAILABLE_ADDONS = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+        Model.AvailableAddOns.Select(a => new { id = a.Id, name = a.Name, basePrice = a.BasePrice })
+    ));
+    const FLIGHT_DISCOUNT_PCT = @Model.FlightDiscountPercentage.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+    const ADDON_DISCOUNTS = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AddonDiscountPercentages));
+
+    // Track assigned seats: { passengerIndex -> seatLabel }
+    let assignedSeats = {};
+
+    @for (int pi = 0; pi < Model.Form.Passengers.Count; pi++)
+    {
+        if (!string.IsNullOrEmpty(Model.Form.Passengers[pi].SelectedSeat))
+        {
+            @:assignedSeats[@pi] = "@Model.Form.Passengers[pi].SelectedSeat";
+        }
+    }
+
+    // --- Seat map logic ---
+    function selectSeat(btn) {
+        const seat = btn.dataset.seat;
+        const passengerIndex = parseInt(document.getElementById('seatPassengerSelect').value);
+
+        // If this seat is already assigned to this passenger, deselect it
+        if (assignedSeats[passengerIndex] === seat) {
+            assignedSeats[passengerIndex] = '';
+        } else {
+            // Unassign from any other passenger
+            for (let idx in assignedSeats) {
+                if (assignedSeats[idx] === seat) {
+                    assignedSeats[idx] = '';
+                }
+            }
+            assignedSeats[passengerIndex] = seat;
+        }
+
+        refreshSeatVisuals();
+        refreshPassengerSeatDisplays();
+    }
+
+    function refreshSeatVisuals() {
+        const selectedSeats = new Set(Object.values(assignedSeats).filter(s => s));
+        document.querySelectorAll('.seat-btn.seat-available, .seat-btn.seat-selected').forEach(btn => {
+            const seat = btn.dataset.seat;
+            if (selectedSeats.has(seat)) {
+                btn.classList.remove('seat-available');
+                btn.classList.add('seat-selected');
+            } else {
+                btn.classList.remove('seat-selected');
+                btn.classList.add('seat-available');
+            }
+        });
+    }
+
+    function refreshPassengerSeatDisplays() {
+        document.querySelectorAll('.passenger-card').forEach(card => {
+            const idx = parseInt(card.dataset.index);
+            const seat = assignedSeats[idx] || '';
+            const hidden = card.querySelector('.passenger-seat-input');
+            const display = card.querySelector('.seat-label-display');
+            if (hidden) hidden.value = seat;
+            if (display) display.textContent = seat || 'None';
+        });
+    }
+
+    // --- Dynamic passenger add/remove ---
+    function getCurrentPassengerCount() {
+        return document.querySelectorAll('.passenger-card').length;
+    }
+
+    function addPassenger() {
+        const count = getCurrentPassengerCount();
+        if (count >= MAX_PASSENGERS) return;
+
+        const idx = count;
+        const addOnsHtml = buildAddOnsHtml(idx);
+        const cardHtml = `
+            <div class="passenger-card" data-index="${idx}">
+                <div class="passenger-card-header">
+                    <span class="passenger-label">Passenger ${idx + 1}</span>
+                    <button type="button" class="btn-remove-passenger" onclick="removePassenger(this)">Remove</button>
+                </div>
+                <div class="passenger-fields">
+                    <div class="passenger-field-group">
+                        <label>First Name *</label>
+                        <input type="text" name="Passengers[${idx}].FirstName" class="form-control" required />
+                    </div>
+                    <div class="passenger-field-group">
+                        <label>Last Name *</label>
+                        <input type="text" name="Passengers[${idx}].LastName" class="form-control" required />
+                    </div>
+                    <div class="passenger-field-group">
+                        <label>Email *</label>
+                        <input type="email" name="Passengers[${idx}].Email" class="form-control" required />
+                    </div>
+                    <div class="passenger-field-group">
+                        <label>Phone</label>
+                        <input type="tel" name="Passengers[${idx}].Phone" class="form-control" />
+                    </div>
+                </div>
+                <input type="hidden" name="Passengers[${idx}].SelectedSeat" class="passenger-seat-input" value="" />
+                <div class="passenger-seat-display">
+                    Selected seat: <strong class="seat-label-display">None</strong>
+                </div>
+                ${addOnsHtml}
+            </div>`;
+
+        document.getElementById('passengerList').insertAdjacentHTML('beforeend', cardHtml);
+        rebindAddonCheckboxes();
+        refreshPassengerSeatDropdown();
+        refreshSummary();
+
+        if (getCurrentPassengerCount() >= MAX_PASSENGERS) {
+            document.getElementById('addPassengerBtn').disabled = true;
+        }
+    }
+
+    function removePassenger(btn) {
+        const card = btn.closest('.passenger-card');
+        const removedIdx = parseInt(card.dataset.index);
+
+        // Clear seat assignment for removed passenger
+        delete assignedSeats[removedIdx];
+
+        card.remove();
+
+        // Re-index remaining cards
+        const cards = document.querySelectorAll('.passenger-card');
+        const newAssigned = {};
+        cards.forEach((c, i) => {
+            const oldIdx = parseInt(c.dataset.index);
+            c.dataset.index = i;
+            c.querySelector('.passenger-label').textContent = `Passenger ${i + 1}`;
+
+            // Remap seat assignments
+            if (assignedSeats[oldIdx] !== undefined) {
+                newAssigned[i] = assignedSeats[oldIdx];
+            }
+
+            // Re-index all input names
+            c.querySelectorAll('input, select').forEach(input => {
+                if (input.name) {
+                    input.name = input.name.replace(/Passengers\[\d+\]/, `Passengers[${i}]`);
+                }
+            });
+        });
+        assignedSeats = newAssigned;
+
+        document.getElementById('addPassengerBtn').disabled = false;
+        refreshPassengerSeatDropdown();
+        refreshPassengerSeatDisplays();
+        refreshSeatVisuals();
+        refreshSummary();
+    }
+
+    function buildAddOnsHtml(idx) {
+        if (!AVAILABLE_ADDONS || AVAILABLE_ADDONS.length === 0) return '';
+        let items = AVAILABLE_ADDONS.map(a =>
+            `<label class="addon-item">
+                <input type="checkbox" name="Passengers[${idx}].SelectedAddOnIds" value="${a.id}"
+                       class="addon-checkbox" data-price="${a.basePrice}" onchange="refreshSummary()" />
+                ${a.name} &ndash; ${parseFloat(a.basePrice).toFixed(2)} &euro;
+            </label>`
+        ).join('');
+        return `<div class="passenger-addons"><label class="addons-label">Add-ons:</label><div class="addons-list">${items}</div></div>`;
+    }
+
+    function rebindAddonCheckboxes() {
+        document.querySelectorAll('.addon-checkbox').forEach(cb => {
+            cb.onchange = refreshSummary;
+        });
+    }
+
+    // --- Passenger dropdown for seat assignment ---
+    function refreshPassengerSeatDropdown() {
+        const select = document.getElementById('seatPassengerSelect');
+        const prevVal = select.value;
+        select.innerHTML = '';
+        document.querySelectorAll('.passenger-card').forEach((card, i) => {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = `Passenger ${i + 1}`;
+            select.appendChild(opt);
+        });
+        // Restore selection if still valid
+        if (prevVal < select.options.length) select.value = prevVal;
+    }
+
+    // --- Price summary ---
+    function refreshSummary() {
+        const passengerCount = getCurrentPassengerCount();
+        const baseTotal = BASE_PRICE * passengerCount;
+
+        let addOnsTotal = 0;
+        let discountedAddOnsTotal = 0;
+        document.querySelectorAll('.addon-checkbox:checked').forEach(cb => {
+            const addonId = parseInt(cb.value);
+            const addonPrice = parseFloat(cb.dataset.price) || 0;
+            const addonDiscount = ADDON_DISCOUNTS[addonId] || 0;
+            addOnsTotal += addonPrice;
+            discountedAddOnsTotal += addonPrice * (1 - addonDiscount / 100);
+        });
+
+        const discountedBaseTotal = baseTotal * (1 - FLIGHT_DISCOUNT_PCT / 100);
+        const membershipSavings = (baseTotal - discountedBaseTotal) + (addOnsTotal - discountedAddOnsTotal);
+        const finalTotal = discountedBaseTotal + discountedAddOnsTotal;
+
+        document.getElementById('summaryPassengerCount').textContent = passengerCount;
+        document.getElementById('summaryBaseTotal').textContent = baseTotal.toFixed(2) + ' â‚¬';
+        document.getElementById('summaryAddOnsTotal').textContent = addOnsTotal.toFixed(2) + ' â‚¬';
+
+        const savingsRow = document.getElementById('membershipSavingsRow');
+        if (membershipSavings > 0.001) {
+            document.getElementById('summaryMembershipSavings').textContent = '-' + membershipSavings.toFixed(2) + ' â‚¬';
+            savingsRow.style.display = '';
+        } else {
+            savingsRow.style.display = 'none';
+        }
+
+        document.getElementById('summaryTotal').textContent = finalTotal.toFixed(2) + ' â‚¬';
+    }
+
+    // --- Init ---
+    document.addEventListener('DOMContentLoaded', function () {
+        rebindAddonCheckboxes();
+        refreshSeatVisuals();
+        refreshSummary();
+    });
+</script>
+}
+

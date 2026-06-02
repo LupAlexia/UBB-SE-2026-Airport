@@ -1,0 +1,27 @@
+﻿@model List<AirportApp.ClassLibrary.Entity.Domain.Shop>
+@if (!Model.Any())
+{
+    <p>No shops found</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var shop in Model)
+        {
+            <div class="col-md-4 mb-3">
+                <a
+                    asp-controller="DutyFreeShopItems"
+                    asp-action="Index"
+                    asp-route-shopId="@shop.Id"
+                    class="text-decoration-none text-dark">
+                        <div class="card h-100">
+                            <div class="card-body">
+                            <h5 class="card-title">@shop.Name</h5>
+                            <p class="card-text text-muted">@shop.Type</p>
+                            </div>
+                        </div>
+                </a>
+            </div>
+        }
+    </div>
+}

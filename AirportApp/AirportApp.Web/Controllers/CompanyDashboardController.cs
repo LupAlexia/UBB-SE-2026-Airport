@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Service.Interface;
 using AirportApp.Web.Models.Staff;
@@ -262,3 +262,4 @@ public class CompanyDashboardController : Controller
         return form;
     }
 }
+

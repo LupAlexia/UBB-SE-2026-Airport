@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AirportApp.Web.Models.Auth;
 
@@ -12,3 +12,4 @@ public class CustomerLoginViewModel
     [DataType(DataType.Password)]
     public string Password { get; set; } = string.Empty;
 }
+

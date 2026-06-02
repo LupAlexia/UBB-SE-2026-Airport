@@ -1,0 +1,145 @@
+﻿@model AirportApp.Web.Models.DutyFree.ShopItemsViewModel
+@{
+    ViewData["Title"] = Model.Shop.Name;
+}
+
+<div class="d-flex align-items-start gap-3 mb-3">
+    <div class="me-auto">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item">
+                    <a asp-controller="DutyFree" asp-action="Index">Shops</a>
+                </li>
+                <li class="breadcrumb-item active">@Model.Shop.Name</li>
+            </ol>
+        </nav>
+        <h1 class="mb-1" style="color: #00bcd4;">@Model.Shop.Name</h1>
+        <p class="text-muted mb-0">@Model.Shop.Type</p>
+    </div>
+
+    @if (!Model.IsManager)
+    {
+        <a asp-controller="DutyFreeCart" asp-action="Index" class="btn btn-primary">
+            Cart
+        </a>
+    }
+</div>
+
+<form asp-controller="DutyFreeShopItems" asp-action="Index" method="get" class="d-flex align-items-center gap-3 mb-4">
+    <input type="hidden" name="shopId" value="@Model.Shop.Id" />
+    <input type="text" name="search" value="@Model.SearchQuery" class="form-control"
+           placeholder="Search products..." />
+
+    <div class="d-flex align-items-center gap-2">
+        <label for="sortSelect" class="text-nowrap mb-0">Sort by:</label>
+        <select id="sortSelect" name="sort" class="form-select" style="width: 180px;">
+            <option value="default">Default</option>
+            <option value="name">Name</option>
+            <option value="price">Price</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-outline-secondary">Apply</button>
+</form>
+
+@if (Model.IsManager)
+{
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Add product</h5>
+            <form asp-controller="DutyFreeShopItems" asp-action="AddItem" method="post" class="row g-3">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="ShopId" value="@Model.Shop.Id" />
+                <div class="col-md-5">
+                    <label class="form-label">Name</label>
+                    <input type="text" name="Name" class="form-control" required />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Price</label>
+                    <input type="number" name="Price" class="form-control" step="0.01" min="0" required />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" name="Quantity" class="form-control" min="0" required />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+@if (!Model.Items.Any())
+{
+    <div class="alert alert-info">
+        No products found in this shop.
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+        @foreach (var item in Model.Items)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <a asp-controller="DutyFreeItemDetails" asp-action="Index" asp-route-id="@item.Id"
+                       class="text-decoration-none text-dark">
+                        @if (!string.IsNullOrWhiteSpace(item.Photo))
+                        {
+                            <img src="@item.Photo" class="card-img-top" alt="@item.Name"
+                                 style="height: 180px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
+                                 style="height: 180px;">
+                                <span>No image available</span>
+                            </div>
+                        }
+
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start gap-3">
+                                <h5 class="card-title mb-1">@item.Name</h5>
+                                <strong class="text-success text-nowrap">@item.Price.ToString("C")</strong>
+                            </div>
+                            <p class="card-text text-muted mb-2">@item.Description</p>
+                            <p class="card-text small text-muted mb-0">In stock: @item.Quantity</p>
+                        </div>
+                    </a>
+
+                    @if (Model.IsManager)
+                    {
+                        <div class="card-footer bg-white d-flex gap-2">
+                            <a asp-controller="DutyFreeShopItems" asp-action="EditItemForm"
+                               asp-route-id="@item.Id" class="btn btn-outline-warning btn-sm">
+                                Edit
+                            </a>
+                            <form asp-controller="DutyFreeShopItems" asp-action="DeleteItem" method="post"
+                                  onsubmit="return confirm('Delete this product?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <input type="hidden" name="shopId" value="@Model.Shop.Id" />
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-controller="DutyFree" asp-action="Index" class="btn btn-outline-secondary">
+        &larr; Back to Shops
+    </a>
+</div>
+
+@section Scripts
+{
+    <script>
+        document.getElementById('sortSelect').value = '@Model.SortOrder';
+    </script>
+}
+

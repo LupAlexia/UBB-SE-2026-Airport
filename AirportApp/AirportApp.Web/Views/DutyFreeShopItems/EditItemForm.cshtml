@@ -1,0 +1,52 @@
+﻿@model AirportApp.Web.Models.DutyFree.ShopItemFormModel
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-controller="DutyFree" asp-action="Index">Shops</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-controller="DutyFreeShopItems" asp-action="Index" asp-route-shopId="@Model.ShopId">Products</a>
+        </li>
+        <li class="breadcrumb-item active">Edit product</li>
+    </ol>
+</nav>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h1 class="h3 mb-4" style="color: #00bcd4;">Edit Product</h1>
+
+        <form asp-controller="DutyFreeShopItems" asp-action="EditItem" method="post" class="row g-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <input type="hidden" name="ShopId" value="@Model.ShopId" />
+
+            <div class="col-md-6">
+                <label class="form-label">Name</label>
+                <input type="text" name="Name" value="@Model.Name" class="form-control" required />
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Price</label>
+                <input type="number" name="Price" value="@Model.Price" class="form-control" step="0.01" min="0" required />
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Quantity</label>
+                <input type="number" name="Quantity" value="@Model.Quantity" class="form-control" min="0" required />
+            </div>
+
+            <div class="col-12 d-flex justify-content-end gap-2">
+                <a asp-controller="DutyFreeShopItems" asp-action="Index" asp-route-shopId="@Model.ShopId"
+                   class="btn btn-outline-secondary">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+

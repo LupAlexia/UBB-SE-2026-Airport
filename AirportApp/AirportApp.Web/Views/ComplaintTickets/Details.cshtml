@@ -1,0 +1,232 @@
+﻿@using AirportApp.ClassLibrary.Entity.Domain
+@model AirportApp.ClassLibrary.Entity.Domain.ComplaintTicket
+
+@{
+    ViewData["Title"] = $"Ticket #{Model.Id}";
+
+    string statusClass = Model.CurrentStatus switch
+    {
+        ComplaintTicketStatusEnum.OPEN => "ticket-status-open",
+        ComplaintTicketStatusEnum.IN_PROGRESS => "ticket-status-progress",
+        ComplaintTicketStatusEnum.RESOLVED => "ticket-status-resolved",
+        _ => "ticket-status-open"
+    };
+
+    string urgencyClass = Model.UrgencyLevel switch
+    {
+        ComplaintTicketUrgencyLevelEnum.HIGH => "ticket-urgency-high",
+        ComplaintTicketUrgencyLevelEnum.MEDIUM => "ticket-urgency-medium",
+        _ => "ticket-urgency-low"
+    };
+}
+
+<section class="ticket-details-page">
+    <div class="ticket-header">
+        <div class="ticket-header-icon" aria-hidden="true"><span></span></div>
+        <div>
+            <h1>Ticket #@Model.Id</h1>
+            <p>Review the request details and current support status.</p>
+        </div>
+    </div>
+
+    <article class="ticket-details-card">
+        <div class="ticket-details-top">
+            <span class="ticket-id">#@Model.Id</span>
+            <div class="ticket-badges">
+                <span class="ticket-badge @statusClass">@FormatValue(Model.CurrentStatus.ToString())</span>
+                <span class="ticket-badge @urgencyClass">@FormatValue(Model.UrgencyLevel.ToString())</span>
+            </div>
+        </div>
+
+        <h2>@Model.Subject</h2>
+        <p class="ticket-description">@Model.Description</p>
+
+        <div class="ticket-meta-grid">
+            <div>
+                <span>Category</span>
+                <strong>@(Model.Category?.CategoryName ?? "Unknown")</strong>
+            </div>
+            <div>
+                <span>Subcategory</span>
+                <strong>@(Model.Subcategory?.SubcategoryName ?? "Unknown")</strong>
+            </div>
+            <div>
+                <span>Created</span>
+                <strong>@Model.CreationTimestamp.ToLocalTime().ToString("g")</strong>
+            </div>
+            <div>
+                <span>Creator email</span>
+                <strong>@(Model.Creator?.EmailAddress ?? "Unknown")</strong>
+            </div>
+        </div>
+    </article>
+
+    <div class="ticket-actions">
+        @if (User.IsInRole("Employee"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn ticket-primary-action">Edit</a>
+        }
+        <a asp-action="Index" class="btn ticket-secondary-action">Back to List</a>
+    </div>
+</section>
+
+@functions {
+    private static string FormatValue(string value)
+    {
+        return System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(value.Replace("_", " ").ToLowerInvariant());
+    }
+}
+
+<style>
+    .ticket-details-page {
+        display: grid;
+        gap: 1.5rem;
+        color: #111827;
+    }
+
+    .ticket-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .ticket-header h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 600;
+    }
+
+    .ticket-header p,
+    .ticket-description {
+        margin: .25rem 0 0;
+        color: #6b7280;
+    }
+
+    .ticket-header-icon {
+        width: 3.75rem;
+        height: 3.75rem;
+        border-radius: 8px;
+        background: #2bb8c0;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+    }
+
+    .ticket-header-icon span {
+        width: 2rem;
+        height: 1.35rem;
+        border: 3px solid #fff;
+        border-radius: 4px;
+        border-top-style: dashed;
+    }
+
+    .ticket-details-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 2rem;
+    }
+
+    .ticket-details-top,
+    .ticket-badges,
+    .ticket-actions {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    .ticket-details-top {
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .ticket-id {
+        color: #6b7280;
+        font-size: .85rem;
+        font-weight: 600;
+    }
+
+    .ticket-details-card h2 {
+        margin: 0 0 .5rem;
+        font-size: 1.35rem;
+        font-weight: 700;
+    }
+
+    .ticket-badge {
+        border-radius: 4px;
+        padding: .2rem .5rem;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .ticket-status-open { background: #fff4e5; color: #9a5b00; }
+    .ticket-status-progress { background: #e5f0ff; color: #245fb3; }
+    .ticket-status-resolved { background: #e6ffed; color: #157347; }
+    .ticket-urgency-high { background: #ffe2e2; color: #aa161e; }
+    .ticket-urgency-medium { background: #fff4e5; color: #9a5b00; }
+    .ticket-urgency-low { background: #eef2ff; color: #4f46e5; }
+
+    .ticket-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .ticket-meta-grid div {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 1rem;
+        background: #f9fafb;
+    }
+
+    .ticket-meta-grid span {
+        display: block;
+        color: #6b7280;
+        font-size: .8rem;
+        margin-bottom: .25rem;
+    }
+
+    .ticket-meta-grid strong {
+        display: block;
+        overflow-wrap: anywhere;
+    }
+
+    .ticket-actions {
+        flex-wrap: wrap;
+    }
+
+    .ticket-primary-action {
+        min-width: 7rem;
+        background: #2bb8c0;
+        border-color: #2bb8c0;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .ticket-primary-action:hover,
+    .ticket-primary-action:focus {
+        background: #239ea5;
+        border-color: #239ea5;
+        color: #fff;
+    }
+
+    .ticket-secondary-action {
+        border: 1px solid #d1d5db;
+        background: #fff;
+        color: #374151;
+        font-weight: 600;
+    }
+
+    @@media (max-width: 768px) {
+        .ticket-details-top {
+            align-items: start;
+            flex-direction: column;
+        }
+
+        .ticket-meta-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+

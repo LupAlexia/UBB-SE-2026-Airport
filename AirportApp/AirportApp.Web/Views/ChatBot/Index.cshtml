@@ -1,0 +1,66 @@
+﻿@model AirportApp.Web.Models.ChatBot.ChatBotModel
+@{
+    ViewData["Title"] = "Chat Support";
+}
+
+<div class="d-flex flex-column mx-auto" style="max-width:800px; height:80vh;">
+
+    <!-- HEADER -->
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body p-3 d-flex justify-content-between align-items-center">
+            <div>
+                <span class="badge text-bg-primary mb-1">Chat Support</span>
+                <p class="text-body-secondary mb-0" style="font-size:12px;">User Id: @Model.UserId</p>
+            </div>
+            <form asp-action="EndChat" asp-controller="ChatBot" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="chatId" value="@Model.ChatId" />
+                <button type="submit" class="btn btn-danger btn-sm">End Chat</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MESAJE -->
+    <div class="card border-0 shadow-sm flex-grow-1 overflow-auto mb-3">
+        <div class="card-body p-3 d-flex flex-column gap-2">
+            @foreach (var message in Model.Messages)
+            {
+                if (message.IsOutgoing)
+                {
+                    <div class="align-self-end bg-success text-white p-2 px-3 rounded-3" style="max-width:60%; border-bottom-right-radius:2px !important;">
+                        <div>@message.MessageText</div>
+                        <div class="text-white-50 mt-1" style="font-size:10px;">@message.Timestamp.ToString("MMM d, HH:mm")</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="align-self-start bg-light text-dark p-2 px-3 rounded-3" style="max-width:60%; border-bottom-left-radius:2px !important;">
+                        <div>@message.MessageText</div>
+                        <div class="text-body-secondary mt-1" style="font-size:10px;">@message.Timestamp.ToString("MMM d, HH:mm")</div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- OPTIUNI -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-3">
+            <p class="text-body-secondary mb-2" style="font-size:13px;">Please select an option:</p>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (var option in Model.CurrentOptions)
+                {
+                    <form asp-action="SendOption" asp-controller="ChatBot" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="chatId" value="@Model.ChatId" />
+                        <input type="hidden" name="optionLabel" value="@option.Label" />
+                        <input type="hidden" name="nextNodeId" value="@option.NextNodeId" />
+                        <button type="submit" class="btn btn-primary btn-sm">@option.Label</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+

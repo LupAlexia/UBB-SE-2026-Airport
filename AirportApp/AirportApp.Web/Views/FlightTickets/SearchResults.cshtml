@@ -1,0 +1,135 @@
+﻿@model IEnumerable<AirportApp.ClassLibrary.Entity.Domain.Flight>
+
+@{
+    ViewData["Title"] = "Search Results";
+    var location = ViewBag.Location as string;
+    var isDeparture = ViewBag.IsDeparture as bool?;
+    var date = ViewBag.Date as string;
+    var passengers = ViewBag.Passengers as string;
+    var basePrices = ViewBag.BasePrices as IDictionary<int, float> ?? new Dictionary<int, float>();
+    var resultCount = Model.Count();
+}
+
+<section class="flight-search-page">
+    <header class="flight-search-header">
+        <h1>Find your next flight</h1>
+    </header>
+
+    <form asp-action="Search" method="post" class="flight-search-panel">
+        <div class="flight-search-field flight-search-location">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location" name="location" value="@location" placeholder="e.g. Barcelona..." required>
+        </div>
+
+        <fieldset class="flight-type-field">
+            <legend>Flight Type</legend>
+            <div class="flight-type-options">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="flightTypeDeparture" name="isDeparture" value="true" checked="@(isDeparture.GetValueOrDefault(true))">
+                    <label class="form-check-label" for="flightTypeDeparture">Departure</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="flightTypeArrival" name="isDeparture" value="false" checked="@(!isDeparture.GetValueOrDefault(true))">
+                    <label class="form-check-label" for="flightTypeArrival">Arrival</label>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="flight-search-field flight-date-field">
+            <label for="date" class="form-label">Date</label>
+            <div class="flight-date-input">
+                <input type="date" class="form-control" id="date" name="date" value="@date">
+                <button class="date-clear-button" type="button" aria-label="Clear date" title="Clear date" onclick="document.getElementById('date').value = '';">&times;</button>
+            </div>
+        </div>
+
+        <div class="flight-search-field flight-passengers-field">
+            <label for="passengers" class="form-label">Passengers</label>
+            <input type="number" class="form-control" id="passengers" name="passengers" min="1" value="@passengers" placeholder="Nr">
+        </div>
+
+        <div class="flight-search-actions">
+            <button type="submit" class="flight-primary-button text-uppercase fw-bold text-white shadow-sm" style="background-color: #17a2b8; border-color: #17a2b8;">Search</button>
+        </div>
+    </form>
+
+    <section class="flight-results-shell" aria-labelledby="available-flights-title">
+        <div class="flight-results-heading">
+            <h2 id="available-flights-title">Available Flights</h2>
+            <a asp-action="Search" class="flight-secondary-link">New Search</a>
+        </div>
+
+        <p class="flight-result-message">
+            @if (resultCount > 0)
+            {
+                <span>@resultCount flight@(resultCount == 1 ? string.Empty : "s") found for @location.</span>
+            }
+            else
+            {
+                <span>No flights found for the selected criteria.</span>
+            }
+        </p>
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive flight-results-table-wrap">
+                <table class="table flight-results-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Flight Nr</th>
+                            <th scope="col">Route</th>
+                            <th scope="col">Date &amp; Time</th>
+                            <th scope="col">Base Price / person</th>
+                            <th scope="col" class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var flight in Model)
+                        {
+                            var routeCity = flight.Route?.Airport?.City ?? flight.Route?.RouteType ?? "Unknown";
+                            var displayPrice = basePrices.TryGetValue(flight.Id, out var price) ? $"{price:0.00} EUR / person" : "Unavailable";
+
+                            <tr>
+                                <td class="flight-number-cell">@flight.FlightNumber</td>
+                                <td>@routeCity</td>
+                                <td>@flight.Date.ToString("g")</td>
+                                <td>@displayPrice</td>
+                                <td class="text-end">
+                                    @if (User.IsInRole("Customer"))
+                                    {
+                                        <a asp-controller="Booking" asp-action="Book"
+                                           asp-route-flightId="@flight.Id"
+                                           asp-route-passengers="@(ViewBag.Passengers ?? "1")"
+                                           class="flight-book-button">Book</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="flight-muted-action">View only</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="flight-results-empty-state">
+                No flights found matching your search criteria. Try a different location, date, or flight type.
+            </div>
+        }
+    </section>
+</section>
+
+@section Scripts {
+    <script>
+        const passengerInput = document.getElementById('passengers');
+        if (passengerInput) {
+            passengerInput.addEventListener('input', () => {
+                passengerInput.value = passengerInput.value.replace(/[^0-9]/g, '');
+            });
+        }
+    </script>
+}
+

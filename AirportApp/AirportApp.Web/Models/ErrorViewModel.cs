@@ -1,4 +1,4 @@
-namespace AirportApp.Web.Models
+﻿namespace AirportApp.Web.Models
 {
     public class ErrorViewModel
     {
@@ -7,3 +7,4 @@ namespace AirportApp.Web.Models
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
     }
 }
+

@@ -1,0 +1,29 @@
+﻿@model AirportApp.ClassLibrary.Entity.Domain.Airport
+@{
+	Layout = "_AdministrationLayout";
+	ViewData["Title"] = "Confirm Deletion";
+}
+
+<div class="d-flex justify-content-center align-items-center mt-5">
+	<div class="card border-danger bg-slate shadow-lg" style="width: 500px;">
+		<div class="card-header border-danger bg-danger bg-opacity-10 py-3">
+			<h4 class="text-danger fw-bold mb-0"><i class="bi bi-exclamation-triangle"></i> Confirm Deletion</h4>
+		</div>
+		<div class="card-body p-4">
+			<p class="text-white fs-5 mb-4">@ViewData["WarningMessage"]</p>
+
+			<div class="alert bg-dark border-secondary text-muted small">
+				<strong>Item:</strong> @Model.Name <br />
+				<strong>Identifier:</strong> @Model.Id
+			</div>
+
+			<form asp-action="DeleteAirport" method="post" class="mt-4">
+				<input type="hidden" asp-for="Id" />
+				<div class="d-grid gap-2">
+					<button type="submit" class="btn btn-danger fw-bold">Yes, Delete Permanently</button>
+					<a asp-action="DisplayConfiguration" class="btn btn-outline-secondary">No, Keep it</a>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
