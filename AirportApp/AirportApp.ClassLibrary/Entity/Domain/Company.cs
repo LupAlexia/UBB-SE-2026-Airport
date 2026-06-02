@@ -15,6 +15,8 @@ namespace AirportApp.ClassLibrary.Entity.Domain
         [Column("Name")]
         public string Name { get; set; } = string.Empty;
 
+        public Manager Manager { get; set; } = null!;
+
         public Company()
         {
         }

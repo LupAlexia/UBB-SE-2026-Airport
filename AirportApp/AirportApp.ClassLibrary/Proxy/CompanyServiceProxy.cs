@@ -40,6 +40,12 @@ public class CompanyServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpC
         await DeleteAsync($"{BaseUrl}/{companyId}");
     }
 
+    public async Task<IEnumerable<Company>> GetCompaniesByManagerIdAsync(int managerId)
+    {
+        var dtos = await GetListAsync<CompanyDTO>($"{BaseUrl}/manager/{managerId}");
+        return dtos.Select(MapToEntity).ToList();
+    }
+
     public async Task<string> GenerateFlightCodeUsingCompanyIdAsync(int companyId)
     {
         return await GetRequiredAsync<string>($"{BaseUrl}/{companyId}/flight-code");

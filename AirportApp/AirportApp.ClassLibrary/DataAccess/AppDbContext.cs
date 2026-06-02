@@ -163,6 +163,13 @@ public class AppDbContext : DbContext
             routeBuilder.Property(route => route.EndDate);
         });
 
+        modelBuilder.Entity<Company>()
+            .HasOne(company => company.Manager)
+            .WithMany()
+            .HasForeignKey("ManagerId")
+            .IsRequired(true)
+            .OnDelete(DeleteBehavior.Restrict);
+
         SeedProjectData(modelBuilder);
     }
 
@@ -232,11 +239,11 @@ public class AppDbContext : DbContext
         );
 
         modelBuilder.Entity<Company>().HasData(
-            new Company(1, "British Airways"),
-            new Company(2, "Delta Airlines"),
-            new Company(3, "Wizz Air"),
-            new Company(4, "Lufthansa"),
-            new Company(5, "Emirates")
+            new { Id = 1, Name = "British Airways", ManagerId = 1 },
+            new { Id = 2, Name = "Delta Airlines", ManagerId = 2 },
+            new { Id = 3, Name = "Wizz Air", ManagerId = 3 },
+            new { Id = 4, Name = "Lufthansa", ManagerId = 2 },
+            new { Id = 5, Name = "Emirates", ManagerId = 1 }
         );
 
         modelBuilder.Entity<Gate>().HasData(

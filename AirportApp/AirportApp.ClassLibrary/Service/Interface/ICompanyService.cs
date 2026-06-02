@@ -6,6 +6,7 @@ public interface ICompanyService
 {
     Task<IEnumerable<Company>> GetAllCompaniesAsync();
     Task<Company?> GetCompanyByIdAsync(int companyId);
+    Task<IEnumerable<Company>> GetCompaniesByManagerIdAsync(int managerId);
     Task AddCompanyAsync(Company company);
     Task UpdateCompanyAsync(Company company);
     Task DeleteCompanyAsync(int companyId);
