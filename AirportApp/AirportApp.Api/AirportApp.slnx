@@ -1,0 +1,18 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="AirportAPI/AirportAPI.csproj" Id="9c547056-b68b-49b5-a83f-6dcdcb276b1d" />
+  <Project Path="AirportLib.Domain/AirportLib.Domain.csproj" Id="ace2da22-3767-4b17-bb0d-cfd92e6b32e2" />
+  <Project Path="AirportLib.Services/AirportLib.Services.csproj" Id="25923aaa-5656-4c37-b24a-f55580732d97" />
+  <Project Path="AirportWebApp/AirportWebApp.csproj" Id="eb382570-5658-48a0-9719-d4b35fbe7799" />
+  <Project Path="AirportApp.Test/AirportApp.Test.csproj" Id="ece58d75-0fcc-470a-bda1-02bff94ac559" />
+  <Project Path="AirportApp/AirportApp.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Deploy />
+  </Project>
+</Solution>

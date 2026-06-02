@@ -27,7 +27,7 @@ public class FlightServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpCl
 
     public async Task<IEnumerable<Flight>> GetFlightsByRouteIdAsync(int routeId)
     {
-        var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}/route/{routeId}");
+        var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}/by-route/{routeId}");
         return dtos.Select(MapToEntity).ToList();
     }
 

@@ -10,7 +10,7 @@ namespace AirportApp.ClassLibrary.Proxy;
 
 public class ComplaintTicketServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClient), IComplaintTicketService
 {
-    private const string BaseUrl = "api/complaint";
+    private const string BaseUrl = "api/ticket";
 
     public async Task CreateTicketAsync(int ticketId, User ticketCreator, ComplaintTicketStatusEnum initialStatus,
         ComplaintTicketCategory category, ComplaintTicketSubcategory subcategory,

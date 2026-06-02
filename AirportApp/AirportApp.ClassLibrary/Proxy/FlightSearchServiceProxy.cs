@@ -11,13 +11,13 @@ namespace AirportApp.ClassLibrary.Proxy;
 
 public class FlightSearchServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClient), IFlightSearchService
 {
-    private const string BaseUrl = "api/flightsearch";
+    private const string BaseUrl = "api/flights";
 
     public async Task<IEnumerable<Flight>> SearchFlightsAsync(string location, bool isDeparture, DateTime? date, int? passengers)
     {
         string dateParam = date.HasValue ? $"&date={date.Value:o}" : "";
-        string passengerParam = passengers.HasValue ? $"&passengers={passengers.Value}" : "";
-        var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}?location={Uri.EscapeDataString(location)}&isDeparture={isDeparture}{dateParam}{passengerParam}");
+        string routeType = isDeparture ? "DEP" : "ARR";
+        var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}/search?location={Uri.EscapeDataString(location)}&routeType={routeType}{dateParam}");
         return dtos.Select(FlightServiceProxy.MapToEntity).ToList();
     }
 
@@ -35,7 +35,7 @@ public class FlightSearchServiceProxy(HttpClient httpClient) : ServiceProxyBase(
     public async Task<IEnumerable<Flight>> GetFlightsByRouteAsync(string location, string routeType, DateTime? date)
     {
         string dateParam = date.HasValue ? $"&date={date.Value:o}" : "";
-        var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}/by-route?location={Uri.EscapeDataString(location)}&routeType={Uri.EscapeDataString(routeType)}{dateParam}");
+        var dtos = await GetListAsync<FlightDTO>($"{BaseUrl}/search?location={Uri.EscapeDataString(location)}&routeType={Uri.EscapeDataString(routeType)}{dateParam}");
         return dtos.Select(FlightServiceProxy.MapToEntity).ToList();
     }
 
