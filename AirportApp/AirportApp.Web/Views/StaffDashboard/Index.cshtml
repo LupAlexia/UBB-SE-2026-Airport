@@ -1,0 +1,61 @@
+﻿@model AirportApp.Web.Models.AirportManagement.StaffDashboardViewModel
+
+@{
+	ViewData["Title"] = "Staff Dashboard";
+}
+
+<div class="container-fluid mt-4">
+	<div class="card bg-dark text-white border-0 shadow">
+		<div class="card-body p-4">
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<h2 class="fw-bold">MY SCHEDULED FLIGHTS</h2>
+				<a asp-action="Index" class="btn btn-info text-white">Refresh</a>
+			</div>
+
+			<div class="row mb-5 text-muted">
+				<div class="col-md-2">
+					<div class="small">EMPLOYEE ID</div>
+					<div class="text-white fs-4 fw-bold">@Model.EmployeeId</div>
+				</div>
+				<div class="col-md-2">
+					<div class="small">ROLE</div>
+					<div class="text-white fs-4 fw-bold">Pilot</div>
+				</div>
+				<div class="col-md-2">
+					<div class="small">ASSIGNED FLIGHTS</div>
+					<div class="text-white fs-4 fw-bold">@Model.Schedule.Count</div>
+				</div>
+			</div>
+
+			<div class="table-responsive">
+				<table class="table table-dark table-borderless align-middle">
+					<thead class="table-info text-dark">
+						<tr>
+							<th>ID</th>
+							<th>FLIGHT NO.</th>
+							<th>TYPE</th>
+							<th>DATE</th>
+							<th>GATE</th>
+							<th>RUNWAY</th>
+							<th>TIME</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var item in Model.Schedule)
+						{
+							<tr>
+								<td>@item.Id</td>
+								<td class="fw-bold">@item.FlightNumber</td>
+								<td>@item.FlightType</td>
+								<td>@item.Date</td>
+								<td>@item.GateName</td>
+								<td>@item.RunwayName</td>
+								<td class="text-info">@item.FlightTime</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

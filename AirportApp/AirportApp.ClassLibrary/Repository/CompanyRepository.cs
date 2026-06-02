@@ -10,14 +10,26 @@ public class CompanyRepository(AppDbContext databaseContext) : ICompanyRepositor
     public async Task<IEnumerable<Company>> GetAsync()
     {
         return await databaseContext.Companies
+            .Include(company => company.Manager)
             .AsNoTracking()
             .ToListAsync();
     }
 
     public async Task<Company?> GetByIdAsync(int companyId)
     {
-        return await databaseContext.Companies.FindAsync(companyId);
+        return await databaseContext.Companies
+            .Include(company => company.Manager)
+            .FirstOrDefaultAsync(company => company.Id == companyId);
     }
+
+    public async Task<IEnumerable<Company>> GetAllByManagerIdAsync(int managerId)
+    {
+        return await databaseContext.Companies
+            .Include(company => company.Manager)
+            .Where(company => company.Manager.Id == managerId)
+            .ToListAsync();
+    }
+
 
     public async Task<int> AddAsync(Company company)
     {

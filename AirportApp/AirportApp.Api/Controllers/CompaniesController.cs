@@ -76,6 +76,13 @@ public class CompaniesController(ICompanyService companyService) : ControllerBas
         return this.NoContent();
     }
 
+    [HttpGet("manager/{managerId:int}")]
+    public async Task<ActionResult<IEnumerable<Company>>> GetByManagerId(int managerId)
+    {
+        var companies = await companyService.GetCompaniesByManagerIdAsync(managerId);
+        return this.Ok(companies);
+    }
+
     [HttpGet("{companyId:int}/flight-code")]
     public async Task<ActionResult<string>> GenerateFlightCode(int companyId)
     {

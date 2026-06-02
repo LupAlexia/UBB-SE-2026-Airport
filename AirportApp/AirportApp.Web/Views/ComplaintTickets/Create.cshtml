@@ -1,0 +1,191 @@
+﻿@using System.Text.Json
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model AirportApp.Web.Models.ComplaintTicket.CreateComplaintTicketViewModel
+
+@{
+    ViewData["Title"] = "Submit a New Ticket";
+    var subcategoryDetails = JsonSerializer.Serialize(ViewBag.SubcategoryDetails);
+}
+
+<section class="ticket-form-page">
+    <div class="ticket-header">
+        <div class="ticket-header-icon" aria-hidden="true"><span></span></div>
+        <div>
+            <h1>Submit a New Ticket</h1>
+            <p>Tell support what happened and choose the category that best matches the issue.</p>
+        </div>
+    </div>
+
+    <form asp-action="Create" method="post" class="ticket-form-panel">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="ticket-form-grid">
+            <div>
+                <label asp-for="Subject" class="form-label">Title of the issue*</label>
+                <input asp-for="Subject" class="form-control" placeholder="e.g. Damaged suitcase" />
+                <span asp-validation-for="Subject" class="text-danger"></span>
+            </div>
+
+            <div>
+                <label asp-for="CategoryId" class="form-label">Category*</label>
+                <select asp-for="CategoryId" id="categorySelect" class="form-select" asp-items="ViewBag.Categories as IEnumerable<SelectListItem>">
+                    <option value="">Select Category</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+
+            <div>
+                <label asp-for="SubcategoryId" class="form-label">Subcategory*</label>
+                <select asp-for="SubcategoryId" id="subcategorySelect" class="form-select">
+                    <option value="">Select Subcategory</option>
+                </select>
+                <span asp-validation-for="SubcategoryId" class="text-danger"></span>
+            </div>
+
+            <div>
+                <label asp-for="UrgencyLevel" class="form-label">Urgency Level</label>
+                <select asp-for="UrgencyLevel" class="form-select" asp-items="Html.GetEnumSelectList<AirportApp.ClassLibrary.Entity.Domain.ComplaintTicketUrgencyLevelEnum>()">
+                    <option value="">Use category default</option>
+                </select>
+                <span asp-validation-for="UrgencyLevel" class="text-danger"></span>
+            </div>
+
+            <div class="ticket-form-wide">
+                <label asp-for="Description" class="form-label">Description*</label>
+                <textarea asp-for="Description" class="form-control" rows="6" placeholder="Details..."></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="ticket-form-actions">
+            <button type="submit" class="btn ticket-primary-action">Send</button>
+            <a asp-action="Index" class="btn ticket-secondary-action">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        (() => {
+            const subcategories = @Html.Raw(subcategoryDetails);
+            const categorySelect = document.getElementById('categorySelect');
+            const subcategorySelect = document.getElementById('subcategorySelect');
+            const selectedSubcategory = '@Model.SubcategoryId';
+
+            function renderSubcategories() {
+                const categoryId = Number(categorySelect.value);
+                subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
+
+                subcategories
+                    .filter(subcategory => subcategory.CategoryId === categoryId)
+                    .forEach(subcategory => {
+                        const option = document.createElement('option');
+                        option.value = subcategory.Id;
+                        option.textContent = subcategory.Name;
+                        option.selected = String(subcategory.Id) === selectedSubcategory;
+                        subcategorySelect.appendChild(option);
+                    });
+            }
+
+            categorySelect.addEventListener('change', renderSubcategories);
+            renderSubcategories();
+        })();
+    </script>
+}
+
+<style>
+    .ticket-form-page {
+        display: grid;
+        gap: 1.5rem;
+        color: #111827;
+    }
+
+    .ticket-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .ticket-header h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 600;
+    }
+
+    .ticket-header p {
+        margin: .25rem 0 0;
+        color: #6b7280;
+    }
+
+    .ticket-header-icon {
+        width: 3.75rem;
+        height: 3.75rem;
+        border-radius: 8px;
+        background: #2bb8c0;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+    }
+
+    .ticket-header-icon span {
+        width: 2rem;
+        height: 1.35rem;
+        border: 3px solid #fff;
+        border-radius: 4px;
+        border-top-style: dashed;
+    }
+
+    .ticket-form-panel {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 2rem;
+    }
+
+    .ticket-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .ticket-form-wide {
+        grid-column: 1 / -1;
+    }
+
+    .ticket-form-actions {
+        display: flex;
+        gap: .75rem;
+        margin-top: 1.25rem;
+    }
+
+    .ticket-primary-action {
+        min-width: 7rem;
+        background: #2bb8c0;
+        border-color: #2bb8c0;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .ticket-primary-action:hover,
+    .ticket-primary-action:focus {
+        background: #239ea5;
+        border-color: #239ea5;
+        color: #fff;
+    }
+
+    .ticket-secondary-action {
+        border: 1px solid #d1d5db;
+        background: #fff;
+        color: #374151;
+        font-weight: 600;
+    }
+
+    @@media (max-width: 768px) {
+        .ticket-form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+

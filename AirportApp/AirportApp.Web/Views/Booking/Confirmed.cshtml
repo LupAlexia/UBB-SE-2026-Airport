@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Booking Confirmed";
+}
+
+<div class="booking-confirmed-page">
+    <div class="booking-confirmed-card">
+        <div class="booking-confirmed-icon">&#10003;</div>
+        <h1 class="booking-confirmed-title">Booking Confirmed!</h1>
+        <p class="booking-confirmed-subtitle">Your tickets were successfully booked.</p>
+
+        <div class="booking-confirmed-details">
+            <div class="confirmed-detail-row">
+                <span class="confirmed-detail-label">Flight:</span>
+                <strong>@ViewBag.FlightNumber</strong>
+            </div>
+            <div class="confirmed-detail-row">
+                <span class="confirmed-detail-label">Date:</span>
+                <strong>@ViewBag.FlightDate</strong>
+            </div>
+            <div class="confirmed-detail-row">
+                <span class="confirmed-detail-label">Tickets:</span>
+                <strong>@ViewBag.TicketCount</strong>
+            </div>
+            <div class="confirmed-detail-row">
+                <span class="confirmed-detail-label">Total paid:</span>
+                <strong>@ViewBag.TotalPaid &euro;</strong>
+            </div>
+        </div>
+
+        <div class="booking-confirmed-actions">
+            <a asp-controller="FlightTickets" asp-action="Index" class="btn-confirmed-primary">View My Tickets</a>
+            <a asp-controller="FlightTickets" asp-action="Search" class="btn-confirmed-secondary">Search More Flights</a>
+        </div>
+    </div>
+</div>
+

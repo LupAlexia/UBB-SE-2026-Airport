@@ -27,6 +27,16 @@ public class CompanyService(ICompanyRepository companyRepository, IFlightRouteSe
         return await companyRepository.GetByIdAsync(companyId);
     }
 
+    public async Task<IEnumerable<Company>> GetCompaniesByManagerIdAsync(int managerId)
+    {
+        if (managerId <= 0)
+        {
+            return Enumerable.Empty<Company>();
+        }
+
+        return await companyRepository.GetAllByManagerIdAsync(managerId);
+    }
+
     public async Task AddCompanyAsync(Company company)
     {
         if (string.IsNullOrWhiteSpace(company.Name))

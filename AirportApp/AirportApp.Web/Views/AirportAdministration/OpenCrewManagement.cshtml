@@ -1,0 +1,37 @@
+﻿@model AirportApp.Web.Models.AirportManagement.CrewManagementViewModel
+@{
+	Layout = "_AdministrationLayout";
+	ViewData["ActiveSection"] = "Flights";
+}
+
+<div class="card bg-slate border-secondary shadow">
+	<div class="card-header bg-dark text-white">
+		<h4 class="mb-0">Manage Crew for Flight: @Model.Flight?.FlightNumber</h4>
+	</div>
+	<div class="card-body">
+		<form asp-action="SaveCrewAssignment" method="post">
+			<input type="hidden" asp-for="FlightId" />
+
+			@foreach (var candidate in Model.CrewCandidates)
+			{
+				@if (candidate.IsFirstInRoleGroup)
+				{
+					<h6 class="text-info mt-3 border-bottom border-secondary pb-1">@candidate.RoleHeader</h6>
+				}
+				<div class="form-check mb-2">
+					<input class="form-check-input" type="checkbox" name="selectedEmployeeIds"
+						   value="@candidate.Employee.Id" id="emp_@candidate.Employee.Id"
+					@(Model.SelectedEmployeeIds.Contains(candidate.Employee.Id) ? "checked" : "")>
+					<label class="form-check-label text-white" for="emp_@candidate.Employee.Id">
+						@candidate.Employee.Name
+					</label>
+				</div>
+			}
+
+			<div class="mt-4 border-top border-secondary pt-3">
+				<button type="submit" class="btn btn-info">Save Changes</button>
+				<a asp-action="DisplayFlights" class="btn btn-outline-light">Cancel</a>
+			</div>
+		</form>
+	</div>
+</div>

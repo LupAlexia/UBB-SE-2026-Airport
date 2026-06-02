@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Search Flights";
+    var location = ViewBag.Location as string;
+    var isDeparture = ViewBag.IsDeparture as bool?;
+    var date = ViewBag.Date as string;
+    var passengers = ViewBag.Passengers as string;
+}
+
+<section class="flight-search-page">
+    <header class="flight-search-header">
+        <h1>Find your next flight</h1>
+    </header>
+
+    <form asp-action="Search" method="post" class="flight-search-panel">
+        <div class="flight-search-field flight-search-location">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location" name="location" value="@location" placeholder="e.g. Barcelona..." required>
+        </div>
+
+        <fieldset class="flight-type-field">
+            <legend>Flight Type</legend>
+            <div class="flight-type-options">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="flightTypeDeparture" name="isDeparture" value="true" checked="@(isDeparture.GetValueOrDefault(true))">
+                    <label class="form-check-label" for="flightTypeDeparture">Departure</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="flightTypeArrival" name="isDeparture" value="false" checked="@(!isDeparture.GetValueOrDefault(true))">
+                    <label class="form-check-label" for="flightTypeArrival">Arrival</label>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="flight-search-field flight-date-field">
+            <label for="date" class="form-label">Date</label>
+            <div class="flight-date-input">
+                <input type="date" class="form-control" id="date" name="date" value="@date">
+                <button class="date-clear-button" type="button" aria-label="Clear date" title="Clear date" onclick="document.getElementById('date').value = '';">&times;</button>
+            </div>
+        </div>
+
+        <div class="flight-search-field flight-passengers-field">
+            <label for="passengers" class="form-label">Passengers</label>
+            <input type="number" class="form-control" id="passengers" name="passengers" min="1" value="@passengers" placeholder="Nr">
+        </div>
+
+        <div class="flight-search-actions">
+            <button type="submit" class="flight-primary-button text-uppercase fw-bold text-white shadow-sm" style="background-color: #17a2b8; border-color: #17a2b8;">Search</button>
+        </div>
+    </form>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger flight-search-alert">
+            @Html.ValidationSummary()
+        </div>
+    }
+
+    <section class="flight-results-shell empty-results-shell" aria-labelledby="available-flights-title">
+        <h2 id="available-flights-title">Available Flights</h2>
+        <p class="flight-result-message">Enter a location and search to see matching flights.</p>
+        <div class="flight-results-empty-state">
+            No flights loaded yet.
+        </div>
+    </section>
+</section>
+
+@section Scripts {
+    <script>
+        const passengerInput = document.getElementById('passengers');
+        if (passengerInput) {
+            passengerInput.addEventListener('input', () => {
+                passengerInput.value = passengerInput.value.replace(/[^0-9]/g, '');
+            });
+        }
+    </script>
+}
+

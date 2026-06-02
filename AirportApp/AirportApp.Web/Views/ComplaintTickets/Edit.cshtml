@@ -1,0 +1,161 @@
+﻿@model AirportApp.ClassLibrary.Entity.Domain.ComplaintTicket
+
+@{
+    ViewData["Title"] = "Edit Ticket Status";
+}
+
+<section class="ticket-form-page">
+    <div class="ticket-header">
+        <div class="ticket-header-icon" aria-hidden="true"><span></span></div>
+        <div>
+            <h1>Edit CurrentStatus for Ticket #@Model.Id</h1>
+            <p>Change the support state for this customer request.</p>
+        </div>
+    </div>
+
+    <form asp-action="Edit" method="post" class="ticket-form-panel">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+
+        <div class="ticket-readonly">
+            <span>#@Model.Id</span>
+            <strong>@Model.Subject</strong>
+            <p>@Model.Description</p>
+            <small>
+                Category: @(Model.Category?.CategoryName ?? "Unknown") |
+                Subcategory: @(Model.Subcategory?.SubcategoryName ?? "Unknown") |
+                Created: @Model.CreationTimestamp.ToLocalTime().ToString("g")
+            </small>
+        </div>
+
+        <div class="ticket-form-grid">
+            <div>
+                <label asp-for="CurrentStatus" class="form-label">Current status</label>
+                <select asp-for="CurrentStatus" class="form-select" asp-items="Html.GetEnumSelectList<AirportApp.ClassLibrary.Entity.Domain.ComplaintTicketStatusEnum>()"></select>
+                <span asp-validation-for="CurrentStatus" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="UrgencyLevel" class="form-label">Urgency level</label>
+                <select asp-for="UrgencyLevel" class="form-select" asp-items="Html.GetEnumSelectList<AirportApp.ClassLibrary.Entity.Domain.ComplaintTicketUrgencyLevelEnum>()"></select>
+                <span asp-validation-for="UrgencyLevel" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="ticket-form-actions">
+            <button type="submit" class="btn ticket-primary-action">Save</button>
+            <a asp-action="Index" class="btn ticket-secondary-action">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<style>
+    .ticket-form-page {
+        display: grid;
+        gap: 1.5rem;
+        color: #111827;
+    }
+
+    .ticket-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .ticket-header h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 600;
+    }
+
+    .ticket-header p,
+    .ticket-readonly p,
+    .ticket-readonly small {
+        margin: .25rem 0 0;
+        color: #6b7280;
+    }
+
+    .ticket-header-icon {
+        width: 3.75rem;
+        height: 3.75rem;
+        border-radius: 8px;
+        background: #2bb8c0;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+    }
+
+    .ticket-header-icon span {
+        width: 2rem;
+        height: 1.35rem;
+        border: 3px solid #fff;
+        border-radius: 4px;
+        border-top-style: dashed;
+    }
+
+    .ticket-form-panel {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 2rem;
+    }
+
+    .ticket-readonly {
+        display: grid;
+        gap: .3rem;
+        padding: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .ticket-readonly span {
+        color: #6b7280;
+        font-size: .8rem;
+    }
+
+    .ticket-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .ticket-form-actions {
+        display: flex;
+        gap: .75rem;
+        margin-top: 1.25rem;
+    }
+
+    .ticket-primary-action {
+        min-width: 7rem;
+        background: #2bb8c0;
+        border-color: #2bb8c0;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .ticket-primary-action:hover,
+    .ticket-primary-action:focus {
+        background: #239ea5;
+        border-color: #239ea5;
+        color: #fff;
+    }
+
+    .ticket-secondary-action {
+        border: 1px solid #d1d5db;
+        background: #fff;
+        color: #374151;
+        font-weight: 600;
+    }
+
+    @@media (max-width: 768px) {
+        .ticket-form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+

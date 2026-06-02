@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Choose Role";
+}
+
+<div class="container-fluid vh-100 d-flex flex-column justify-content-center align-items-center" style="background-color: #0078D4; overflow: hidden; margin: 0; padding: 0;">
+
+    <div class="text-center mb-4">
+        <h1 class="fw-bold text-white m-0" style="font-size: 36px; font-family: 'Segoe UI', system-ui, sans-serif;">Welcome to Airport App!</h1>
+        <p class="text-white mt-2 mb-0" style="font-size: 16px; opacity: 0.9;">How can we assist you today?</p>
+    </div>
+
+    <div class="d-flex flex-column flex-md-row gap-4 justify-content-center align-items-center">
+
+        <a asp-action="EnterId" asp-route-role="Customer" class="text-decoration-none text-start">
+            <div class="card p-3 text-center border-0 shadow-lg"
+                 style="width: 280px; height: 200px; border-radius: 12px; background-color: #FFFFFF; transition: transform 0.2s, background-color 0.2s; cursor: pointer;">
+                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                    <h2 class="fw-semibold mb-2" style="font-size: 20px; color: #201F1E; font-family: 'Segoe UI', sans-serif;">I'm a Customer</h2>
+                    <p class="mb-0" style="font-size: 13px; color: #605E5C; line-height: 1.4; padding: 0 5px;">
+                        Book flights, customer support, and duty free shopping.
+                    </p>
+                </div>
+            </div>
+        </a>
+
+        <a asp-action="StaffRoleSelection" class="text-decoration-none text-start">
+            <div class="card p-3 text-center border-0 shadow-lg"
+                 style="width: 280px; height: 200px; border-radius: 12px; background-color: #FFFFFF; transition: transform 0.2s, background-color 0.2s; cursor: pointer;">
+                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                    <h2 class="fw-semibold mb-2" style="font-size: 20px; color: #201F1E; font-family: 'Segoe UI', sans-serif;">I'm Staff</h2>
+                    <p class="mb-0" style="font-size: 13px; color: #605E5C; line-height: 1.4; padding: 0 5px;">
+                        Admin, Manager, or Flight Crew access.
+                    </p>
+                </div>
+            </div>
+        </a>
+
+    </div>
+</div>

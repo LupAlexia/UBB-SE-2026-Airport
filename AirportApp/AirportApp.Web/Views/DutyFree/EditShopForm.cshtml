@@ -1,0 +1,39 @@
+﻿@model AirportApp.Web.Models.DutyFree.ShopFormModel
+
+@{
+	ViewData["Title"] = "Modify Shop Record";
+}
+
+<div class="container mt-5">
+	<div class="card shadow-sm border-0 max-width-600 mx-auto">
+		<div class="card-body p-4">
+			<h2 class="text-secondary mb-4">Modify Shop Registration</h2>
+			<hr />
+
+			<form asp-action="EditShop" asp-controller="DutyFree" method="post">
+				@Html.AntiForgeryToken()
+                
+				<input type="hidden" asp-for="Id" />
+				<input type="hidden" asp-for="ManagerId" />
+
+				<div class="mb-3">
+					<label asp-for="Name" class="form-label fw-bold text-muted">Shop Display Name</label>
+					<input asp-for="Name" class="form-label-custom-control form-control form-control-lg fs-6" placeholder="e.g., Luxury Perfumes" required />
+					<span asp-validation-for="Name" class="text-danger small"></span>
+				</div>
+
+				<div class="mb-4">
+					<label asp-for="Type" class="form-label fw-bold text-muted">Shop Category / Classification</label>
+					<input asp-for="Type" class="form-label-custom-control form-control form-control-lg fs-6" placeholder="e.g., Retail / Fashion" required />
+					<span asp-validation-for="Type" class="text-danger small"></span>
+				</div>
+
+				<div class="d-flex justify-content-end gap-2 pt-2">
+					<a asp-action="Index" class="btn btn-white border px-4 py-2">Cancel</a>
+					<button type="submit" class="btn btn-secondary px-4 py-2 text-white">Save Changes</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+

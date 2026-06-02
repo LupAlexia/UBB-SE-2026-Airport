@@ -1,0 +1,188 @@
+﻿@model AirportApp.ClassLibrary.Entity.Domain.Review
+
+@{
+    ViewData["Title"] = "Share a Review";
+}
+
+<style>
+    .review-shell {
+        background: linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 28px;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.10);
+        overflow: hidden;
+    }
+
+    .review-hero {
+        background: radial-gradient(circle at top right, rgba(0, 120, 212, 0.18), transparent 35%), linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
+        border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    }
+
+    .review-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        padding: .4rem .8rem;
+        border-radius: 999px;
+        background: #dff4ff;
+        color: #0078d4;
+        font-size: .9rem;
+        font-weight: 600;
+    }
+
+    .review-panel {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 22px;
+        box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+    }
+
+    .review-help {
+        background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+        color: #fff;
+    }
+
+    .review-help .btn-light {
+        color: #0f172a;
+        font-weight: 600;
+        border: 0;
+    }
+
+    .rating-label {
+        font-size: .9rem;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: .5rem;
+    }
+</style>
+
+<div class="review-shell">
+    <div class="review-hero p-4 p-md-5">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div class="d-flex flex-column gap-3">
+                <span class="review-badge">Customer review</span>
+                <div>
+                    <h1 class="display-6 fw-semibold mb-2">Share your airport experience</h1>
+                    <p class="text-body-secondary mb-0" style="max-width: 52rem;">
+                        Tell us what worked, what did not, and how your visit felt overall. Your feedback helps us improve the airport for everyone.
+                    </p>
+                </div>
+            </div>
+            <div class="text-md-end">
+                <div class="text-uppercase text-body-secondary small fw-semibold">Logged in area</div>
+                <div class="fs-5 fw-semibold text-primary">Review submission</div>
+                <div class="mt-3">
+                    <a asp-controller="Dashboard" asp-action="RedirectUser" class="btn btn-outline-primary btn-sm px-3">
+                        Back to dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="p-4 p-md-5">
+        <div class="row g-4">
+            <div class="col-12 col-lg-4">
+                <div class="review-help review-panel h-100 p-4 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="small text-uppercase fw-semibold opacity-75 mb-2">Need help?</div>
+                        <h2 class="h4 fw-semibold mb-3">Open a complaint ticket</h2>
+                        <p class="mb-0 opacity-90">
+                            If your issue needs follow-up instead of feedback, go to the customer complaint tickets section.
+                        </p>
+                    </div>
+
+                    <div class="mt-4">
+                        <a asp-controller="ComplaintTickets" asp-action="Index" class="btn btn-light btn-lg w-100">
+                            Go to complaint tickets
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-8">
+                <div class="review-panel p-4 p-md-5">
+                    <form asp-action="Create" asp-route-userId="@ViewBag.UserId" class="d-grid gap-4">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-0"></div>
+
+                        <div>
+                            <label asp-for="Message" class="form-label fw-semibold">Your review</label>
+                            <textarea asp-for="Message" class="form-control form-control-lg" rows="6" placeholder="Tell us about your experience..."></textarea>
+                            <span asp-validation-for="Message" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-4">
+                            <div class="col-12 col-md-6">
+                                <div>
+                                    <div class="rating-label">Duty free shops</div>
+                                    <select asp-for="DutyFreeRating" class="form-select form-select-lg">
+                                        <option value="">Choose a rating</option>
+                                        @for (var rating = 1; rating <= 5; rating++)
+                                        {
+                                            <option value="@rating">@rating</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="DutyFreeRating" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div>
+                                    <div class="rating-label">Flight experience</div>
+                                    <select asp-for="FlightExperienceRating" class="form-select form-select-lg">
+                                        <option value="">Choose a rating</option>
+                                        @for (var rating = 1; rating <= 5; rating++)
+                                        {
+                                            <option value="@rating">@rating</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="FlightExperienceRating" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div>
+                                    <div class="rating-label">Staff friendliness</div>
+                                    <select asp-for="StaffFriendlinessRating" class="form-select form-select-lg">
+                                        <option value="">Choose a rating</option>
+                                        @for (var rating = 1; rating <= 5; rating++)
+                                        {
+                                            <option value="@rating">@rating</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="StaffFriendlinessRating" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div>
+                                    <div class="rating-label">Cleanliness</div>
+                                    <select asp-for="CleanlinessRating" class="form-select form-select-lg">
+                                        <option value="">Choose a rating</option>
+                                        @for (var rating = 1; rating <= 5; rating++)
+                                        {
+                                            <option value="@rating">@rating</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="CleanlinessRating" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end pt-2">
+                            <button type="submit" class="btn btn-primary btn-lg px-4">
+                                Submit review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

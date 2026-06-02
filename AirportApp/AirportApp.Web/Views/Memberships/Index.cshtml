@@ -1,0 +1,65 @@
+﻿@model IEnumerable<AirportApp.ClassLibrary.Entity.Domain.Membership>
+
+@{
+    ViewData["Title"] = "Memberships";
+}
+
+<h1>Available Memberships</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="row mt-4">
+    @foreach (var membership in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="my-0 font-weight-normal">@membership.Name</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title pricing-card-title text-center">
+                        @membership.FlightDiscountPercentage% <small class="text-muted">flight discount</small>
+                    </h5>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        @if (membership.AddonDiscounts != null && membership.AddonDiscounts.Any())
+                        {
+                            @foreach (var addonDiscount in membership.AddonDiscounts)
+                            {
+                                <li>
+                                    <strong>@addonDiscount.AddOn?.Name</strong>: @addonDiscount.DiscountPercentage% off
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No additional addon discounts.</li>
+                        }
+                    </ul>
+                    @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Customer"))
+                    {
+                        <form asp-action="Purchase" method="post" class="text-center">
+                            <input type="hidden" name="id" value="@membership.Id" />
+                            <button type="submit" class="btn btn-lg btn-block btn-outline-primary w-100">Subscribe Now</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <p class="text-center text-muted">Log in to subscribe</p>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

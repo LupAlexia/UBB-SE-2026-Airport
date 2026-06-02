@@ -1,0 +1,54 @@
+﻿@model AirportApp.ClassLibrary.Entity.Domain.FAQEntry
+
+@{
+    ViewData["Title"] = "Create";
+}
+<partial name="_UpperBar" />
+<div class="faq-page">
+
+<style>
+    .faq-page { font-size: 1.12rem; }
+    .faq-page .btn { font-size: 1.06rem; padding-top: .45rem; padding-bottom: .45rem; }
+    .faq-page .form-control { font-size: 1rem; }
+    .faq-actions { display: flex; gap: .6rem; align-items: center; white-space: nowrap; }
+    .faq-actions a { display: inline-block; }
+</style>
+
+<h1>Create</h1>
+
+<h4>FAQEntry</h4>
+<hr />
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Category" class="control-label"></label>
+                <select asp-for="Category" class="form-control" asp-items="Html.GetEnumSelectList<AirportApp.ClassLibrary.Entity.Domain.FAQCategoryEnum>()"></select>
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Question" class="control-label"></label>
+                <input asp-for="Question" class="form-control" />
+                <span asp-validation-for="Question" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Answer" class="control-label"></label>
+                <input asp-for="Answer" class="form-control" />
+                <span asp-validation-for="Answer" class="text-danger"></span>
+            </div>
+            <div class="mt-3 d-flex gap-2">
+                <input type="submit" value="Create" class="btn btn-primary w-100" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+</div>
+

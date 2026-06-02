@@ -308,6 +308,9 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ManagerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -316,32 +319,39 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ManagerId");
+
                     b.ToTable("Companies");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            ManagerId = 1,
                             Name = "British Airways"
                         },
                         new
                         {
                             Id = 2,
+                            ManagerId = 2,
                             Name = "Delta Airlines"
                         },
                         new
                         {
                             Id = 3,
+                            ManagerId = 3,
                             Name = "Wizz Air"
                         },
                         new
                         {
                             Id = 4,
+                            ManagerId = 2,
                             Name = "Lufthansa"
                         },
                         new
                         {
                             Id = 5,
+                            ManagerId = 1,
                             Name = "Emirates"
                         });
                 });
@@ -1687,6 +1697,17 @@ namespace AirportApp.ClassLibrary.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.Company", b =>
+                {
+                    b.HasOne("AirportApp.ClassLibrary.Entity.Domain.Manager", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Manager");
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.ComplaintTicket", b =>
