@@ -9,7 +9,7 @@ namespace AirportApp.ClassLibrary.Proxy;
 
 public class ShopItemServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClient), IShopItemService
 {
-    private const string BaseUrl = "api/shopitems";
+    private const string BaseUrl = "api/shop-items";
 
     public async Task<IEnumerable<ShopItem>> GetAllAsync()
     {

@@ -1,0 +1,267 @@
+using System;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Service.Interface;
+using AirportApp.Services.Interfaces;
+
+namespace AirportApp.Src.ViewModel
+{
+    public class AuthViewModel : ViewModelBase
+    {
+        private readonly IAuthService authService;
+        private readonly INavigationService navigationService;
+
+        private string emailText = string.Empty;
+        private string passwordText = string.Empty;
+        private string usernameText = string.Empty;
+        private string phoneText = string.Empty;
+        private string errorMessage = string.Empty;
+        private string successMessage = string.Empty;
+        private bool isLoginMode = true;
+        private bool isAuthenticated;
+        private Customer? authenticatedUser;
+
+        private string titleText = "Flight Security Access";
+        private string subtitleText = "To protect your flight details and personal data, please complete this quick security verification.";
+        private string actionButtonLabel = "Sign In";
+        private bool isRegisterFieldsVisible = false;
+
+        public AuthViewModel(IAuthService authService, INavigationService navigationService)
+        {
+            this.authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            this.navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+
+            ActionCommand = new RelayCommand(async parameter => await ExecuteActionAsync(), parameter => IsFormValid);
+        }
+
+        public string EmailText
+        {
+            get => emailText;
+            set
+            {
+                emailText = value;
+                OnPropertyChanged();
+                RaiseActionCanExecuteChanged();
+            }
+        }
+
+        public string PasswordText
+        {
+            get => passwordText;
+            set
+            {
+                passwordText = value;
+                OnPropertyChanged();
+                RaiseActionCanExecuteChanged();
+            }
+        }
+
+        public string UsernameText
+        {
+            get => usernameText;
+            set
+            {
+                usernameText = value;
+                OnPropertyChanged();
+                RaiseActionCanExecuteChanged();
+            }
+        }
+
+        public string PhoneText
+        {
+            get => phoneText;
+            set
+            {
+                phoneText = value;
+                OnPropertyChanged();
+                RaiseActionCanExecuteChanged();
+            }
+        }
+
+        public string ErrorMessage
+        {
+            get => errorMessage;
+            set
+            {
+                errorMessage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string SuccessMessage
+        {
+            get => successMessage;
+            set
+            {
+                successMessage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsLoginMode
+        {
+            get => isLoginMode;
+            set
+            {
+                isLoginMode = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsAuthenticated
+        {
+            get => isAuthenticated;
+            set
+            {
+                isAuthenticated = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Customer? AuthenticatedUser
+        {
+            get => authenticatedUser;
+            set
+            {
+                authenticatedUser = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string TitleText
+        {
+            get => titleText;
+            set
+            {
+                titleText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string SubtitleText
+        {
+            get => subtitleText;
+            set
+            {
+                subtitleText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string ActionButtonLabel
+        {
+            get => actionButtonLabel;
+            set
+            {
+                actionButtonLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsRegisterFieldsVisible
+        {
+            get => isRegisterFieldsVisible;
+            set
+            {
+                isRegisterFieldsVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsFormValid
+        {
+            get
+            {
+                if (IsLoginMode)
+                {
+                    return !string.IsNullOrWhiteSpace(EmailText) &&
+                           !string.IsNullOrWhiteSpace(PasswordText);
+                }
+                else
+                {
+                    return !string.IsNullOrWhiteSpace(EmailText) &&
+                           !string.IsNullOrWhiteSpace(UsernameText) &&
+                           !string.IsNullOrWhiteSpace(PhoneText) &&
+                           !string.IsNullOrWhiteSpace(PasswordText);
+                }
+            }
+        }
+
+        public ICommand ActionCommand { get; }
+
+        private async Task ExecuteActionAsync()
+        {
+            if (IsLoginMode)
+            {
+                await LoginAsync();
+
+                if (IsAuthenticated)
+                {
+                    UserSession.CurrentUser = AuthenticatedUser;
+
+                    if (UserSession.PendingBookingParameters != null)
+                    {
+                        var pendingParameters = UserSession.PendingBookingParameters;
+                        UserSession.PendingBookingParameters = null;
+                        navigationService.NavigateTo(typeof(View.BookingPage), pendingParameters);
+                    }
+                    else
+                    {
+                        navigationService.NavigateTo(typeof(View.FlightSearchPage));
+                    }
+                }
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    SetLoginMode();
+                }
+            }
+        }
+
+        private void SetLoginMode()
+        {
+            IsLoginMode = true;
+            TitleText = "Welcome to WizzErr";
+            SubtitleText = "Please sign in to manage your tickets";
+            ActionButtonLabel = "Sign In";
+            IsRegisterFieldsVisible = false;
+        }
+
+        private async Task LoginAsync()
+        {
+            try
+            {
+                ErrorMessage = string.Empty;
+                SuccessMessage = string.Empty;
+
+                int? currentUserId = ((App)App.Current).User?.Id;
+                Customer user = await authService.LoginAsync(EmailText, PasswordText, currentUserId);
+
+                AuthenticatedUser = user;
+                IsAuthenticated = true;
+                SuccessMessage = "Login successful.";
+            }
+            catch (Exception exception)
+            {
+                IsAuthenticated = false;
+                AuthenticatedUser = null;
+                ErrorMessage = exception.Message;
+            }
+        }
+
+        public void ClearMessages()
+        {
+            ErrorMessage = string.Empty;
+            SuccessMessage = string.Empty;
+        }
+
+        private void RaiseActionCanExecuteChanged()
+        {
+            OnPropertyChanged(nameof(IsFormValid));
+            (ActionCommand as RelayCommand)?.RaiseCanExecuteChanged();
+        }
+    }
+}

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "AirpotApp (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "AirpotApp (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

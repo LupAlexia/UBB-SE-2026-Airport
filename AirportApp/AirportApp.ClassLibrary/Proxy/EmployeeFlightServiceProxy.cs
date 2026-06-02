@@ -10,7 +10,7 @@ namespace AirportApp.ClassLibrary.Proxy;
 
 public class EmployeeFlightServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClient), IEmployeeFlightService
 {
-    private const string BaseUrl = "api/employeeflights";
+    private const string BaseUrl = "api/employee-flights";
 
     public async Task AssignEmployeeToFlightUsingIdsAsync(int flightId, int employeeId)
     {
@@ -20,71 +20,77 @@ public class EmployeeFlightServiceProxy(HttpClient httpClient) : ServiceProxyBas
 
     public async Task RemoveEmployeeFromFlightUsingIdsAsync(int flightId, int employeeId)
     {
-        await DeleteAsync($"{BaseUrl}/remove?flightId={flightId}&employeeId={employeeId}");
+        await DeleteAsync($"{BaseUrl}/flights/{flightId}/employees/{employeeId}");
     }
 
     public async Task<IEnumerable<Employee>> GetEmployeesAssignedToFlightAsync(int flightId)
     {
-        return await GetListAsync<Employee>($"{BaseUrl}/flight/{flightId}/employees");
+        return await GetListAsync<Employee>($"{BaseUrl}/flights/{flightId}/employees");
     }
 
     public async Task<IEnumerable<Flight>> GetEmployeeScheduleAsync(int employeeId)
     {
-        return await GetListAsync<Flight>($"{BaseUrl}/employee/{employeeId}/schedule");
+        return await GetListAsync<Flight>($"{BaseUrl}/employees/{employeeId}/schedule");
     }
 
     public async Task<bool> IsEmployeeAvailableAsync(int employeeId, DateTime targetDate, int targetRouteId, int? excludedFlightId = null)
     {
-        return await GetRequiredAsync<bool>($"{BaseUrl}/employee/{employeeId}/available?targetDate={targetDate:o}&targetRouteId={targetRouteId}&excludedFlightId={excludedFlightId}");
+        return await GetRequiredAsync<bool>($"{BaseUrl}/employees/{employeeId}/available?targetDate={targetDate:o}&targetRouteId={targetRouteId}&excludedFlightId={excludedFlightId}");
     }
 
     public async Task AssignEmpolyeesToFlightUsingIdsAsync(int flightId, List<int> employeeIds)
     {
-        await PostAsync($"{BaseUrl}/assign-multiple?flightId={flightId}", employeeIds);
+        await PostAsync($"{BaseUrl}/flights/{flightId}/employees", employeeIds);
     }
 
     public async Task UpdateEmployeesForFlightUsingIdsAsync(int flightId, List<int> updatedEmployeeIds)
     {
-        await PutAsync($"{BaseUrl}/flight/{flightId}/employees", updatedEmployeeIds);
+        await PutAsync($"{BaseUrl}/flights/{flightId}/employees", updatedEmployeeIds);
     }
 
     public async Task RemoveAllCrewAssignmentsForFlightAsync(int flightId)
     {
-        await DeleteAsync($"{BaseUrl}/flight/{flightId}/crew");
+        await DeleteAsync($"{BaseUrl}/flights/{flightId}");
     }
 
     public async Task RemoveAllFlightsAssignmentsForEmployeeAsync(int employeeId)
     {
-        await DeleteAsync($"{BaseUrl}/employee/{employeeId}/flights");
+        await DeleteAsync($"{BaseUrl}/employees/{employeeId}");
     }
 
     public async Task<IEnumerable<EmployeeScheduleItem>> GetFormattedEmployeeScheduleAsync(int employeeId)
     {
-        return await GetListAsync<EmployeeScheduleItem>($"{BaseUrl}/employee/{employeeId}/schedule-formatted");
+        return await GetListAsync<EmployeeScheduleItem>($"{BaseUrl}/employees/{employeeId}/formatted-schedule");
     }
 
     public async Task<IEnumerable<Employee>> GetAvailableEmployeesGroupedByRoleAsync(Flight flight)
     {
-        return await PostForResultAsync<Flight, IEnumerable<Employee>>($"{BaseUrl}/available-employees", flight);
+        return await GetListAsync<Employee>($"{BaseUrl}/flights/{flight.Id}/available-employees");
     }
 
     public async Task<IEnumerable<Employee>> GetAvailableEmployeesGroupedByRoleByIdAsync(int flightId)
     {
-        return await GetListAsync<Employee>($"{BaseUrl}/available-employees-by-id/{flightId}");
+        return await GetListAsync<Employee>($"{BaseUrl}/flights/{flightId}/available-employees");
     }
 
     public string FormatCrewList(int flightId)
     {
-        return GetRequiredAsync<string>($"{BaseUrl}/flight/{flightId}/crew-formatted").GetAwaiter().GetResult();
+        var response = GetRequiredAsync<CrewListResponse>($"{BaseUrl}/flights/{flightId}/crew-list").GetAwaiter().GetResult();
+        return response.Result ?? string.Empty;
     }
 
     public async Task<IEnumerable<CrewMemberSelectionData>> GetCrewSelectionDataAsync(Flight flight)
     {
-        return await PostForResultAsync<Flight, IEnumerable<CrewMemberSelectionData>>($"{BaseUrl}/crew-selection-data", flight);
+        return await GetListAsync<CrewMemberSelectionData>($"{BaseUrl}/flights/{flight.Id}/crew-selection-data");
     }
 
     public async Task<IEnumerable<CrewMemberSelectionData>> GetCrewSelectionDataByIdAsync(int flightId)
     {
-        return await GetListAsync<CrewMemberSelectionData>($"{BaseUrl}/flight/{flightId}/crew-selection-data");
+        return await GetListAsync<CrewMemberSelectionData>($"{BaseUrl}/flights/{flightId}/crew-selection-data");
+    }
+
+    private sealed class CrewListResponse
+    {
+        public string? Result { get; set; }
     }
 }

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="AirportApp.WinUI.AirportAdmin.AirportDashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AirportApp.WinUI.AirportAdmin.Components"
+    Foreground="#F8FAFC">
+
+    <Grid>
+        <ScrollViewer>
+            <Grid Padding="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <local:AirportSectionControl Grid.Column="0"
+                                             Title="Runways"
+                                             Items="{x:Bind ViewModel.RunwaysList, Mode=OneWay}"
+                                             SelectedItem="{x:Bind ViewModel.SelectedRunway, Mode=TwoWay}"
+                                             DisplayMemberPath="Name"
+                                             AddCommand="{x:Bind ViewModel.PrepareNewRunwayDialogCommand}"
+                                             EditCommand="{x:Bind ViewModel.PrepareEditRunwayDialogCommand}"
+                                             DeleteCommand="{x:Bind ViewModel.PromptDeleteRunwayCommand}"/>
+
+                <local:AirportSectionControl Grid.Column="2"
+                                             Title="Gates"
+                                             Items="{x:Bind ViewModel.GatesList, Mode=OneWay}"
+                                             SelectedItem="{x:Bind ViewModel.SelectedGate, Mode=TwoWay}"
+                                             DisplayMemberPath="Name"
+                                             AddCommand="{x:Bind ViewModel.PrepareNewGateDialogCommand}"
+                                             EditCommand="{x:Bind ViewModel.PrepareEditGateDialogCommand}"
+                                             DeleteCommand="{x:Bind ViewModel.PromptDeleteGateCommand}"/>
+
+                <local:AirportSectionControl Grid.Column="4"
+                                             Title="Destination Airports"
+                                             Items="{x:Bind ViewModel.AirportsList, Mode=OneWay}"
+                                             SelectedItem="{x:Bind ViewModel.SelectedAirport, Mode=TwoWay}"
+                                             DisplayMemberPath="Name"
+                                             AddCommand="{x:Bind ViewModel.PrepareNewAirportDialogCommand}"
+                                             EditCommand="{x:Bind ViewModel.PrepareEditAirportDialogCommand}"
+                                             DeleteCommand="{x:Bind ViewModel.PromptDeleteAirportCommand}"/>
+            </Grid>
+        </ScrollViewer>
+
+        <Grid Background="#80000000"
+              Visibility="{x:Bind ViewModel.DialogVisibility, Mode=OneWay}"
+              CornerRadius="8">
+            <Border Background="#1E293B"
+                    BorderBrush="#334155"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="24"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="350">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="{x:Bind ViewModel.DialogTitle, Mode=OneWay}"
+                               FontSize="20" FontWeight="Bold" Foreground="White"/>
+
+                    <TextBox Header="Name"
+                             Text="{x:Bind ViewModel.EditingName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             PlaceholderText="Enter name"/>
+
+                    <TextBox Header="Handle Time (minutes)"
+                             Text="{x:Bind ViewModel.EditingHandleTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             PlaceholderText="Enter time"
+                             Visibility="{x:Bind ViewModel.HandleTimeVisibility, Mode=OneWay}"/>
+
+                    <TextBox Header="City"
+                             Text="{x:Bind ViewModel.EditingCity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             PlaceholderText="Enter city"
+                             Visibility="{x:Bind ViewModel.CityCodeVisibility, Mode=OneWay}"/>
+
+                    <TextBox Header="Code"
+                             Text="{x:Bind ViewModel.EditingCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             PlaceholderText="e.g. LAX"
+                             Visibility="{x:Bind ViewModel.CityCodeVisibility, Mode=OneWay}"/>
+
+                    <TextBlock Text="{x:Bind ViewModel.DialogErrorMessage, Mode=OneWay}"
+                               Foreground="#FF6B6B"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiBold"
+                               Margin="0,-4,0,0"/>
+
+                    <Grid Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Content="Cancel" HorizontalAlignment="Stretch"
+                                Command="{x:Bind ViewModel.CloseConfigurationDialogCommand}"/>
+                        <Button Grid.Column="2" Content="Save"
+                                Style="{StaticResource AccentButtonStyle}"
+                                HorizontalAlignment="Stretch"
+                                Command="{x:Bind ViewModel.SaveDialogChangesCommand}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid Background="#80000000"
+              Visibility="{x:Bind ViewModel.DeleteConfirmationVisibility, Mode=OneWay}"
+              CornerRadius="8">
+            <Border Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="8" Padding="24"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Confirm Deletion" FontSize="20" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="{x:Bind ViewModel.DeleteWarningMessage, Mode=OneWay}"
+                               Foreground="#CBD5E1" TextWrapping="Wrap" FontSize="14"/>
+                    <Grid Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Content="No, Keep it" HorizontalAlignment="Stretch"
+                                Command="{x:Bind ViewModel.CloseDeleteConfirmationCommand}"/>
+                        <Button Grid.Column="2" Content="Yes, Delete"
+                                Background="#FF6B6B" Foreground="White"
+                                HorizontalAlignment="Stretch"
+                                Command="{x:Bind ViewModel.ExecuteDeletionCommand}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>
