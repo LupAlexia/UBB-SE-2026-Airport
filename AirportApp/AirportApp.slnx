@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="AirportApp.Api/AirportApp.Api.csproj" Id="a7261025-36e6-4974-aca1-70c06e768b4d" />
   <Project Path="AirportApp.ClassLibrary/AirportApp.ClassLibrary.csproj" />
+  <Project Path="AirportApp.Web/AirportApp.Web.csproj" />
   <Project Path="AirpotApp/AirportApp.csproj" Id="30744d16-b4b7-40c8-a760-011cbaa222c1">
     <Platform Project="x64" />
     <Deploy />
