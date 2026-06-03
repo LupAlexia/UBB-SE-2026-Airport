@@ -8,6 +8,7 @@ using AirportApp.ClassLibrary.Service.Interface;
 using CommunityToolkit.Mvvm.Input;
 
 using Microsoft.UI.Xaml;
+using Windows.Devices.Printers;
 
 namespace AirportApp.Src.ViewModel
 {

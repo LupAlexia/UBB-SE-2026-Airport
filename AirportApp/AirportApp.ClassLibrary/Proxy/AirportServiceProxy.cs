@@ -58,7 +58,7 @@ public class AirportServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpC
 
     private static Airport MapToEntity(AirportDTO dto)
     {
-        return new Airport(dto.id, dto.airportCode, dto.city, "");
+        return new Airport(dto.Id, dto.AirportCode, dto.City, dto.Name);
     }
 
     private static AirportDTO MapToDto(Airport airport)

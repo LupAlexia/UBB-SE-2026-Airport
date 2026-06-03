@@ -41,7 +41,7 @@ public class AirportsController : ControllerBase
     {
         try
         {
-            Airport newAirport = new Airport(request.AirportCode, request.City, request.AirportName);
+            Airport newAirport = new Airport(request.AirportCode, request.City, request.Name);
             await airportService.AddAirportAsync(newAirport);
             return Ok(newAirport.Id);
         }
@@ -54,7 +54,7 @@ public class AirportsController : ControllerBase
     [HttpPut("{airportId}")]
     public async Task<IActionResult> UpdateAirport(int airportId, [FromBody] SaveAirportRequest request)
     {
-        Airport airportToSave = new Airport(airportId, request.AirportCode, request.City, request.AirportName);
+        Airport airportToSave = new Airport(airportId, request.AirportCode, request.City, request.Name);
         await airportService.SaveAirportAsync(airportToSave);
         return Ok();
     }
@@ -80,6 +80,6 @@ public class AirportsController : ControllerBase
         return Ok(new { WarningMessage = warningMessage });
     }
 
-    public record AddAirportRequest(string AirportCode, string AirportName, string City);
-    public record SaveAirportRequest(string AirportCode, string AirportName, string City);
+    public record AddAirportRequest(string AirportCode, string Name, string City);
+    public record SaveAirportRequest(string AirportCode, string Name, string City);
 }

@@ -18,31 +18,34 @@
                 </Grid.ColumnDefinitions>
 
                 <local:AirportSectionControl Grid.Column="0"
-                                             Title="Runways"
-                                             Items="{x:Bind ViewModel.RunwaysList, Mode=OneWay}"
-                                             SelectedItem="{x:Bind ViewModel.SelectedRunway, Mode=TwoWay}"
-                                             DisplayMemberPath="Name"
-                                             AddCommand="{x:Bind ViewModel.PrepareNewRunwayDialogCommand}"
-                                             EditCommand="{x:Bind ViewModel.PrepareEditRunwayDialogCommand}"
-                                             DeleteCommand="{x:Bind ViewModel.PromptDeleteRunwayCommand}"/>
+                                 Title="Runways"
+                                 Foreground="White"
+                                 Items="{x:Bind ViewModel.RunwaysList, Mode=OneWay}"
+                                 SelectedItem="{x:Bind ViewModel.SelectedRunway, Mode=TwoWay}"
+                                 DisplayMemberPath="Name" 
+                                 AddCommand="{x:Bind ViewModel.PrepareNewRunwayDialogCommand}"
+                                 EditCommand="{x:Bind ViewModel.PrepareEditRunwayDialogCommand}"
+                                 DeleteCommand="{x:Bind ViewModel.PromptDeleteRunwayCommand}"/>
 
                 <local:AirportSectionControl Grid.Column="2"
-                                             Title="Gates"
-                                             Items="{x:Bind ViewModel.GatesList, Mode=OneWay}"
-                                             SelectedItem="{x:Bind ViewModel.SelectedGate, Mode=TwoWay}"
-                                             DisplayMemberPath="Name"
-                                             AddCommand="{x:Bind ViewModel.PrepareNewGateDialogCommand}"
-                                             EditCommand="{x:Bind ViewModel.PrepareEditGateDialogCommand}"
-                                             DeleteCommand="{x:Bind ViewModel.PromptDeleteGateCommand}"/>
+                                Title="Gates"
+                                Foreground="White"
+                                Items="{x:Bind ViewModel.GatesList, Mode=OneWay}"
+                                SelectedItem="{x:Bind ViewModel.SelectedGate, Mode=TwoWay}"
+                                DisplayMemberPath="GateName" 
+                                AddCommand="{x:Bind ViewModel.PrepareNewGateDialogCommand}"
+                                EditCommand="{x:Bind ViewModel.PrepareEditGateDialogCommand}"
+                                DeleteCommand="{x:Bind ViewModel.PromptDeleteGateCommand}"/>
 
                 <local:AirportSectionControl Grid.Column="4"
-                                             Title="Destination Airports"
-                                             Items="{x:Bind ViewModel.AirportsList, Mode=OneWay}"
-                                             SelectedItem="{x:Bind ViewModel.SelectedAirport, Mode=TwoWay}"
-                                             DisplayMemberPath="Name"
-                                             AddCommand="{x:Bind ViewModel.PrepareNewAirportDialogCommand}"
-                                             EditCommand="{x:Bind ViewModel.PrepareEditAirportDialogCommand}"
-                                             DeleteCommand="{x:Bind ViewModel.PromptDeleteAirportCommand}"/>
+                                Title="Destination Airports"
+                                Foreground="White"
+                                Items="{x:Bind ViewModel.AirportsList, Mode=OneWay}"
+                                SelectedItem="{x:Bind ViewModel.SelectedAirport, Mode=TwoWay}"
+                                DisplayMemberPath="Name" 
+                                AddCommand="{x:Bind ViewModel.PrepareNewAirportDialogCommand}"
+                                EditCommand="{x:Bind ViewModel.PrepareEditAirportDialogCommand}"
+                                DeleteCommand="{x:Bind ViewModel.PromptDeleteAirportCommand}"/>
             </Grid>
         </ScrollViewer>
 

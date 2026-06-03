@@ -75,7 +75,7 @@ public class RouteServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpCli
 
         if (dto.airport is not null)
         {
-            route.Airport = new Airport(dto.airport.id, dto.airport.airportCode, dto.airport.city, dto.airport.name);
+            route.Airport = new Airport(dto.airport.Id, dto.airport.AirportCode, dto.airport.City, dto.airport.Name);
         }
 
         if (dto.company is not null)
