@@ -20,7 +20,14 @@ public class ShopItemsController(IShopItemService shopItemService) : ControllerB
     [HttpGet("{shopItemId:int}")]
     public async Task<ActionResult<ShopItem>> GetById(int shopItemId)
     {
-        ShopItem shopItem = await shopItemService.GetByIdAsync(shopItemId);
+        // Treat non-positive ids as not found so UI proxies that expect null receive 404 -> null
+        if (shopItemId <= 0)
+            return NotFound();
+
+        var shopItem = await shopItemService.GetByIdAsync(shopItemId);
+        if (shopItem == null)
+            return NotFound();
+
         return this.Ok(shopItem);
     }
 

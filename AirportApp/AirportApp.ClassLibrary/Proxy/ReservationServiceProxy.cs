@@ -23,12 +23,20 @@ public class ReservationServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
 
     public async Task ReserveCartAsync(Reservation reservation)
     {
-        await PostAsync(BaseUrl, reservation);
+        if (reservation == null) throw new ArgumentNullException(nameof(reservation));
+
+        // Map Reservation -> DTO expected by API (ReserveCartRequest)
+        var cart = reservation.ReservationCart;
+        var items = cart.CartItems?.Select(ci => new ReserveCartItemRequest(ci.Id, ci.ShopItem?.Id ?? 0, ci.Quantity)).ToList() ?? new List<ReserveCartItemRequest>();
+
+        var payload = new ReserveCartRequest(cart.Id, reservation.Active, reservation.ReservationDate, items);
+
+        await PostAsync($"{BaseUrl}/reserve", payload);
     }
 
     public async Task CancelReservationAsync(int reservationId)
     {
-        await PostAsync<object>($"{BaseUrl}/{reservationId}/cancel", null!);
+        await PutAsync($"{BaseUrl}/{reservationId}/cancel", new { });
     }
 
     public async Task<Reservation?> GetActiveReservationForCartAsync(int cartId)
@@ -40,4 +48,7 @@ public class ReservationServiceProxy(HttpClient httpClient) : ServiceProxyBase(h
     {
         await DeleteAsync($"{BaseUrl}/{reservationId}");
     }
+
+    private sealed record ReserveCartItemRequest(int Id, int ShopItemId, int Quantity);
+    private sealed record ReserveCartRequest(int CartId, bool Active, DateTime ReservationDate, List<ReserveCartItemRequest> CartItems);
 }

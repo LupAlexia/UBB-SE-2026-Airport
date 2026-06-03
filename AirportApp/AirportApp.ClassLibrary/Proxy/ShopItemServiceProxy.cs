@@ -16,9 +16,9 @@ public class ShopItemServiceProxy(HttpClient httpClient) : ServiceProxyBase(http
         return await GetListAsync<ShopItem>(BaseUrl);
     }
 
-    public async Task<ShopItem> GetByIdAsync(int shopItemId)
+    public async Task<ShopItem?> GetByIdAsync(int shopItemId)
     {
-        return await GetRequiredAsync<ShopItem>($"{BaseUrl}/{shopItemId}");
+        return await GetOptionalAsync<ShopItem>($"{BaseUrl}/{shopItemId}");
     }
 
     public async Task<IEnumerable<ShopItem>> GetItemsByShopIdAsync(int shopId)

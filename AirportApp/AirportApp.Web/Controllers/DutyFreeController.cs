@@ -23,17 +23,13 @@ public class DutyFreeController : Controller
         this.managerService = managerService;
     }
 
-    public IActionResult Index(string? search)
+    public async Task<IActionResult> Index(string? search)
     {
         IEnumerable<Shop> shops;
         if (!string.IsNullOrWhiteSpace(search))
-        {
-            shops = shopService.SearchByName(search);
-        }
+            shops = await shopService.SearchByNameAsync(search);
         else
-        {
-            shops = shopService.GetAllAvailableShops();
-        }
+            shops = await shopService.GetAllAvailableShopsAsync();
 
         var model = new ShopListViewModel
         {
@@ -48,23 +44,16 @@ public class DutyFreeController : Controller
     }
 
     [RequireDutyFreeRole(DutyFreeModuleRole.Client)]
-    public IActionResult Search(string? searchText, string? sort)
+    public async Task<IActionResult> Search(string? searchText, string? sort)
     {
         IEnumerable<Shop> shops;
-
         if (!string.IsNullOrWhiteSpace(searchText))
-        {
-            shops = shopService.SearchByName(searchText);
-        }
+            shops = await shopService.SearchByNameAsync(searchText);
         else
-        {
-            shops = shopService.GetAllAvailableShops();
-        }
+            shops = await shopService.GetAllAvailableShopsAsync();
 
         if (sort == "name")
-        {
-            shops = shopService.SortAlphabetically(shops);
-        }
+            shops = shops.OrderBy(s => s.Name);
 
         return PartialView("_ShopList", shops.ToList());
     }
@@ -72,25 +61,22 @@ public class DutyFreeController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequireDutyFreeRole(DutyFreeModuleRole.Manager)]
-    public IActionResult AddShop(ShopFormModel form)
+    public async Task<IActionResult> AddShop(ShopFormModel form)
     {
         if (ModelState.IsValid)
         {
-            var manager = managerService.GetManagerById(session.DutyFreeUserId);
-            shopService.AddShop(new Shop(form.Name, form.Type, manager!));
+            var manager = await managerService.GetManagerByIdAsync(session.DutyFreeUserId);
+            if (manager != null)
+                await shopService.AddShopAsync(new Shop(form.Name, form.Type, manager));
         }
-
         return RedirectToAction(nameof(Index));
     }
 
     [RequireDutyFreeRole(DutyFreeModuleRole.Manager)]
-    public IActionResult EditShopForm(int id)
+    public async Task<IActionResult> EditShopForm(int id)
     {
-        var shop = shopService.GetAllAvailableShops().FirstOrDefault(s => s.Id == id);
-        if (shop == null)
-        {
-            return NotFound();
-        }
+        var shop = await shopService.GetShopByIdAsync(id);
+        if (shop == null) return NotFound();
 
         var form = new ShopFormModel
         {
@@ -99,43 +85,33 @@ public class DutyFreeController : Controller
             Type = shop.Type,
             ManagerId = shop.Manager?.Id ?? 0
         };
-
         return View(form);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequireDutyFreeRole(DutyFreeModuleRole.Manager)]
-    public IActionResult EditShop(ShopFormModel form)
+    public async Task<IActionResult> EditShop(ShopFormModel form)
     {
-        if (!this.ModelState.IsValid)
-        {
-            return this.RedirectToAction(nameof(this.Index));
-        }
+        if (!ModelState.IsValid)
+            return RedirectToAction(nameof(Index));
 
-        Shop? existingShop = shopService.GetAllAvailableShops()
-            .FirstOrDefault(shop => shop.Id == form.Id);
-
-        if (existingShop == null)
-        {
-            return this.NotFound();
-        }
+        var existingShop = await shopService.GetShopByIdAsync(form.Id);
+        if (existingShop == null) return NotFound();
 
         existingShop.Name = form.Name;
         existingShop.Type = form.Type;
+        await shopService.UpdateShopAsync(existingShop);
 
-        shopService.UpdateShop(existingShop);
-
-        return this.RedirectToAction(nameof(this.Index));
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequireDutyFreeRole(DutyFreeModuleRole.Manager)]
-    public IActionResult DeleteShop(int id)
+    public async Task<IActionResult> DeleteShop(int id)
     {
-        shopService.DeleteShop(id);
+        await shopService.DeleteShopAsync(id);
         return RedirectToAction(nameof(Index));
     }
 }
-

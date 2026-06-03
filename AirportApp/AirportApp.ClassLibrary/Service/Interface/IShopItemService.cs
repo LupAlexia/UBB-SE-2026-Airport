@@ -5,7 +5,7 @@ namespace AirportApp.ClassLibrary.Service.Interface;
 public interface IShopItemService
 {
     Task<IEnumerable<ShopItem>> GetAllAsync();
-    Task<ShopItem> GetByIdAsync(int shopItemId);
+    Task<ShopItem?> GetByIdAsync(int shopItemId);
     Task<IEnumerable<ShopItem>> GetItemsByShopIdAsync(int shopId);
     Task<IEnumerable<ShopItem>> SearchItemsByNameAsync(int shopId, string searchText);
     Task AddShopItemAsync(ShopItem shopItem);

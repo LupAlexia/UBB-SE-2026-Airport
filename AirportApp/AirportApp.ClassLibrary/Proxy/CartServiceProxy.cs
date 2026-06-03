@@ -27,16 +27,21 @@ public class CartServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClie
 
     public async Task<Cart> GetOrCreateCartAsync(int clientId)
     {
-        var existingCart = await GetCartByIdAsync(clientId);
-        if (existingCart is not null) return existingCart;
+        var list = await GetListAsync<CartDto>(BaseUrl);
+        var carts = list.Select(MapCart).ToList();
+        var existing = carts.FirstOrDefault(c => c.Client?.Id == clientId);
+        if (existing is not null) return existing;
 
         var newCart = new Cart(
-            clientId,
+            0,
             new Client(clientId, "Current Client"),
-            []);
+            new List<CartItem>());
 
         await AddCartAsync(newCart);
-        return newCart;
+
+        // fetch again to get generated id
+        var refreshed = (await GetListAsync<CartDto>(BaseUrl)).Select(MapCart).FirstOrDefault(c => c.Client?.Id == clientId);
+        return refreshed ?? newCart;
     }
 
     public async Task AddCartAsync(Cart cart)

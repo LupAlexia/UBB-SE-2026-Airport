@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using AirportLib.Domain.User;
+﻿using AirportApp.ClassLibrary.Service.Interface;
 using AirportApp.Web.Infrastructure;
-using AirportApp.ClassLibrary.Service.Interface;
+using AirportApp.Web.Models.DutyFree;
+using AirportLib.Domain.User;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AirportApp.Web.Controllers;
 
@@ -24,18 +25,24 @@ public class DutyFreeItemDetailsController : Controller
         this.cartService = cartService;
     }
 
-    public IActionResult Index(int id)
+    public async Task<IActionResult> Index(int id)
     {
-        var item = shopItemService.GetById(id);
-        if (item == null)
-        {
+        if (id <= 0)
             return NotFound();
-        }
 
-        var shop = item.Shop ?? shopService.GetAllAvailableShops().FirstOrDefault(s => s.Id == item.Shop?.Id);
-        var cart = cartService.GetOrCreateCart(session.DutyFreeUserId);
-        var cartItems = cartService.GetCartItems(cart.Id);
-        bool alreadyInCart = cartItems.Any(ci => ci.ShopItem?.Id == id);
+        var item = await shopItemService.GetByIdAsync(id);
+        if (item == null)
+            return NotFound();
+
+        var shop = item.Shop ?? await shopService.GetShopByIdAsync(item.Shop?.Id ?? 0);
+        // Ensure HttpContext session client id stays in sync with WebUserSession
+        HttpContext?.Session?.SetInt32("ClientId", session.DutyFreeUserId);
+
+        var cart = await cartService.GetOrCreateCartAsync(session.DutyFreeUserId);
+        var cartItems = await cartService.GetCartItemsAsync(cart.Id);
+        int existingQty = cartItems.Where(ci => ci.ShopItem?.Id == id).Sum(ci => ci.Quantity);
+        // Consider item "already in cart" only when existing quantity is >= available stock
+        bool alreadyInCart = existingQty >= item.Quantity;
 
         var model = new ItemDetailsViewModel
         {
@@ -52,16 +59,24 @@ public class DutyFreeItemDetailsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequireDutyFreeRole(DutyFreeModuleRole.Client)]
-    public IActionResult AddToCart(int itemId, int cartId, int quantity)
+    public async Task<IActionResult> AddToCart(int itemId, int cartId, int quantity)
     {
-        var item = shopItemService.GetById(itemId);
+        if (itemId <= 0 || quantity <= 0)
+        {
+            return BadRequest();
+        }
+
+        // keep session client id in sync
+        HttpContext?.Session?.SetInt32("ClientId", session.DutyFreeUserId);
+
+        var item = await shopItemService.GetByIdAsync(itemId);
         if (item != null)
         {
-            var cart = cartService.GetOrCreateCart(session.DutyFreeUserId);
-            cartService.AddItemToCart(cart.Id, new CartItem(0, item, quantity));
+            var cart = await cartService.GetOrCreateCartAsync(session.DutyFreeUserId);
+            await cartService.AddItemToCartAsync(cart.Id, itemId, quantity);
+            TempData["CartSuccess"] = "Item added to cart.";
         }
 
         return RedirectToAction(nameof(Index), new { id = itemId });
     }
 }
-

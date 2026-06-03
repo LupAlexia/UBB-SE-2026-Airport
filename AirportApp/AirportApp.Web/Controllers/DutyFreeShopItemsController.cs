@@ -23,31 +23,21 @@ public class DutyFreeShopItemsController : Controller
         this.shopItemService = shopItemService;
     }
 
-    public IActionResult Index(int shopId, string? search, string? sort)
+    public async Task<IActionResult> Index(int shopId, string? search, string? sort)
     {
-        var shop = shopService.GetShopById(shopId);
+        var shop = await shopService.GetShopByIdAsync(shopId);
         if (shop == null)
-        {
             return NotFound();
-        }
 
         IEnumerable<ShopItem> items;
         if (!string.IsNullOrWhiteSpace(search))
-        {
-            items = shopItemService.SearchItemsByName(shopId, search);
-        }
+            items = await shopItemService.SearchItemsByNameAsync(shopId, search);
         else if (sort == "price")
-        {
-            items = shopItemService.GetItemsSortedByPrice(shop);
-        }
+            items = await shopItemService.GetItemsSortedByPriceAsync(shop);
         else if (sort == "name")
-        {
-            items = shopItemService.GetItemsSortedAlphabetically(shop);
-        }
+            items = await shopItemService.GetItemsSortedAlphabeticallyAsync(shop);
         else
-        {
-            items = shopItemService.GetItemsByShopId(shopId);
-        }
+            items = await shopItemService.GetItemsByShopIdAsync(shopId);
 
         var model = new ShopItemsViewModel
         {
@@ -64,28 +54,23 @@ public class DutyFreeShopItemsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequireDutyFreeRole(DutyFreeModuleRole.Manager)]
-    public IActionResult AddItem(ShopItemFormModel form)
+    public async Task<IActionResult> AddItem(ShopItemFormModel form)
     {
         if (ModelState.IsValid)
         {
-            var shop = shopService.GetShopById(form.ShopId);
+            var shop = await shopService.GetShopByIdAsync(form.ShopId);
             if (shop != null)
-            {
-                shopItemService.AddShopItem(new ShopItem(form.Quantity, form.Price, shop, string.Empty, form.Name, string.Empty));
-            }
+                await shopItemService.AddShopItemAsync(new ShopItem(form.Quantity, form.Price, shop, string.Empty, form.Name, string.Empty));
         }
-
         return RedirectToAction(nameof(Index), new { shopId = form.ShopId });
     }
 
     [RequireDutyFreeRole(DutyFreeModuleRole.Manager)]
-    public IActionResult EditItemForm(int id)
+    public async Task<IActionResult> EditItemForm(int id)
     {
-        var item = shopItemService.GetById(id);
+        var item = await shopItemService.GetByIdAsync(id);
         if (item == null)
-        {
             return NotFound();
-        }
 
         var form = new ShopItemFormModel
         {
@@ -95,37 +80,34 @@ public class DutyFreeShopItemsController : Controller
             Quantity = item.Quantity,
             ShopId = item.Shop?.Id ?? 0,
         };
-
         return View(form);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequireDutyFreeRole(DutyFreeModuleRole.Manager)]
-    public IActionResult EditItem(ShopItemFormModel form)
+    public async Task<IActionResult> EditItem(ShopItemFormModel form)
     {
         if (ModelState.IsValid)
         {
-            var existing = shopItemService.GetById(form.Id);
+            var existing = await shopItemService.GetByIdAsync(form.Id);
             if (existing != null)
             {
                 existing.Name = form.Name;
                 existing.Price = form.Price;
                 existing.Quantity = form.Quantity;
-                shopItemService.UpdateShopItem(existing);
+                await shopItemService.UpdateShopItemAsync(existing);
             }
         }
-
         return RedirectToAction(nameof(Index), new { shopId = form.ShopId });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequireDutyFreeRole(DutyFreeModuleRole.Manager)]
-    public IActionResult DeleteItem(int id, int shopId)
+    public async Task<IActionResult> DeleteItem(int id, int shopId)
     {
-        shopItemService.RemoveShopItem(id);
+        await shopItemService.RemoveShopItemAsync(id);
         return RedirectToAction(nameof(Index), new { shopId });
     }
 }
-

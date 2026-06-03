@@ -58,7 +58,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AddOns");
+                    b.ToTable("AddOns", (string)null);
 
                     b.HasData(
                         new
@@ -122,7 +122,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Airports");
+                    b.ToTable("Airports", (string)null);
 
                     b.HasData(
                         new
@@ -192,7 +192,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("BotMessages");
+                    b.ToTable("BotMessages", (string)null);
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.Cart", b =>
@@ -211,7 +211,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.CartItem", b =>
@@ -239,7 +239,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("ShopItemId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.Chat", b =>
@@ -262,7 +262,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Chats");
+                    b.ToTable("Chats", (string)null);
 
                     b.HasData(
                         new
@@ -296,7 +296,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clients");
+                    b.ToTable("Clients", (string)null);
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.Company", b =>
@@ -321,7 +321,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("ManagerId");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
 
                     b.HasData(
                         new
@@ -405,7 +405,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("SubcategoryId");
 
-                    b.ToTable("Tickets");
+                    b.ToTable("Tickets", (string)null);
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.ComplaintTicketCategory", b =>
@@ -429,7 +429,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TicketCategories");
+                    b.ToTable("TicketCategories", (string)null);
 
                     b.HasData(
                         new
@@ -478,7 +478,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("ParentCategoryId");
 
-                    b.ToTable("TicketSubcategories");
+                    b.ToTable("TicketSubcategories", (string)null);
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.Customer", b =>
@@ -520,7 +520,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("MembershipId");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
 
                     b.HasData(
                         new
@@ -598,7 +598,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
 
                     b.HasData(
                         new
@@ -687,7 +687,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("FlightId");
 
-                    b.ToTable("EmployeeFlights");
+                    b.ToTable("EmployeeFlights", (string)null);
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.FAQEntry", b =>
@@ -728,7 +728,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FAQs");
+                    b.ToTable("FAQs", (string)null);
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.FAQNode", b =>
@@ -862,7 +862,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("RunwayId");
 
-                    b.ToTable("Flights");
+                    b.ToTable("Flights", (string)null);
 
                     b.HasData(
                         new
@@ -955,7 +955,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("FlightTickets");
+                    b.ToTable("FlightTickets", (string)null);
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.Gate", b =>
@@ -980,7 +980,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("AirportId");
 
-                    b.ToTable("Gates");
+                    b.ToTable("Gates", (string)null);
 
                     b.HasData(
                         new
@@ -1050,7 +1050,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Managers");
+                    b.ToTable("Managers", (string)null);
 
                     b.HasData(
                         new
@@ -1097,7 +1097,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Memberships");
+                    b.ToTable("Memberships", (string)null);
 
                     b.HasData(
                         new
@@ -1142,7 +1142,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("AddOnId");
 
-                    b.ToTable("Membership_Addon_Discounts");
+                    b.ToTable("Membership_Addon_Discounts", (string)null);
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.Message", b =>
@@ -1175,7 +1175,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Messages", (string)null);
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.Reservation", b =>
@@ -1202,7 +1202,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("ReservationCartId");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.Review", b =>
@@ -1242,7 +1242,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
 
                     b.HasData(
                         new
@@ -1318,7 +1318,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Routes");
+                    b.ToTable("Routes", (string)null);
 
                     b.HasData(
                         new
@@ -1382,7 +1382,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Runways");
+                    b.ToTable("Runways", (string)null);
 
                     b.HasData(
                         new
@@ -1434,7 +1434,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Senders");
+                    b.ToTable("Senders", (string)null);
 
                     b.UseTptMappingStrategy();
 
@@ -1482,7 +1482,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("ManagerId");
 
-                    b.ToTable("Shops");
+                    b.ToTable("Shops", (string)null);
 
                     b.HasData(
                         new
@@ -1546,7 +1546,7 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasIndex("ShopId");
 
-                    b.ToTable("ShopItems");
+                    b.ToTable("ShopItems", (string)null);
 
                     b.HasData(
                         new
@@ -1595,14 +1595,14 @@ namespace AirportApp.ClassLibrary.Migrations
                 {
                     b.HasBaseType("AirportApp.ClassLibrary.Entity.Domain.Sender");
 
-                    b.ToTable("Administrators");
+                    b.ToTable("Administrators", (string)null);
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.User", b =>
                 {
                     b.HasBaseType("AirportApp.ClassLibrary.Entity.Domain.Sender");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new
