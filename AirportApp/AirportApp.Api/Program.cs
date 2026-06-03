@@ -153,6 +153,60 @@ using (IServiceScope scope = application.Services.CreateScope())
         await databaseContext.SaveChangesAsync();
     }
 
+    if (!await databaseContext.Flights.AnyAsync())
+    {
+        databaseContext.Flights.AddRange(
+            new Flight
+            {
+                Date = new DateTime(2026, 5, 20, 8, 0, 0),
+                FlightNumber = "BA101",
+                Route = new AirportApp.ClassLibrary.Entity.Domain.Route { Id = 1 },
+                Runway = new Runway { Id = 1 },
+                Gate = new Gate { Id = 1 }
+            },
+            new Flight
+            {
+                Date = new DateTime(2026, 5, 21, 14, 0, 0),
+                FlightNumber = "DL455",
+                Route = new AirportApp.ClassLibrary.Entity.Domain.Route { Id = 2 },
+                Runway = new Runway { Id = 2 },
+                Gate = new Gate { Id = 3 }
+            },
+            new Flight
+            {
+                Date = new DateTime(2026, 5, 22, 6, 30, 0),
+                FlightNumber = "W6 3301",
+                Route = new AirportApp.ClassLibrary.Entity.Domain.Route { Id = 3 },
+                Runway = new Runway { Id = 3 },
+                Gate = new Gate { Id = 5 }
+            }
+        );
+
+        await databaseContext.SaveChangesAsync();
+    }
+
+    if (!await databaseContext.Flights.AnyAsync(flight => flight.FlightNumber == "BA103" && flight.Date == new DateTime(2026, 6, 3, 8, 0, 0)))
+    {
+        AirportApp.ClassLibrary.Entity.Domain.Route londonRoute = new() { Id = 1 };
+        Runway runway = new() { Id = 1 };
+        Gate gate = new() { Id = 1 };
+
+        databaseContext.Entry(londonRoute).State = EntityState.Unchanged;
+        databaseContext.Entry(runway).State = EntityState.Unchanged;
+        databaseContext.Entry(gate).State = EntityState.Unchanged;
+
+        databaseContext.Flights.Add(new Flight
+        {
+            Date = new DateTime(2026, 6, 3, 8, 0, 0),
+            FlightNumber = "BA103",
+            Route = londonRoute,
+            Runway = runway,
+            Gate = gate
+        });
+
+        await databaseContext.SaveChangesAsync();
+    }
+
     if (!await databaseContext.FaqNodes.AnyAsync(node => node.NodeId == 5))
     {
         FAQNode lostBaggageNode = new()
