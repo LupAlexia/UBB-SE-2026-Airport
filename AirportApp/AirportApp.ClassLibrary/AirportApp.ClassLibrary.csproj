@@ -20,7 +20,7 @@
     </PackageReference>
       <PackageReference Include="QuestPDF" Version="2024.3.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.10" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.2" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.8" />
   </ItemGroup>
 
 </Project>
