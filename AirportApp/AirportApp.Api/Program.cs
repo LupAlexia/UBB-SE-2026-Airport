@@ -152,6 +152,52 @@ using (IServiceScope scope = application.Services.CreateScope())
 
         await databaseContext.SaveChangesAsync();
     }
+
+    if (!await databaseContext.FaqNodes.AnyAsync(node => node.NodeId == 5))
+    {
+        FAQNode lostBaggageNode = new()
+        {
+            QuestionText = "Please go to the baggage services desk or file a lost baggage report at the arrivals hall.",
+            IsFinalAnswer = true
+        };
+
+        FAQNode damagedBaggageNode = new()
+        {
+            QuestionText = "Take photos and report the damage at the baggage service desk before leaving the airport.",
+            IsFinalAnswer = true
+        };
+
+        FAQNode delayedBaggageNode = new()
+        {
+            QuestionText = "Use your reference number to track the bag and contact baggage services if it does not arrive.",
+            IsFinalAnswer = true
+        };
+
+        databaseContext.FaqNodes.AddRange(lostBaggageNode, damagedBaggageNode, delayedBaggageNode);
+        await databaseContext.SaveChangesAsync();
+
+        FAQNode baggageQuestionNode = await databaseContext.FaqNodes.FirstAsync(node => node.NodeId == 2);
+
+        baggageQuestionNode.Options.Add(new FAQOption
+        {
+            Label = "Lost baggage",
+            NextOption = lostBaggageNode
+        });
+
+        baggageQuestionNode.Options.Add(new FAQOption
+        {
+            Label = "Damaged baggage",
+            NextOption = damagedBaggageNode
+        });
+
+        baggageQuestionNode.Options.Add(new FAQOption
+        {
+            Label = "Delayed baggage",
+            NextOption = delayedBaggageNode
+        });
+
+        await databaseContext.SaveChangesAsync();
+    }
 }
 
 application.UseSwagger();
