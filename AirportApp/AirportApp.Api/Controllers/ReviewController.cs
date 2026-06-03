@@ -61,7 +61,7 @@ namespace AirportApp.Api.Controllers
             };
 
             int createdId = await reviewService.AddAsync(review);
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = createdId }, review);
+            return Ok(createdId);
         }
 
         [HttpPut("{id}")]

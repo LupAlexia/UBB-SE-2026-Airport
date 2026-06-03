@@ -25,6 +25,12 @@ public class DashboardController : Controller
     }
 
     [Authorize(Roles = "Customer")]
+    public IActionResult SupportDashboard()
+    {
+        return View();
+    }
+
+    [Authorize(Roles = "Customer")]
     public IActionResult CustomerSelection()
     {
         return View();
