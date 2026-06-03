@@ -1,6 +1,8 @@
 using AirportApp.ClassLibrary;
 using AirportApp.ClassLibrary.DataAccess;
+using AirportApp.ClassLibrary.Entity.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 WebApplicationBuilder applicationBuilder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +28,78 @@ applicationBuilder.Services.AddEndpointsApiExplorer();
 applicationBuilder.Services.AddSwaggerGen();
 
 WebApplication application = applicationBuilder.Build();
+
+using (IServiceScope scope = application.Services.CreateScope())
+{
+    AppDbContext databaseContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await databaseContext.Database.MigrateAsync();
+
+    if (!await databaseContext.TicketSubcategories.AnyAsync())
+    {
+        ComplaintTicketCategory technicalSupport = await databaseContext.TicketCategories.FirstAsync(category => category.Id == 1);
+        ComplaintTicketCategory billing = await databaseContext.TicketCategories.FirstAsync(category => category.Id == 2);
+        ComplaintTicketCategory generalFeedback = await databaseContext.TicketCategories.FirstAsync(category => category.Id == 3);
+
+        databaseContext.TicketSubcategories.AddRange(
+            new ComplaintTicketSubcategory
+            {
+                SubcategoryName = "Login or account access",
+                SubcategoryExternalReferenceId = 1,
+                ParentCategory = technicalSupport
+            },
+            new ComplaintTicketSubcategory
+            {
+                SubcategoryName = "Booking or reservation issue",
+                SubcategoryExternalReferenceId = 2,
+                ParentCategory = technicalSupport
+            },
+            new ComplaintTicketSubcategory
+            {
+                SubcategoryName = "Website or app problem",
+                SubcategoryExternalReferenceId = 3,
+                ParentCategory = technicalSupport
+            },
+            new ComplaintTicketSubcategory
+            {
+                SubcategoryName = "Refund request",
+                SubcategoryExternalReferenceId = 4,
+                ParentCategory = billing
+            },
+            new ComplaintTicketSubcategory
+            {
+                SubcategoryName = "Incorrect charge",
+                SubcategoryExternalReferenceId = 5,
+                ParentCategory = billing
+            },
+            new ComplaintTicketSubcategory
+            {
+                SubcategoryName = "Invoice or payment receipt",
+                SubcategoryExternalReferenceId = 6,
+                ParentCategory = billing
+            },
+            new ComplaintTicketSubcategory
+            {
+                SubcategoryName = "Complaint",
+                SubcategoryExternalReferenceId = 7,
+                ParentCategory = generalFeedback
+            },
+            new ComplaintTicketSubcategory
+            {
+                SubcategoryName = "Suggestion",
+                SubcategoryExternalReferenceId = 8,
+                ParentCategory = generalFeedback
+            },
+            new ComplaintTicketSubcategory
+            {
+                SubcategoryName = "Praise",
+                SubcategoryExternalReferenceId = 9,
+                ParentCategory = generalFeedback
+            }
+        );
+
+        await databaseContext.SaveChangesAsync();
+    }
+}
 
 application.UseSwagger();
 application.UseSwaggerUI(swaggerUiOptions =>

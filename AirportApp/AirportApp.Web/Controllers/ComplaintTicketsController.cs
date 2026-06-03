@@ -297,12 +297,21 @@ namespace AirportApp.Web.Controllers
         private async Task PopulateCreateOptionsAsync(int? selectedCategoryId = null, int? selectedSubcategoryId = null)
         {
             List<ComplaintTicketCategory> categories = (await complaintTicketCategoryService.GetAllCategoriesAsync()).ToList();
+            Dictionary<int, List<ComplaintTicketSubcategory>> subcategoriesByCategory = new();
+            foreach (ComplaintTicketCategory category in categories)
+            {
+                subcategoriesByCategory[category.Id] = (await complaintTicketSubcategoryService.GetSubcategoriesByCategoryIdAsync(category.Id)).ToList();
+            }
+
+            int? resolvedCategoryId = selectedCategoryId
+                ?? categories.FirstOrDefault(category => subcategoriesByCategory[category.Id].Count > 0)?.Id
+                ?? categories.FirstOrDefault()?.Id;
             List<SelectListItem> categoryItems = categories
                 .Select(category => new SelectListItem
                 {
                     Value = category.Id.ToString(),
                     Text = category.CategoryName,
-                    Selected = selectedCategoryId.HasValue && selectedCategoryId.Value == category.Id
+                    Selected = resolvedCategoryId.HasValue && resolvedCategoryId.Value == category.Id
                 })
                 .ToList();
 
@@ -310,7 +319,7 @@ namespace AirportApp.Web.Controllers
             List<object> subcategoryDetails = new List<object>();
             foreach (ComplaintTicketCategory category in categories)
             {
-                IEnumerable<ComplaintTicketSubcategory> subcategories = await complaintTicketSubcategoryService.GetSubcategoriesByCategoryIdAsync(category.Id);
+                IEnumerable<ComplaintTicketSubcategory> subcategories = subcategoriesByCategory[category.Id];
                 subcategoryItems.AddRange(subcategories.Select(subcategory => new SelectListItem
                 {
                     Value = subcategory.Id.ToString(),
@@ -328,6 +337,17 @@ namespace AirportApp.Web.Controllers
             ViewBag.Categories = categoryItems;
             ViewBag.Subcategories = subcategoryItems;
             ViewBag.SubcategoryDetails = subcategoryDetails;
+            ViewBag.SelectedCategoryId = resolvedCategoryId;
+            ViewBag.InitialSubcategories = resolvedCategoryId.HasValue
+                ? subcategoriesByCategory[resolvedCategoryId.Value]
+                    .Select(subcategory => new SelectListItem
+                    {
+                        Value = subcategory.Id.ToString(),
+                        Text = categories.First(category => category.Id == resolvedCategoryId.Value).CategoryName + " - " + subcategory.SubcategoryName,
+                        Selected = selectedSubcategoryId.HasValue && selectedSubcategoryId.Value == subcategory.Id
+                    })
+                    .ToList()
+                : new List<SelectListItem>();
         }
     }
 }
