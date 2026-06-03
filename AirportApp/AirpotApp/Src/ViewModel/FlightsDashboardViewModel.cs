@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -93,7 +93,7 @@ namespace AirportApp.Src.ViewModel
         [RelayCommand]
         public void LoadFlights()
         {
-            allFlights = RunSync(() => flightRouteService.GetAllFlightsWithDetailsAsync()).ToList();
+            allFlights = Task.Run(() => flightRouteService.GetAllFlightsWithDetailsAsync()).GetAwaiter().GetResult().ToList();
             ApplyFilter();
         }
 
@@ -159,13 +159,24 @@ namespace AirportApp.Src.ViewModel
         private void ApplyFilter()
         {
             string query = SearchText?.Trim().ToLowerInvariant() ?? string.Empty;
-            var matchingFlights = RunSync(() => flightRouteService.SearchFlightsAsync(allFlights, query)).ToList();
+            var displayRows = Task.Run(() =>
+            {
+                var matchingFlights = flightRouteService.SearchFlightsAsync(allFlights, query).GetAwaiter().GetResult().ToList();
+                var resultList = new List<FlightDisplayRow>();
+
+                foreach (Flight flight in matchingFlights)
+                {
+                    string crewText = flightEmployeeService.FormatCrewList(flight.Id);
+                    var summary = flightRouteService.BuildFlightSummaryAsync(flight, crewText).GetAwaiter().GetResult();
+                    resultList.Add(new FlightDisplayRow(summary));
+                }
+                return resultList;
+            }).GetAwaiter().GetResult();
 
             FilteredFlights.Clear();
-            foreach (Flight flight in matchingFlights)
+            foreach (var row in displayRows)
             {
-                string crewText = flightEmployeeService.FormatCrewList(flight.Id);
-                FilteredFlights.Add(new FlightDisplayRow(RunSync(() => flightRouteService.BuildFlightSummaryAsync(flight, crewText))));
+                FilteredFlights.Add(row);
             }
         }
 
