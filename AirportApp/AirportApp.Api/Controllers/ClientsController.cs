@@ -85,4 +85,19 @@ public class ClientsController(IClientService clientService) : ControllerBase
         await clientService.DeleteClientAsync(clientId);
         return this.NoContent();
     }
+
+    [HttpGet("any")]
+    public async Task<ActionResult<Client>> GetAny()
+    {
+        var clients = await clientService.GetAllClientsAsync();
+
+        var client = clients.FirstOrDefault();
+
+        if (client == null)
+        {
+            return this.NotFound("No clients exist in the database.");
+        }
+
+        return this.Ok(client);
+    }
 }

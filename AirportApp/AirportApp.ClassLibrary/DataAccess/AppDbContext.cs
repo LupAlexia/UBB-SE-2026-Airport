@@ -170,6 +170,10 @@ public class AppDbContext : DbContext
             .IsRequired(true)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Cart>()
+            .Property(c => c.Id)
+            .ValueGeneratedOnAdd();
+
         SeedProjectData(modelBuilder);
     }
 
