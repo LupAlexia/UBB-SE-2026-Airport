@@ -91,7 +91,10 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.FilteredFAQs) {
+@if (Model.FilteredFAQs.Any())
+{
+    foreach (var item in Model.FilteredFAQs)
+    {
         <tr>
             <td>
                 @item.Question
@@ -114,6 +117,15 @@
                                 <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-info">Delete</a>
                     }
                 </div>
+            </td>
+        </tr>
+    }
+}
+else
+{
+        <tr>
+            <td colspan="5" class="text-center text-muted py-4">
+                No FAQs have been added yet.
             </td>
         </tr>
 }

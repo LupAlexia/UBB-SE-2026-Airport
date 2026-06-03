@@ -99,6 +99,59 @@ using (IServiceScope scope = application.Services.CreateScope())
 
         await databaseContext.SaveChangesAsync();
     }
+
+    if (!await databaseContext.Faqs.AnyAsync())
+    {
+        databaseContext.Faqs.AddRange(
+            new FAQEntry
+            {
+                Question = "How do I check in online?",
+                Answer = "Open your booking, select Check-in, and follow the on-screen steps to confirm your passenger details and boarding pass.",
+                Category = FAQCategoryEnum.CheckIn,
+                ViewCount = 0,
+                HelpfulVotesCount = 0,
+                NotHelpfulVotesCount = 0
+            },
+            new FAQEntry
+            {
+                Question = "Where can I park at the airport?",
+                Answer = "Use the short-stay or long-stay car parks marked on the airport map. The parking page shows the current options and rates.",
+                Category = FAQCategoryEnum.Parking,
+                ViewCount = 0,
+                HelpfulVotesCount = 0,
+                NotHelpfulVotesCount = 0
+            },
+            new FAQEntry
+            {
+                Question = "What items are allowed in cabin baggage?",
+                Answer = "Liquids must follow the 100 ml rule and sharp or restricted items are not allowed in the cabin. Check the baggage page for the full list.",
+                Category = FAQCategoryEnum.Baggage,
+                ViewCount = 0,
+                HelpfulVotesCount = 0,
+                NotHelpfulVotesCount = 0
+            },
+            new FAQEntry
+            {
+                Question = "How do I change or cancel a ticket?",
+                Answer = "Go to My Bookings, open the ticket, and choose the change or cancel option if it is available for your fare type.",
+                Category = FAQCategoryEnum.Tickets,
+                ViewCount = 0,
+                HelpfulVotesCount = 0,
+                NotHelpfulVotesCount = 0
+            },
+            new FAQEntry
+            {
+                Question = "Where can I find airport facilities?",
+                Answer = "Facilities such as restrooms, lounges, charging points, and accessibility services are listed in the airport facilities section.",
+                Category = FAQCategoryEnum.Facilities,
+                ViewCount = 0,
+                HelpfulVotesCount = 0,
+                NotHelpfulVotesCount = 0
+            }
+        );
+
+        await databaseContext.SaveChangesAsync();
+    }
 }
 
 application.UseSwagger();
