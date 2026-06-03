@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Service.Interface;
-using AirportApp.Web.Models.Staff;
+using AirportApp.Web.Models.AirportManagement;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +13,7 @@ public class CompanyDashboardController : Controller
     private readonly IFlightRouteService flightRouteService;
     private readonly ICompanyService companyService;
     private readonly IEmployeeFlightService employeeFlightService;
+    private readonly IEmployeeService employeeService;
     private readonly IAirportService airportService;
     private readonly IRunwayService runwayService;
     private readonly IGateService gateService;
@@ -21,6 +22,7 @@ public class CompanyDashboardController : Controller
         IFlightRouteService flightRouteService,
         ICompanyService companyService,
         IEmployeeFlightService employeeFlightService,
+        IEmployeeService employeeService,
         IAirportService airportService,
         IRunwayService runwayService,
         IGateService gateService)
@@ -28,6 +30,7 @@ public class CompanyDashboardController : Controller
         this.flightRouteService = flightRouteService;
         this.companyService = companyService;
         this.employeeFlightService = employeeFlightService;
+        this.employeeService = employeeService;
         this.airportService = airportService;
         this.runwayService = runwayService;
         this.gateService = gateService;
@@ -176,9 +179,52 @@ public class CompanyDashboardController : Controller
         return View(model);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetCrewModal(int flightId)
+    {
+        Flight? flight = await flightRouteService.GetFlightByIdAsync(flightId);
+        if (flight == null) return NotFound();
+
+        List<Company> companies = await GetManagerCompaniesAsync();
+        if (!CanAccessFlight(flight, companies)) return Forbid();
+
+        Task<IEnumerable<Employee>> allEmployeesTask = employeeService.GetAllEmployeesAsync();
+        Task<IEnumerable<Employee>> assignedTask = employeeFlightService.GetEmployeesAssignedToFlightAsync(flightId);
+        Task<IEnumerable<CrewMemberSelectionData>> availableTask = employeeFlightService.GetCrewSelectionDataByIdAsync(flightId);
+        await Task.WhenAll(allEmployeesTask, assignedTask, availableTask);
+
+        List<int> assignedIds = assignedTask.Result.Select(e => e.Id).ToList();
+        HashSet<int> availableIds = availableTask.Result.Select(c => c.Employee.Id).ToHashSet();
+
+        EmployeeRoleEnum? prevRole = null;
+        var crewCandidates = new List<CrewMemberSelectionData>();
+
+        foreach (Employee emp in allEmployeesTask.Result.OrderBy(e => e.Role).ThenBy(e => e.Name))
+        {
+            crewCandidates.Add(new CrewMemberSelectionData
+            {
+                Employee = emp,
+                IsSelected = assignedIds.Contains(emp.Id),
+                IsFirstInRoleGroup = emp.Role != prevRole,
+                RoleHeader = emp.Role.ToString()
+            });
+            prevRole = emp.Role;
+        }
+
+        var model = new CrewManagementViewModel
+        {
+            FlightId = flightId,
+            CrewCandidates = crewCandidates,
+            SelectedEmployeeIds = assignedIds,
+            AvailableEmployeeIds = availableIds,
+        };
+
+        return PartialView("_CrewModal", model);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SaveCrew(int flightId, List<int> selectedEmployeeIds)
+    public async Task<IActionResult> SaveCrew(int flightId, int companyId, List<int> selectedEmployeeIds)
     {
         Task<Flight?> flightTask = flightRouteService.GetFlightByIdAsync(flightId);
         Task<List<Company>> companiesTask = GetManagerCompaniesAsync();
@@ -190,7 +236,7 @@ public class CompanyDashboardController : Controller
             return StatusCode(StatusCodes.Status403Forbidden);
 
         await employeeFlightService.UpdateEmployeesForFlightUsingIdsAsync(flightId, selectedEmployeeIds ?? new List<int>());
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Index), new { companyId });
     }
 
     private int GetManagerId() =>
@@ -232,7 +278,7 @@ public class CompanyDashboardController : Controller
 
         return new CompanyDashboardViewModel
         {
-            SelectedCompanyId = selectedCompanyId,
+            CompanyId = selectedCompanyId,
             CompanyName = selected?.Name ?? string.Empty,
             ManagerCompanies = companies,
             Flights = summaries,

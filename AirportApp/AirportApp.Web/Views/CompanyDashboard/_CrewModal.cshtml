@@ -1,0 +1,42 @@
+@model AirportApp.Web.Models.AirportManagement.CrewManagementViewModel
+
+<form method="post" asp-action="SaveCrew" id="crewForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="flightId" value="@Model.FlightId" />
+    <input type="hidden" name="companyId" id="crewCompanyIdInput" />
+
+    <div style="max-height:340px; overflow-y:auto; padding-right:.5rem;">
+        @foreach (var member in Model.CrewCandidates)
+        {
+            bool isAvailable = Model.AvailableEmployeeIds.Count == 0 || Model.AvailableEmployeeIds.Contains(member.Employee.Id);
+            bool isAssigned = Model.SelectedEmployeeIds.Contains(member.Employee.Id);
+
+            if (member.IsFirstInRoleGroup)
+            {
+                <div style="font-weight:600; margin-top:.75rem; margin-bottom:.25rem; color:#aaa; font-size:.8rem; text-transform:uppercase;">
+                    @member.RoleHeader
+                </div>
+            }
+            <div style="display:flex; align-items:center; gap:.5rem; padding:.3rem 0; @(!isAvailable && !isAssigned ? "opacity:.45;" : "")">
+                <input type="checkbox"
+                       name="selectedEmployeeIds"
+                       value="@member.Employee.Id"
+                       id="crew_@member.Employee.Id"
+                       @(isAssigned ? "checked" : "")
+                       @(!isAvailable && !isAssigned ? "disabled" : "") />
+                <label for="crew_@member.Employee.Id" style="cursor:@(isAvailable || isAssigned ? "pointer" : "not-allowed"); margin:0;">
+                    @member.Employee.Name
+                    @if (!isAvailable && !isAssigned)
+                    {
+                        <span style="font-size:.75rem; color:#e74c3c; margin-left:.4rem;">(unavailable)</span>
+                    }
+                </label>
+            </div>
+        }
+    </div>
+
+    <div class="modal-footer-btns" style="margin-top:1rem;">
+        <button type="submit" class="btn-save">Save Crew</button>
+        <button type="button" class="btn-cancel" id="cancelCrew">Cancel</button>
+    </div>
+</form>
