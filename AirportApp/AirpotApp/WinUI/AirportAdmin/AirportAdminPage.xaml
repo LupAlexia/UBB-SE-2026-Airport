@@ -75,6 +75,30 @@
                             <TextBlock Text="AIRPORT" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </Grid>
                     </Button>
+
+                    <Button x:Name="FAQButton"
+                            Style="{StaticResource SidebarNavItemStyle}"
+                            Command="{x:Bind ViewModel.ShowFAQCommand}">
+                        <Grid Height="44" Padding="14,0">
+                            <TextBlock Text="FAQ" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+
+                    <Button x:Name="TicketsButton"
+                            Style="{StaticResource SidebarNavItemStyle}"
+                            Command="{x:Bind ViewModel.ShowTicketsCommand}">
+                        <Grid Height="44" Padding="14,0">
+                            <TextBlock Text="TICKETS" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+
+                    <Button x:Name="ReviewsButton"
+                            Style="{StaticResource SidebarNavItemStyle}"
+                            Command="{x:Bind ViewModel.ShowReviewsCommand}">
+                        <Grid Height="44" Padding="14,0">
+                            <TextBlock Text="REVIEWS" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
                 </StackPanel>
             </Border>
 
