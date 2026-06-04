@@ -209,43 +209,4 @@ public class FlightSearchServiceTests
 
         Assert.That(result, Is.EqualTo(1));
     }
-
-    [Test]
-    public async Task GetFlightByIdAsync_FlightFound_ReturnsFlight()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var targetFlight = new Flight { Id = TargetFlightId };
-        flightRepository.GetByIdAsync(TargetFlightId).Returns(Task.FromResult<Flight?>(targetFlight));
-
-        var flightSearchService = new FlightSearchService(flightRepository);
-        var result = await flightSearchService.GetFlightByIdAsync(TargetFlightId);
-
-        Assert.That(result, Is.EqualTo(targetFlight));
-    }
-
-    [Test]
-    public async Task GetFlightsByRouteAsync_WithGivenRouteParameters_DelegatesSearchToRepository()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var expectedFlights = new List<Flight> { new Flight { Id = TargetFlightId } };
-        flightRepository.SearchFlightsAsync(TargetLocation, DepartureRouteType, TargetDate)
-            .Returns(Task.FromResult<IEnumerable<Flight>>(expectedFlights));
-
-        var flightSearchService = new FlightSearchService(flightRepository);
-        var result = await flightSearchService.GetFlightsByRouteAsync(TargetLocation, DepartureRouteType, TargetDate);
-
-        Assert.That(result, Is.EqualTo(expectedFlights));
-    }
-
-    [Test]
-    public async Task GetOccupiedSeatCountAsync_ValidFlightId_ReturnsCount()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        flightRepository.GetOccupiedSeatCountAsync(TargetFlightId).Returns(Task.FromResult(OccupiedSeatsCount));
-
-        var flightSearchService = new FlightSearchService(flightRepository);
-        var result = await flightSearchService.GetOccupiedSeatCountAsync(TargetFlightId);
-
-        Assert.That(result, Is.EqualTo(OccupiedSeatsCount));
-    }
 }

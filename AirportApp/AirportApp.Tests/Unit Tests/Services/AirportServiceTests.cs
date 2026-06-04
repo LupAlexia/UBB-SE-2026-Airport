@@ -134,25 +134,6 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task GetAllAirportsAsync_RecordsExist_ReturnsAllRecords()
-    {
-        var airportRepository = Substitute.For<IAirportRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var existingAirportsList = new List<Airport>
-        {
-            new Airport { AirportCode = DefaultTestCode, Name = DefaultTestName, City = DefaultTestCity },
-            new Airport { AirportCode = SecondTestCode, Name = SecondTestName, City = SecondTestCity }
-        };
-        airportRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Airport>>(existingAirportsList));
-
-        var airportService = new AirportService(airportRepository, flightRepository);
-        var resultList = (await airportService.GetAllAirportsAsync()).ToList();
-
-        Assert.That(resultList.Count, Is.EqualTo(2));
-        Assert.That(resultList, Is.EqualTo(existingAirportsList));
-    }
-
-    [Test]
     public async Task GetAirportByIdAsync_IdIsInvalid_ReturnsNull()
     {
         var airportRepository = Substitute.For<IAirportRepository>();

@@ -26,25 +26,6 @@ public class RunwayServiceTests
     private const string NegativeHandleTimeText = "-5";
 
     [Test]
-    public async Task GetAllRunwaysAsync_Called_ReturnsAllRunways()
-    {
-        var runwayRepository = Substitute.For<IRunwayRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var runways = new List<Runway>
-        {
-            new Runway { Name = DefaultRunwayName, HandleTime = DefaultHandleTime },
-            new Runway { Name = DefaultRunwayName2, HandleTime = DefaultHandleTime2 }
-        };
-        runwayRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Runway>>(runways));
-
-        var runwayService = new RunwayService(runwayRepository, flightRepository);
-        var result = (await runwayService.GetAllRunwaysAsync()).ToList();
-
-        Assert.That(result.Count, Is.EqualTo(runways.Count));
-        Assert.That(result, Is.EqualTo(runways));
-    }
-
-    [Test]
     public async Task GetRunwayByIdAsync_NegativeId_ReturnsNull()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();

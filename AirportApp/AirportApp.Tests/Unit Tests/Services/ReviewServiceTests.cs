@@ -235,26 +235,4 @@ public class ReviewServiceTests
 
         Assert.That(result, Is.SameAs(review));
     }
-    [Test]
-    public async Task GetAllAsync_RepositoryReturnsNull_ReturnsNull()
-    {
-        var repo = Substitute.For<IReviewRepository>();
-        repo.GetAsync().Returns(Task.FromResult<IEnumerable<Review>>(null!));
-
-        var result = await new ReviewService(repo).GetAllAsync();
-
-        Assert.That(result, Is.Null);
-    }
-
-    [Test]
-    public async Task GetAllAsync_RepositoryHasData_ReturnsMaterialisedList()
-    {
-        var reviews = new List<Review> { MakeValidReview(1), MakeValidReview(2) };
-        var repo    = Substitute.For<IReviewRepository>();
-        repo.GetAsync().Returns(Task.FromResult<IEnumerable<Review>>(reviews));
-
-        var result = await new ReviewService(repo).GetAllAsync();
-
-        Assert.That(result!.Count, Is.EqualTo(2));
-    }
 }

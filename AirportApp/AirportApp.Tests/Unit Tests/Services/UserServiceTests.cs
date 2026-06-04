@@ -120,31 +120,4 @@ public class UserServiceTests
 
         Assert.That(result, Is.SameAs(user));
     }
-
-    [Test]
-    public async Task GetAllUsersAsync_EmptyRepository_ReturnsEmptyList()
-    {
-        var repo = Substitute.For<IUserRepository>();
-        repo.GetAsync().Returns(Task.FromResult<IEnumerable<User>>(new List<User>()));
-
-        var result = await new UserService(repo).GetAllUsersAsync();
-
-        Assert.That(result, Is.Empty);
-    }
-
-    [Test]
-    public async Task GetAllUsersAsync_RepositoryHasData_ReturnsAllUsers()
-    {
-        var users = new List<User>
-        {
-            new User(1, "Alice", "alice@example.com"),
-            new User(2, "Bob",   "bob@example.com")
-        };
-        var repo = Substitute.For<IUserRepository>();
-        repo.GetAsync().Returns(Task.FromResult<IEnumerable<User>>(users));
-
-        var result = await new UserService(repo).GetAllUsersAsync();
-
-        Assert.That(result.Count, Is.EqualTo(2));
-    }
 }

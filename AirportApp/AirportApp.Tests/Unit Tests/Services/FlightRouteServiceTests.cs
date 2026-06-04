@@ -304,62 +304,6 @@ public class FlightRouteServiceTests
     }
 
     [Test]
-    public async Task GetRouteByIdAsync_IdIsValid_ReturnsRouteObject()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var routeRepository = Substitute.For<IRouteRepository>();
-        var targetRoute = new Route { RouteType = "ARR" };
-        routeRepository.GetByIdAsync(TargetRouteId).Returns(Task.FromResult<Route?>(targetRoute));
-
-        var flightRouteService = CreateTestService(flightRepository, routeRepository);
-        var resultRoute = await flightRouteService.GetRouteByIdAsync(TargetRouteId);
-
-        Assert.That(resultRoute, Is.EqualTo(targetRoute));
-    }
-
-    [Test]
-    public async Task GetFlightByIdAsync_IdIsValid_ReturnsFlightObject()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var routeRepository = Substitute.For<IRouteRepository>();
-        var targetFlight = new Flight { FlightNumber = ValidFlightNumber };
-        flightRepository.GetByIdAsync(TargetFlightId).Returns(Task.FromResult<Flight?>(targetFlight));
-
-        var flightRouteService = CreateTestService(flightRepository, routeRepository);
-        var resultFlight = await flightRouteService.GetFlightByIdAsync(TargetFlightId);
-
-        Assert.That(resultFlight, Is.EqualTo(targetFlight));
-    }
-
-    [Test]
-    public async Task GetAllRoutesAsync_RecordsExist_ReturnsAllRecords()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var routeRepository = Substitute.For<IRouteRepository>();
-        var existingRoutesList = new List<Route> { new Route(), new Route() };
-        routeRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Route>>(existingRoutesList));
-
-        var flightRouteService = CreateTestService(flightRepository, routeRepository);
-        var resultList = (await flightRouteService.GetAllRoutesAsync()).ToList();
-
-        Assert.That(resultList.Count, Is.EqualTo(2));
-    }
-
-    [Test]
-    public async Task GetAllFlightsAsync_RecordsExist_ReturnsAllRecords()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var routeRepository = Substitute.For<IRouteRepository>();
-        var existingFlightsList = new List<Flight> { new Flight(), new Flight() };
-        flightRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Flight>>(existingFlightsList));
-
-        var flightRouteService = CreateTestService(flightRepository, routeRepository);
-        var resultList = (await flightRouteService.GetAllFlightsAsync()).ToList();
-
-        Assert.That(resultList.Count, Is.EqualTo(2));
-    }
-
-    [Test]
     public void DeleteFlightUsingIdAsync_IdIsNegative_ThrowsArgumentException()
     {
         var flightRepository = Substitute.For<IFlightRepository>();

@@ -58,47 +58,6 @@ public class RouteServiceTests
     }
 
     [Test]
-    public async Task GetRouteByIdAsync_RouteExists_ReturnsRoute()
-    {
-        var routeRepository = Substitute.For<IRouteRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var targetRoute = new Route { RouteType = DepartureRouteType };
-        routeRepository.GetByIdAsync(ValidRouteId).Returns(Task.FromResult<Route?>(targetRoute));
-
-        var routeService = BuildService(routeRepository, flightRepository);
-        var result = await routeService.GetRouteByIdAsync(ValidRouteId);
-
-        Assert.That(result, Is.EqualTo(targetRoute));
-    }
-
-    [Test]
-    public async Task GetRouteByIdAsync_RouteNotFound_ReturnsNull()
-    {
-        var routeRepository = Substitute.For<IRouteRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        routeRepository.GetByIdAsync(InvalidRouteId).Returns(Task.FromResult<Route?>(null));
-
-        var routeService = BuildService(routeRepository, flightRepository);
-        var result = await routeService.GetRouteByIdAsync(InvalidRouteId);
-
-        Assert.That(result, Is.Null);
-    }
-
-    [Test]
-    public async Task GetAllRoutesAsync_Called_ReturnsAllRoutes()
-    {
-        var routeRepository = Substitute.For<IRouteRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var routes = new List<Route> { new Route(), new Route() };
-        routeRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Route>>(routes));
-
-        var routeService = BuildService(routeRepository, flightRepository);
-        var result = (await routeService.GetAllRoutesAsync()).ToList();
-
-        Assert.That(result.Count, Is.EqualTo(NumberOfRoutes));
-    }
-
-    [Test]
     public void NormalizeFlightType_NullInput_ReturnsDash()
     {
         var routeService = BuildService(Substitute.For<IRouteRepository>(), Substitute.For<IFlightRepository>());

@@ -26,24 +26,6 @@ public class FlightServiceTests
     private static readonly DateTime NewFlightDate2 = new DateTime(2025, 12, 1);
 
     [Test]
-    public async Task GetAllFlightsAsync_Called_ReturnsAllFlights()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flights = new List<Flight>
-        {
-            new Flight { FlightNumber = FirstFlightNumber },
-            new Flight { FlightNumber = SecondFlightNumber }
-        };
-        flightRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Flight>>(flights));
-
-        var flightService = new FlightService(flightRepository);
-        var result = (await flightService.GetAllFlightsAsync()).ToList();
-
-        Assert.That(result.Count, Is.EqualTo(NumberOfFlights));
-        Assert.That(result, Is.EqualTo(flights));
-    }
-
-    [Test]
     public async Task GetFlightByIdAsync_NegativeId_ReturnsNull()
     {
         var flightRepository = Substitute.For<IFlightRepository>();

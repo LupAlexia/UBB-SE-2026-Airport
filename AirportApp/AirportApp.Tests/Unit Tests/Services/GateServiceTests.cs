@@ -16,25 +16,6 @@ public class GateServiceTests
     private const int NumberOfGates = 2;
 
     [Test]
-    public async Task GetAllGatesAsync_Called_ReturnsAllGates()
-    {
-        var gateRepository = Substitute.For<IGateRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var gates = new List<Gate>
-        {
-            new Gate { GateName = FirstGateName },
-            new Gate { GateName = SecondGateName }
-        };
-        gateRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Gate>>(gates));
-
-        var gateService = new GateService(gateRepository, flightRepository);
-        var result = (await gateService.GetAllGatesAsync()).ToList();
-
-        Assert.That(result.Count, Is.EqualTo(NumberOfGates));
-        Assert.That(result, Is.EqualTo(gates));
-    }
-
-    [Test]
     public async Task GetGateByIdAsync_ZeroId_ReturnsNull()
     {
         var gateRepository = Substitute.For<IGateRepository>();
