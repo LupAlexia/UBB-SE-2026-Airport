@@ -23,11 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Unit Tests\" />
+    <ProjectReference Include="..\AirportApp.ClassLibrary\AirportApp.ClassLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AirportApp.ClassLibrary\AirportApp.ClassLibrary.csproj" />
+    <Folder Include="Integration\" />
   </ItemGroup>
 
 </Project>
