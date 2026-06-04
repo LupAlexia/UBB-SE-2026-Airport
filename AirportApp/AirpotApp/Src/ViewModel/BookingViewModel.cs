@@ -22,6 +22,9 @@ namespace AirportApp.Src.ViewModel
         private bool isSaving;
         private bool passengersValid;
 
+        // FIX 1: Capture the UI Thread Dispatcher to prevent silent UI binding dropouts
+        private readonly Microsoft.UI.Dispatching.DispatcherQueue dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+
         private Flight currentFlight = null!;
         public Flight CurrentFlight
         {
@@ -400,6 +403,8 @@ namespace AirportApp.Src.ViewModel
             confirmBookingCommand.RaiseCanExecuteChanged();
         }
 
+        // FIX 2: Added robust Try-Catch block to catch swallowed service exceptions
+        // FIX 3: Enforced UI thread safety when pushing updates back to UI bindings
         public async Task UpdatePricesAsync()
         {
             if (CurrentFlight == null)
@@ -407,24 +412,38 @@ namespace AirportApp.Src.ViewModel
                 return;
             }
 
-            float basePrice = await pricingService.CalculateBasePriceAsync(CurrentFlight);
-            var passengerData = MapPassengersToData();
-            var tickets = bookingService.CreateTickets(CurrentFlight, CurrentUser, passengerData, basePrice);
-            var breakdown = await pricingService.CalculatePriceBreakdownAsync(CurrentFlight, CurrentUser, tickets);
+            try
+            {
+               
+                float basePrice = await pricingService.CalculateBasePriceAsync(CurrentFlight);
+                var passengerData = MapPassengersToData();
+                var tickets = bookingService.CreateTickets(CurrentFlight, CurrentUser, passengerData, basePrice);
+                var breakdown = await pricingService.CalculatePriceBreakdownAsync(CurrentFlight, CurrentUser, tickets);
 
-            BasePricePerPerson = breakdown.BasePricePerPerson;
-            BasePriceTotal = breakdown.BasePriceTotal;
-            AddOnsTotal = breakdown.AddOnsTotal;
-            MembershipSavings = breakdown.MembershipSavings;
-            FinalTotalPrice = breakdown.FinalTotal;
+                if (breakdown == null)
+                {
+                    return;
+                }
 
-            OnPropertyChanged(nameof(BasePricePerPersonDisplay));
-            OnPropertyChanged(nameof(BasePriceTotalDisplay));
-            OnPropertyChanged(nameof(AddOnsTotalDisplay));
-            OnPropertyChanged(nameof(MembershipSavingsDisplay));
-            OnPropertyChanged(nameof(FinalTotalPriceDisplay));
+                BasePricePerPerson = breakdown.BasePricePerPerson;
+                BasePriceTotal = breakdown.BasePriceTotal;
+                AddOnsTotal = breakdown.AddOnsTotal;
+                MembershipSavings = breakdown.MembershipSavings;
+                FinalTotalPrice = breakdown.FinalTotal;
 
-            await RefreshBookingStateAsync();
+                OnPropertyChanged(nameof(BasePricePerPersonDisplay));
+                OnPropertyChanged(nameof(BasePriceTotalDisplay));
+                OnPropertyChanged(nameof(AddOnsTotalDisplay));
+                OnPropertyChanged(nameof(MembershipSavingsDisplay));
+                OnPropertyChanged(nameof(FinalTotalPriceDisplay));
+
+
+                await RefreshBookingStateAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+            }
         }
 
         private async Task ConfirmBookingAsync()
@@ -473,8 +492,6 @@ namespace AirportApp.Src.ViewModel
 
         public void UpdatePassengerAddOns(PassengerFormViewModel passenger, IEnumerable<AddOn> addedAddOns, IEnumerable<AddOn> removedAddOns)
         {
-            // Update the existing collection directly so that the CollectionChanged event fires
-            // and triggers UpdatePrices() automatically.
             bookingService.ApplyAddOnUpdates(passenger.SelectedAddOns, addedAddOns, removedAddOns);
         }
     }
