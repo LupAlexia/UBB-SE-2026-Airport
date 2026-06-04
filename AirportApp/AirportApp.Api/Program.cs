@@ -21,7 +21,11 @@ applicationBuilder.Services.AddCors(corsOptions =>
             .AllowAnyHeader()
             .AllowAnyMethod()));
 
-applicationBuilder.Services.AddControllers();
+applicationBuilder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 applicationBuilder.Services.AddEndpointsApiExplorer();
 applicationBuilder.Services.AddSwaggerGen();
 

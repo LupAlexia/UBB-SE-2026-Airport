@@ -8,6 +8,7 @@ namespace AirportApp.Web.Models.AirportManagement
         public FlightSummary? Flight { get; set; }
         public List<CrewMemberSelectionData> CrewCandidates { get; set; } = new();
         public List<int> SelectedEmployeeIds { get; set; } = new();
+        public HashSet<int> AvailableEmployeeIds { get; set; } = new();
     }
 }
 
