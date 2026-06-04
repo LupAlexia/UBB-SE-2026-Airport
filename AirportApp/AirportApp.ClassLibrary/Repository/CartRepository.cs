@@ -39,14 +39,18 @@ public class CartRepository(AppDbContext databaseContext) : ICartRepository
 
         if (cart.Client is not null)
         {
-            var existingClient = await databaseContext.Clients.FindAsync(cart.Client.Id);
+            var existingClient = cart.Client.Id > 0
+                ? await databaseContext.Clients.FindAsync(cart.Client.Id)
+                : null;
+
             if (existingClient is null)
             {
-                await databaseContext.Database.ExecuteSqlInterpolatedAsync(
-                    $"SET IDENTITY_INSERT [Clients] ON; INSERT INTO [Clients] ([Client_Id], [Name]) VALUES ({cart.Client.Id}, {cart.Client.Name}); SET IDENTITY_INSERT [Clients] OFF");
-                existingClient = await databaseContext.Clients.FindAsync(cart.Client.Id);
+                var newClient = new Client(0, cart.Client.Name);
+                databaseContext.Clients.Add(newClient);
+                await databaseContext.SaveChangesAsync();
+                existingClient = newClient;
             }
-            cart.Client = existingClient!;
+            cart.Client = existingClient;
         }
 
         var clientId = cart.Client!.Id;
