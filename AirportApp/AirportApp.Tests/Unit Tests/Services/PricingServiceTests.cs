@@ -29,7 +29,7 @@ public class PricingServiceTests
     [SetUp]
     public void SetUp()
     {
-        _pricingService = new PricingService();
+        _pricingService = new PricingService(new MembershipPricingStrategyFactory());
     }
 
     private static Flight CreateFlightWithDurationInMinutes(int durationInMinutes)
