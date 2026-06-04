@@ -16,7 +16,7 @@ public class ComplaintTicketSubcategoryServiceTests
         new ComplaintTicketCategory(1, "Delay", ComplaintTicketUrgencyLevelEnum.MEDIUM);
 
     [Test]
-    public void GetSubcategoryByIdAsync_ThrowsKeyNotFoundException_WhenSubcategoryDoesNotExist()
+    public void GetSubcategoryByIdAsync_SubcategoryDoesNotExist_ThrowsKeyNotFoundException()
     {
         var subcategoryRepository = Substitute.For<IComplaintTicketSubcategoryRepository>();
         subcategoryRepository.GetByIdAsync(InvalidSubcategoryId).Returns(Task.FromResult<ComplaintTicketSubcategory?>(null));
@@ -26,7 +26,7 @@ public class ComplaintTicketSubcategoryServiceTests
     }
 
     [Test]
-    public async Task GetSubcategoryByIdAsync_ReturnsSubcategory_WhenSubcategoryExists()
+    public async Task GetSubcategoryByIdAsync_SubcategoryExists_ReturnsSubcategory()
     {
         var subcategoryRepository = Substitute.For<IComplaintTicketSubcategoryRepository>();
         var subcategory = new ComplaintTicketSubcategory(ValidSubcategoryId, SubcategoryName, 0, CreateParentCategory());

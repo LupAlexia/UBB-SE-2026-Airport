@@ -22,7 +22,7 @@ public class AirportServiceTests
     private const string UpdatedCode = "NEW";
 
     [Test]
-    public void AddAirportAsync_ThrowsArgumentException_WhenCodeIsNull()
+    public void AddAirportAsync_CodeIsNull_ThrowsArgumentException()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -33,7 +33,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public void AddAirportAsync_ThrowsArgumentException_WhenCodeIsEmpty()
+    public void AddAirportAsync_CodeIsEmpty_ThrowsArgumentException()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -44,7 +44,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public void AddAirportAsync_ThrowsArgumentException_WhenCodeIsWhitespace()
+    public void AddAirportAsync_CodeIsWhitespace_ThrowsArgumentException()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -55,7 +55,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public void AddAirportAsync_ThrowsArgumentException_WhenNameIsNull()
+    public void AddAirportAsync_NameIsNull_ThrowsArgumentException()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -66,7 +66,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public void AddAirportAsync_ThrowsArgumentException_WhenNameIsEmpty()
+    public void AddAirportAsync_NameIsEmpty_ThrowsArgumentException()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -77,7 +77,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public void AddAirportAsync_ThrowsArgumentException_WhenNameIsWhitespace()
+    public void AddAirportAsync_NameIsWhitespace_ThrowsArgumentException()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -88,7 +88,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public void AddAirportAsync_ThrowsArgumentException_WhenCityIsNull()
+    public void AddAirportAsync_CityIsNull_ThrowsArgumentException()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -99,7 +99,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public void AddAirportAsync_ThrowsArgumentException_WhenCityIsEmpty()
+    public void AddAirportAsync_CityIsEmpty_ThrowsArgumentException()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -110,7 +110,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public void AddAirportAsync_ThrowsArgumentException_WhenCityIsWhitespace()
+    public void AddAirportAsync_CityIsWhitespace_ThrowsArgumentException()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -121,7 +121,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task AddAirportAsync_CallsRepository_WhenArgumentsAreValid()
+    public async Task AddAirportAsync_ArgumentsAreValid_CallsRepository()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -134,7 +134,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task GetAllAirportsAsync_ReturnsAllRecords_WhenRecordsExist()
+    public async Task GetAllAirportsAsync_RecordsExist_ReturnsAllRecords()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -153,7 +153,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task GetAirportByIdAsync_ReturnsNull_WhenIdIsInvalid()
+    public async Task GetAirportByIdAsync_IdIsInvalid_ReturnsNull()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -165,7 +165,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task GetAirportByIdAsync_ReturnsNull_WhenIdIsNegative()
+    public async Task GetAirportByIdAsync_IdIsNegative_ReturnsNull()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -177,7 +177,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task GetAirportByIdAsync_ReturnsAirportObject_WhenIdIsValid()
+    public async Task GetAirportByIdAsync_IdIsValid_ReturnsAirportObject()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -191,7 +191,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task UpdateAirportAsync_DoesNotCallRepository_WhenAirportNotFound()
+    public async Task UpdateAirportAsync_AirportNotFound_DoesNotCallRepository()
     {
         var airportRepositoryThatReturnsNull = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -204,7 +204,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task UpdateAirportAsync_UpdatesOnlyName_WhenOtherFieldsAreNull()
+    public async Task UpdateAirportAsync_OtherFieldsAreNull_UpdatesOnlyName()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -221,7 +221,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task UpdateAirportAsync_UpdatesOnlyCity_WhenOtherFieldsAreNull()
+    public async Task UpdateAirportAsync_OtherFieldsAreNull_UpdatesOnlyCity()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -238,7 +238,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task UpdateAirportAsync_UpdatesOnlyCode_WhenOtherFieldsAreNull()
+    public async Task UpdateAirportAsync_OtherFieldsAreNull_UpdatesOnlyCode()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -255,7 +255,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task UpdateAirportAsync_UpdatesAllFields_WhenAllFieldsAreProvided()
+    public async Task UpdateAirportAsync_AllFieldsAreProvided_UpdatesAllFields()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -272,7 +272,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task UpdateAirportAsync_CallsRepository_EvenWhenNoChanges()
+    public async Task UpdateAirportAsync_NoChangesProvided_CallsRepository()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -289,7 +289,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task DeleteAirportAsync_DoesNotCallRepository_WhenIdIsInvalid()
+    public async Task DeleteAirportAsync_IdIsInvalid_DoesNotCallRepository()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -301,7 +301,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task DeleteAirportAsync_DoesNotCallRepository_WhenIdIsNegative()
+    public async Task DeleteAirportAsync_IdIsNegative_DoesNotCallRepository()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -313,7 +313,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task DeleteAirportAsync_CallsRepositoryDelete_WhenIdIsValid()
+    public async Task DeleteAirportAsync_IdIsValid_CallsRepositoryDelete()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -326,7 +326,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task HasFlightsAsync_ReturnsTrue_WhenAssociatedFlightsExist()
+    public async Task HasFlightsAsync_AssociatedFlightsExist_ReturnsTrue()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepositoryWithFlights = Substitute.For<IFlightRepository>();
@@ -340,7 +340,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task HasFlightsAsync_ReturnsFalse_WhenNoAssociatedFlightsFound()
+    public async Task HasFlightsAsync_NoAssociatedFlightsFound_ReturnsFalse()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepositoryWithNoFlights = Substitute.For<IFlightRepository>();
@@ -354,7 +354,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task SaveAirportAsync_CallsAdd_WhenIdIsZero()
+    public async Task SaveAirportAsync_IdIsZero_CallsAdd()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -368,7 +368,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task SaveAirportAsync_CallsUpdate_WhenIdIsNonZero()
+    public async Task SaveAirportAsync_IdIsNonZero_CallsUpdate()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -383,7 +383,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task GetDeleteWarningMessageAsync_ReturnsCriticalMessage_WhenAirportHasFlights()
+    public async Task GetDeleteWarningMessageAsync_AirportHasFlights_ReturnsCriticalMessage()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -400,7 +400,7 @@ public class AirportServiceTests
     }
 
     [Test]
-    public async Task GetDeleteWarningMessageAsync_ReturnsStandardMessage_WhenAirportHasNoFlights()
+    public async Task GetDeleteWarningMessageAsync_AirportHasNoFlights_ReturnsStandardMessage()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();

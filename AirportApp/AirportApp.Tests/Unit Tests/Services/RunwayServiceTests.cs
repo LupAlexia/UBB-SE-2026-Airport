@@ -26,7 +26,7 @@ public class RunwayServiceTests
     private const string NegativeHandleTimeText = "-5";
 
     [Test]
-    public async Task GetAllRunwaysAsync_ReturnsAllRunways_Always()
+    public async Task GetAllRunwaysAsync_Called_ReturnsAllRunways()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -45,7 +45,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task GetRunwayByIdAsync_ReturnsNull_ForNegativeId()
+    public async Task GetRunwayByIdAsync_NegativeId_ReturnsNull()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -57,7 +57,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task GetRunwayByIdAsync_ReturnsNull_ForZeroId()
+    public async Task GetRunwayByIdAsync_ZeroId_ReturnsNull()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -69,7 +69,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task GetRunwayByIdAsync_ReturnsNull_WhenRunwayNotFound()
+    public async Task GetRunwayByIdAsync_RunwayNotFound_ReturnsNull()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -82,7 +82,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task GetRunwayByIdAsync_ReturnsRunway_WhenRunwayExists()
+    public async Task GetRunwayByIdAsync_RunwayExists_ReturnsRunway()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -96,7 +96,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public void AddRunwayAsync_ThrowsArgumentException_ForNullName()
+    public void AddRunwayAsync_NullName_ThrowsArgumentException()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -107,7 +107,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public void AddRunwayAsync_ThrowsArgumentException_ForEmptyName()
+    public void AddRunwayAsync_EmptyName_ThrowsArgumentException()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -118,7 +118,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public void AddRunwayAsync_ThrowsArgumentException_ForWhitespaceName()
+    public void AddRunwayAsync_WhitespaceName_ThrowsArgumentException()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -129,7 +129,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public void AddRunwayAsync_ThrowsArgumentException_ForInvalidHandleTime()
+    public void AddRunwayAsync_InvalidHandleTime_ThrowsArgumentException()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -140,7 +140,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task AddRunwayAsync_CallsRepository_WhenValidInput()
+    public async Task AddRunwayAsync_ValidInput_CallsRepository()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -154,7 +154,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public void UpdateRunwayAsync_ThrowsInvalidOperationException_WhenRunwayNotFound()
+    public void UpdateRunwayAsync_RunwayNotFound_ThrowsInvalidOperationException()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -167,7 +167,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task UpdateRunwayAsync_UpdatesAllFields_WhenBothAreProvided()
+    public async Task UpdateRunwayAsync_BothFieldsProvided_UpdatesAllFields()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -183,7 +183,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task UpdateRunwayAsync_UpdatesOnlyName_WhenHandleTimeIsZero()
+    public async Task UpdateRunwayAsync_HandleTimeIsZero_UpdatesOnlyName()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -199,7 +199,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task UpdateRunwayAsync_UpdatesOnlyHandleTime_WhenNameIsNull()
+    public async Task UpdateRunwayAsync_NameIsNull_UpdatesOnlyHandleTime()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -215,7 +215,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public void UpdateRunwayAsync_ThrowsArgumentException_ForWhitespaceName()
+    public void UpdateRunwayAsync_WhitespaceName_ThrowsArgumentException()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -228,7 +228,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public void DeleteRunwayAsync_ThrowsInvalidOperationException_WhenRunwayNotFound()
+    public void DeleteRunwayAsync_RunwayNotFound_ThrowsInvalidOperationException()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -240,7 +240,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task DeleteRunwayAsync_CallsRepository_ForValidId()
+    public async Task DeleteRunwayAsync_ValidId_CallsRepository()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -254,7 +254,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public void SaveRunwayAsync_ThrowsArgumentException_ForNonNumericHandleTimeText()
+    public void SaveRunwayAsync_NonNumericHandleTimeText_ThrowsArgumentException()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -265,7 +265,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public void SaveRunwayAsync_ThrowsArgumentException_ForZeroHandleTimeText()
+    public void SaveRunwayAsync_ZeroHandleTimeText_ThrowsArgumentException()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -276,7 +276,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public void SaveRunwayAsync_ThrowsArgumentException_ForNegativeHandleTimeText()
+    public void SaveRunwayAsync_NegativeHandleTimeText_ThrowsArgumentException()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -287,7 +287,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task SaveRunwayAsync_CallsAdd_WhenIdIsZero()
+    public async Task SaveRunwayAsync_IdIsZero_CallsAdd()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -301,7 +301,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task SaveRunwayAsync_CallsUpdate_WhenIdIsNonZero()
+    public async Task SaveRunwayAsync_IdIsNonZero_CallsUpdate()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -315,7 +315,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task HasFlightsAsync_ReturnsTrue_WhenFlightsExist()
+    public async Task HasFlightsAsync_FlightsExist_ReturnsTrue()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -329,7 +329,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task HasFlightsAsync_ReturnsFalse_WhenNoFlightsExist()
+    public async Task HasFlightsAsync_NoFlightsExist_ReturnsFalse()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -343,7 +343,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task GetDeleteWarningMessageAsync_ReturnsEmptyString_WhenRunwayNotFound()
+    public async Task GetDeleteWarningMessageAsync_RunwayNotFound_ReturnsEmptyString()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -356,7 +356,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task GetDeleteWarningMessageAsync_ReturnsCriticalMessage_WhenRunwayHasFlights()
+    public async Task GetDeleteWarningMessageAsync_RunwayHasFlights_ReturnsCriticalMessage()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -372,7 +372,7 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task GetDeleteWarningMessageAsync_ReturnsStandardMessage_WhenRunwayHasNoFlights()
+    public async Task GetDeleteWarningMessageAsync_RunwayHasNoFlights_ReturnsStandardMessage()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();

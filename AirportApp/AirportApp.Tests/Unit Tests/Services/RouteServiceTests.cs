@@ -58,7 +58,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public async Task GetRouteByIdAsync_ReturnsRoute_WhenRouteExists()
+    public async Task GetRouteByIdAsync_RouteExists_ReturnsRoute()
     {
         var routeRepository = Substitute.For<IRouteRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -72,7 +72,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public async Task GetRouteByIdAsync_ReturnsNull_WhenRouteNotFound()
+    public async Task GetRouteByIdAsync_RouteNotFound_ReturnsNull()
     {
         var routeRepository = Substitute.For<IRouteRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -85,7 +85,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public async Task GetAllRoutesAsync_ReturnsAllRoutes_Always()
+    public async Task GetAllRoutesAsync_Called_ReturnsAllRoutes()
     {
         var routeRepository = Substitute.For<IRouteRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -99,7 +99,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public void NormalizeFlightType_ReturnsDash_ForNull()
+    public void NormalizeFlightType_NullInput_ReturnsDash()
     {
         var routeService = BuildService(Substitute.For<IRouteRepository>(), Substitute.For<IFlightRepository>());
 
@@ -107,7 +107,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public void NormalizeFlightType_ReturnsDash_ForEmptyString()
+    public void NormalizeFlightType_EmptyStringInput_ReturnsDash()
     {
         var routeService = BuildService(Substitute.For<IRouteRepository>(), Substitute.For<IFlightRepository>());
 
@@ -115,7 +115,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public void NormalizeFlightType_ReturnsDash_ForWhitespace()
+    public void NormalizeFlightType_WhitespaceInput_ReturnsDash()
     {
         var routeService = BuildService(Substitute.For<IRouteRepository>(), Substitute.For<IFlightRepository>());
 
@@ -123,7 +123,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public void NormalizeFlightType_ReturnsARR_ForArrivalVariants()
+    public void NormalizeFlightType_ArrivalVariantInput_ReturnsARR()
     {
         var routeService = BuildService(Substitute.For<IRouteRepository>(), Substitute.For<IFlightRepository>());
 
@@ -134,7 +134,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public void NormalizeFlightType_ReturnsDEP_ForDepartureVariants()
+    public void NormalizeFlightType_DepartureVariantInput_ReturnsDEP()
     {
         var routeService = BuildService(Substitute.For<IRouteRepository>(), Substitute.For<IFlightRepository>());
 
@@ -145,7 +145,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public void NormalizeFlightType_ReturnsUppercasedValue_ForUnknownType()
+    public void NormalizeFlightType_UnknownTypeInput_ReturnsUppercasedValue()
     {
         var routeService = BuildService(Substitute.For<IRouteRepository>(), Substitute.For<IFlightRepository>());
 
@@ -153,7 +153,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public void GetRelevantTime_ReturnsDash_ForNullRoute()
+    public void GetRelevantTime_NullRoute_ReturnsDash()
     {
         var routeService = BuildService(Substitute.For<IRouteRepository>(), Substitute.For<IFlightRepository>());
 
@@ -161,7 +161,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public void GetRelevantTime_ReturnsArrivalTime_ForARRRoute()
+    public void GetRelevantTime_ARRRoute_ReturnsArrivalTime()
     {
         var routeService = BuildService(Substitute.For<IRouteRepository>(), Substitute.For<IFlightRepository>());
         var arrivalRoute = new Route { RouteType = ArrivalRouteType, ArrivalTime = ArrivalTime, DepartureTime = DepartureTime };
@@ -170,7 +170,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public void GetRelevantTime_ReturnsDepartureTime_ForDEPRoute()
+    public void GetRelevantTime_DEPRoute_ReturnsDepartureTime()
     {
         var routeService = BuildService(Substitute.For<IRouteRepository>(), Substitute.For<IFlightRepository>());
         var departureRoute = new Route { RouteType = DepartureRouteType, ArrivalTime = ArrivalTime, DepartureTime = DepartureTime };
@@ -179,7 +179,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public async Task AddWithInitialFlightAsync_Succeeds_WhenNoConflicts()
+    public async Task AddWithInitialFlightAsync_NoConflicts_Succeeds()
     {
         var routeRepository = Substitute.For<IRouteRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -202,7 +202,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public void AddWithInitialFlightAsync_ThrowsInvalidOperationException_WhenTimesOverlap()
+    public void AddWithInitialFlightAsync_TimesOverlap_ThrowsInvalidOperationException()
     {
         var routeRepository = Substitute.For<IRouteRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -231,7 +231,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public async Task AddWithInitialFlightAsync_ContinuesProcessing_WhenExistingRouteIsNull()
+    public async Task AddWithInitialFlightAsync_ExistingRouteIsNull_ContinuesProcessing()
     {
         var routeRepository = Substitute.For<IRouteRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -261,7 +261,7 @@ public class RouteServiceTests
     }
 
     [Test]
-    public async Task AddWithInitialFlightAsync_SkipsFlights_OnDifferentDate()
+    public async Task AddWithInitialFlightAsync_DifferentDate_SkipsFlights()
     {
         var routeRepository = Substitute.For<IRouteRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
