@@ -17,9 +17,9 @@ public class AuthServiceTests
 
     private static Customer MakeHashedCustomer(string email, string rawPassword)
     {
-        var c = new Customer { Email = email, Username = ValidUsername, Id = ExistingUserId };
-        c.PasswordHash = new PasswordHasher<Customer>().HashPassword(c, rawPassword);
-        return c;
+        var customer = new Customer { Email = email, Username = ValidUsername, Id = ExistingUserId };
+        customer.PasswordHash = new PasswordHasher<Customer>().HashPassword(customer, rawPassword);
+        return customer;
     }
 
     [Test]
@@ -277,8 +277,8 @@ public class AuthServiceTests
         var service = new AuthService(repo);
         await service.RegisterAsync(ValidEmail, ValidPhone, ValidUsername, ValidPassword);
 
-        await repo.Received(1).AddAsync(Arg.Is<Customer>(c =>
-            !string.IsNullOrEmpty(c.PasswordHash) && c.PasswordHash != ValidPassword));
+        await repo.Received(1).AddAsync(Arg.Is<Customer>(customer =>
+            !string.IsNullOrEmpty(customer.PasswordHash) && customer.PasswordHash != ValidPassword));
     }
 
     [Test]

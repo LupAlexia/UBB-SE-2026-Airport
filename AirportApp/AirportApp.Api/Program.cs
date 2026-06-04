@@ -6,9 +6,23 @@ using Microsoft.Extensions.DependencyInjection;
 
 WebApplicationBuilder applicationBuilder = WebApplication.CreateBuilder(args);
 
-applicationBuilder.Services.AddDbContext<AppDbContext>(dbContextOptions =>
-    dbContextOptions.UseSqlServer(
-        applicationBuilder.Configuration.GetConnectionString("DefaultConnection")));
+bool isTestingEnvironment = applicationBuilder.Environment.IsEnvironment("Testing") ||
+                            AppDomain.CurrentDomain.GetAssemblies().Any(a =>
+                                a.FullName != null &&
+                                (a.FullName.Contains("AirportApp.Tests") ||
+                                 a.FullName.Contains("Microsoft.AspNetCore.Mvc.Testing")));
+
+if (isTestingEnvironment)
+{
+    applicationBuilder.Services.AddDbContext<AppDbContext>(dbContextOptions =>
+        dbContextOptions.UseInMemoryDatabase("InMemoryAirportApiTestDb"));
+}
+else
+{
+    applicationBuilder.Services.AddDbContext<AppDbContext>(dbContextOptions =>
+        dbContextOptions.UseSqlServer(
+            applicationBuilder.Configuration.GetConnectionString("DefaultConnection")));
+}
 
 applicationBuilder.Services.AddAirportServices();
 
@@ -33,9 +47,11 @@ applicationBuilder.Services.AddSwaggerGen();
 
 WebApplication application = applicationBuilder.Build();
 
-using (IServiceScope scope = application.Services.CreateScope())
+if (!isTestingEnvironment)
 {
-    AppDbContext databaseContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    using (IServiceScope scope = application.Services.CreateScope())
+    {
+        AppDbContext databaseContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await databaseContext.Database.MigrateAsync();
 
     if (!await databaseContext.TicketSubcategories.AnyAsync())
@@ -257,6 +273,7 @@ using (IServiceScope scope = application.Services.CreateScope())
         await databaseContext.SaveChangesAsync();
     }
 }
+}
 
 application.UseSwagger();
 application.UseSwaggerUI(swaggerUiOptions =>
@@ -270,11 +287,14 @@ application.UseHttpsRedirection();
 application.UseAuthorization();
 application.MapControllers();
 
-application.Lifetime.ApplicationStarted.Register(() =>
+if (!isTestingEnvironment)
 {
-    string swaggerUrl = "http://localhost:5043";
-    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(swaggerUrl) { UseShellExecute = true });
-});
+    application.Lifetime.ApplicationStarted.Register(() =>
+    {
+        string swaggerUrl = "http://localhost:5043";
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(swaggerUrl) { UseShellExecute = true });
+    });
+}
 
 application.Run();
 

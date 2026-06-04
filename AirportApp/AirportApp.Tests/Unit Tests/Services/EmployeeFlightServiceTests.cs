@@ -458,7 +458,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task UpdateEmployeesForFlightUsingIdsAsync_AddsNewAndRemovesMissingEmployees()
+    public async Task UpdateEmployeesForFlightUsingIdsAsync_WithUpdatedCrewIds_AddsNewAndRemovesMissingEmployees()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var employeeRepository = Substitute.For<IEmployeeRepository>();
@@ -540,7 +540,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task GetFormattedEmployeeScheduleAsync_SortsResultsByDate()
+    public async Task GetFormattedEmployeeScheduleAsync_WithMultipleScheduledFlights_SortsResultsByDate()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -574,7 +574,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task GetAvailableEmployeesGroupedByRoleAsync_FiltersOutUnavailableEmployees()
+    public async Task GetAvailableEmployeesGroupedByRoleAsync_WithUnavailableEmployees_FiltersOutUnavailableEmployees()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var employeeRepository = Substitute.For<IEmployeeRepository>();
@@ -623,7 +623,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task GetAvailableEmployeesGroupedByRoleAsync_SortsByRoleThenName()
+    public async Task GetAvailableEmployeesGroupedByRoleAsync_WithUnsortedEmployees_SortsByRoleThenName()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var employeeRepository = Substitute.For<IEmployeeRepository>();

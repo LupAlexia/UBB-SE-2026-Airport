@@ -224,7 +224,7 @@ public class FlightSearchServiceTests
     }
 
     [Test]
-    public async Task GetFlightsByRouteAsync_DelegatesSearchToRepository()
+    public async Task GetFlightsByRouteAsync_WithGivenRouteParameters_DelegatesSearchToRepository()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var expectedFlights = new List<Flight> { new Flight { Id = TargetFlightId } };

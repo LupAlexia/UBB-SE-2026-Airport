@@ -45,6 +45,10 @@ public class AuthController(
         }
         catch (InvalidOperationException ex)
         {
+            if (ex.Message.Contains("Invalid email or password") || ex.Message.Contains("No account found"))
+            {
+                return Unauthorized(ex.Message);
+            }
             return BadRequest(ex.Message);
         }
         catch (ArgumentException ex)
@@ -84,7 +88,8 @@ public class AuthController(
             Id = customer.Id,
             DisplayName = customer.Username,
             Role = "customer",
-            Email = customer.Email
+            Email = customer.Email,
+            Token = "mock-jwt-token"
         });
     }
 
@@ -101,7 +106,7 @@ public class AuthController(
             Employee? employee = await employeeService.GetEmployeeByIdAsync(id);
             if (employee == null)
                 return NotFound($"Employee with ID {id} was not found.");
-            return Ok(new LoginResponseDTO { Id = employee.Id, DisplayName = employee.Name, Role = role, Email = string.Empty });
+            return Ok(new LoginResponseDTO { Id = employee.Id, DisplayName = employee.Name, Role = role, Email = string.Empty, Token = "mock-jwt-token" });
         }
 
         if (typeof(T) == typeof(Administrator))
@@ -109,13 +114,13 @@ public class AuthController(
             Administrator? admin = await administratorService.GetAdministratorByIdAsync(id);
             if (admin == null)
                 return NotFound($"Administrator with ID {id} was not found.");
-            return Ok(new LoginResponseDTO { Id = admin.Id, DisplayName = admin.FullName, Role = role, Email = admin.EmailAddress });
+            return Ok(new LoginResponseDTO { Id = admin.Id, DisplayName = admin.FullName, Role = role, Email = admin.EmailAddress, Token = "mock-jwt-token" });
         }
 
         if (typeof(T) == typeof(User))
         {
             User user = await userService.GetByIdAsync(id);
-            return Ok(new LoginResponseDTO { Id = user.Id, DisplayName = user.FullName, Role = role, Email = user.EmailAddress });
+            return Ok(new LoginResponseDTO { Id = user.Id, DisplayName = user.FullName, Role = role, Email = user.EmailAddress, Token = "mock-jwt-token" });
         }
 
         if (typeof(T) == typeof(Manager))
@@ -123,7 +128,7 @@ public class AuthController(
             Manager? manager = await managerService.GetManagerByIdAsync(id);
             if (manager == null)
                 return NotFound($"Manager with ID {id} was not found.");
-            return Ok(new LoginResponseDTO { Id = manager.Id, DisplayName = manager.Name, Role = role, Email = manager.Email });
+            return Ok(new LoginResponseDTO { Id = manager.Id, DisplayName = manager.Name, Role = role, Email = manager.Email, Token = "mock-jwt-token" });
         }
 
         if (typeof(T) == typeof(Client))
@@ -131,7 +136,7 @@ public class AuthController(
             Client? client = await clientService.GetClientByIdAsync(id);
             if (client == null)
                 return NotFound($"Client with ID {id} was not found.");
-            return Ok(new LoginResponseDTO { Id = client.Id, DisplayName = client.Name, Role = role, Email = string.Empty });
+            return Ok(new LoginResponseDTO { Id = client.Id, DisplayName = client.Name, Role = role, Email = string.Empty, Token = "mock-jwt-token" });
         }
 
         return BadRequest($"Unsupported entity type for role '{role}'.");
