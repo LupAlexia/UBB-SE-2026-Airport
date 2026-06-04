@@ -111,14 +111,7 @@ namespace AirportApp.WinUI.AirportAdmin
                 return;
             }
 
-            var data = new FAQNavigationData
-            {
-                CurrentPersonId = currentPersonId,
-                IsEmployee = true,
-                FAQEntry = null
-            };
-
-            navigationService.NavigateTo(typeof(FAQAddEditPage), data);
+            navigationService.NavigateTo(typeof(FAQAddEditPage), ViewModel.BuildAddNavigationData(currentPersonId));
         }
 
         private void EditFaqButton_Click(object sender, RoutedEventArgs arguments)
