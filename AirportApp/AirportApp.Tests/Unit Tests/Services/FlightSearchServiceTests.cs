@@ -19,8 +19,8 @@ public class FlightSearchServiceTests
     private const string InvalidPassengerInput = "abc";
     private const string ZeroPassengerInput = "0";
     private const string NegativePassengerInput = "-3";
-    private const string DepartureRouteType = "Departure";
-    private const string ArrivalRouteType = "Arrival";
+    private const string DepartureRouteType = "DEP";
+    private const string ArrivalRouteType = "ARR";
     private static readonly DateTime TargetDate = new DateTime(2026, 6, 10);
 
     [Test]

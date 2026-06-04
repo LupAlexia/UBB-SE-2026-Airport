@@ -39,12 +39,17 @@ namespace AirportApp.Web.Controllers
             return null;
         }
 
+        private IActionResult RedirectToAuthWithReturnUrl(int? chatId)
+        {
+            return RedirectToAction("Login", "Auth", new { returnUrl = Url.Action(nameof(Index), "ChatBot", new { chatId }) });
+        }
+
         public async Task<IActionResult> Index(int? chatId)
         {
             int? userId = GetCurrentUserId();
-            if (!userId.HasValue)
+            if (!userId.HasValue || userId.Value <= 0)
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAuthWithReturnUrl(chatId);
             }
 
             if (!chatId.HasValue)
@@ -129,9 +134,9 @@ namespace AirportApp.Web.Controllers
         public async Task<IActionResult> SendOption(int chatId, string optionLabel, int? nextNodeId)
         {
             int? userId = GetCurrentUserId();
-            if (!userId.HasValue)
+            if (!userId.HasValue || userId.Value <= 0)
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAuthWithReturnUrl(chatId);
             }
 
             FAQNode? nextNode = null;

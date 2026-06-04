@@ -63,6 +63,7 @@ namespace AirportApp.Src.ViewModel.DutyFreeShops
             catch (Exception)
             {
                 ErrorMessage = "No client found.";
+                //ErrorMessage = $"Debug Error: {ex.Message} | Stack: {ex.StackTrace}";
             }
         }
     }

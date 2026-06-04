@@ -10,8 +10,8 @@ namespace AirportApp.ClassLibrary.Service;
 
 public class FlightSearchService(IFlightRepository flightRepository) : IFlightSearchService
 {
-    private const string DepartureRouteType = "Departure";
-    private const string ArrivalRouteType = "Arrival";
+    private const string DepartureRouteType = "DEP";
+    private const string ArrivalRouteType = "ARR";
 
     public async Task<IEnumerable<Flight>> SearchFlightsAsync(string location, bool isDeparture, DateTime? date, int? passengers)
     {
