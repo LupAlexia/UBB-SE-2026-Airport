@@ -1,6 +1,5 @@
 using AirportApp.ClassLibrary.Entity.Domain;
-using AirportApp.Src.ViewModel.DutyFreeShops;
-using AirportApp.Src.ViewModel.DutyFreeShops.Interface;
+using AirportApp.Src.ViewModel;
 using AirportApp.WinUI.DutyFreeShops.CartPage;
 using AirportApp.WinUI.DutyFreeShops.ItemDetailsPage;
 using AirportApp.WinUI.DutyFreeShops.ShopPage;

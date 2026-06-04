@@ -14,7 +14,7 @@ namespace AirportApp.Src.View.General
 
         public LandingPage()
         {
-            ViewModel = App.Services.GetService<LandingViewModel>();
+            ViewModel = App.Services.GetRequiredService<LandingViewModel>();
             this.InitializeComponent();
             this.DataContext = ViewModel;
             StartCarousel();

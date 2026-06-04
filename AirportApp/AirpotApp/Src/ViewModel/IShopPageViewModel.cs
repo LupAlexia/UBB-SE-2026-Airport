@@ -5,7 +5,7 @@ using AirportApp.ClassLibrary.Entity.Domain;
 
 using CommunityToolkit.Mvvm.Input;
 
-namespace AirportApp.Src.ViewModel.DutyFreeShops.Interface
+namespace AirportApp.Src.ViewModel
 {
     public interface IShopPageViewModel : INotifyPropertyChanged
     {
