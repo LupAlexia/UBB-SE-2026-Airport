@@ -30,7 +30,10 @@ namespace AirportApp.Src.ViewModel
         private const int DefaultIdInCaseOfNull = 0;
 
         private int currentCompanyId;
+        private int crewManagementFlightId;
         private List<Flight> masterFlightsCollection = new();
+        private Visibility crewDialogVisibility = Visibility.Collapsed;
+        private string dialogError = string.Empty;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -51,6 +54,9 @@ namespace AirportApp.Src.ViewModel
 
             ExecuteFlightDeletionCommand = new RelayCommand<int>(ExecuteFlightDeletion);
             AddFlightFromInputsCommand = new RelayCommand(AddFlightFromInputs);
+            OpenCrewManagementCommand = new RelayCommand<int>(OpenCrewManagement);
+            SaveCrewCommand = new RelayCommand(SaveCrew);
+            CloseCrewDialogCommand = new RelayCommand(CloseCrewDialog);
         }
 
         private ObservableCollection<Airport> airportsList;
@@ -268,8 +274,39 @@ namespace AirportApp.Src.ViewModel
         public Visibility SingleDateVisibility => IsRecurrent ? Visibility.Collapsed : Visibility.Visible;
         public Visibility CustomDaysVisibility => RecurrenceType == CustomRecurrenceType ? Visibility.Visible : Visibility.Collapsed;
 
+        public Visibility CrewDialogVisibility
+        {
+            get => crewDialogVisibility;
+            set
+            {
+                if (crewDialogVisibility != value)
+                {
+                    crewDialogVisibility = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string DialogError
+        {
+            get => dialogError;
+            set
+            {
+                if (dialogError != value)
+                {
+                    dialogError = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public ObservableCollection<CrewSelectionWrapper> AvailableCrew { get; } = new();
+
         public ICommand ExecuteFlightDeletionCommand { get; }
         public ICommand AddFlightFromInputsCommand { get; }
+        public ICommand OpenCrewManagementCommand { get; }
+        public ICommand SaveCrewCommand { get; }
+        public ICommand CloseCrewDialogCommand { get; }
 
         public void InitializeCompanyDashboard(int companyId)
         {
@@ -324,6 +361,60 @@ namespace AirportApp.Src.ViewModel
             {
                 // silent catch for bulk operations
             }
+        }
+
+        private void OpenCrewManagement(int flightId)
+        {
+            Flight? flight = RunSync(() => flightRouteService.GetFlightByIdAsync(flightId));
+            if (flight == null)
+            {
+                return;
+            }
+
+            crewManagementFlightId = flightId;
+            var crewData = RunSync(() => employeeFlightService.GetCrewSelectionDataAsync(flight)).ToList();
+
+            AvailableCrew.Clear();
+            foreach (CrewMemberSelectionData item in crewData)
+            {
+                AvailableCrew.Add(new CrewSelectionWrapper(item.Employee)
+                {
+                    IsSelected = item.IsSelected,
+                    RoleHeader = item.RoleHeader,
+                    RoleHeaderVisibility = item.IsFirstInRoleGroup ? Visibility.Visible : Visibility.Collapsed
+                });
+            }
+
+            DialogError = string.Empty;
+            CrewDialogVisibility = Visibility.Visible;
+        }
+
+        private void SaveCrew()
+        {
+            if (crewManagementFlightId == DefaultIdInCaseOfNull)
+            {
+                return;
+            }
+
+            List<int> selectedEmployeeIds = new List<int>();
+            foreach (CrewSelectionWrapper selectionContext in AvailableCrew)
+            {
+                if (selectionContext.IsSelected)
+                {
+                    selectedEmployeeIds.Add(selectionContext.Employee.Id);
+                }
+            }
+
+            RunSync(() => employeeFlightService.UpdateEmployeesForFlightUsingIdsAsync(crewManagementFlightId, selectedEmployeeIds));
+            CrewDialogVisibility = Visibility.Collapsed;
+            crewManagementFlightId = DefaultIdInCaseOfNull;
+            this.RefreshCompanyFlights(this.currentCompanyId);
+        }
+
+        private void CloseCrewDialog()
+        {
+            CrewDialogVisibility = Visibility.Collapsed;
+            crewManagementFlightId = DefaultIdInCaseOfNull;
         }
 
         public void AddFlightFromInputs()

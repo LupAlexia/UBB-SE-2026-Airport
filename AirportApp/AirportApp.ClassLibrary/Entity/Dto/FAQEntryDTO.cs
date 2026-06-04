@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using AirportApp.ClassLibrary.Entity.Domain;
 
 namespace AirportApp.ClassLibrary.Entity.Dto
@@ -28,6 +29,7 @@ namespace AirportApp.ClassLibrary.Entity.Dto
             }
         }
 
+        [JsonConstructor]
         public FAQEntryDTO(
             int id,
             string question,

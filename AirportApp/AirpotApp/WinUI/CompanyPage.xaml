@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:components="using:AirportApp.WinUI.Components"
+    xmlns:vm="using:AirportApp.Src.ViewModel"
     mc:Ignorable="d"
     Background="#0F172A">
 
@@ -146,7 +147,7 @@
                         <ColumnDefinition Width="1.5*"/>
                         <ColumnDefinition Width="1.5*"/>
                         <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="1.2*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="ID" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                     <TextBlock Grid.Column="1" Text="FLIGHT NO." Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
@@ -166,24 +167,84 @@
                                     <ColumnDefinition Width="1.5*"/>
                                     <ColumnDefinition Width="1.5*"/>
                                     <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="0.5*"/>
+                                    <ColumnDefinition Width="1.2*"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" FontSize="14" HorizontalAlignment="Center" Foreground="#888888" Text="{Binding Id}"/>
                                 <TextBlock Grid.Column="1" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#E0E0E0" Text="{Binding FlightNumber}"/>
                                 <TextBlock Grid.Column="2" FontSize="14" HorizontalAlignment="Center" Foreground="#E0E0E0" Text="{Binding Route.Id}"/>
                                 <TextBlock Grid.Column="3" FontSize="14" HorizontalAlignment="Center" Foreground="#E0E0E0" Text="{Binding Date}"/>
                                 <TextBlock Grid.Column="4" FontSize="14" HorizontalAlignment="Center" Foreground="#E0E0E0" Text="{Binding Gate.Id}"/>
-                                <Button Grid.Column="5"
-                                        Content="&#xE711;" FontFamily="Segoe MDL2 Assets"
-                                        Background="Transparent" Foreground="#FF5555"
-                                        HorizontalAlignment="Center" VerticalAlignment="Center"
-                                        Command="{Binding DataContext.ExecuteFlightDeletionCommand, ElementName=FlightsListView}"
-                                        CommandParameter="{Binding Id}"/>
+                                <StackPanel Grid.Column="5" Orientation="Horizontal" Spacing="6"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Button Content="Manage Crew"
+                                            FontSize="11" Padding="8,4"
+                                            Background="{StaticResource CustomAccentBrush}" Foreground="White"
+                                            Command="{Binding DataContext.OpenCrewManagementCommand, ElementName=FlightsListView}"
+                                            CommandParameter="{Binding Id}"/>
+                                    <Button Content="&#xE711;" FontFamily="Segoe MDL2 Assets"
+                                            Background="Transparent" Foreground="#FF5555"
+                                            Command="{Binding DataContext.ExecuteFlightDeletionCommand, ElementName=FlightsListView}"
+                                            CommandParameter="{Binding Id}"/>
+                                </StackPanel>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
             </Grid>
         </Border>
+
+        <Grid Grid.RowSpan="2"
+              Background="#80000000"
+              Visibility="{Binding CrewDialogVisibility}">
+            <Border Background="#1E293B"
+                    BorderBrush="#334155"
+                    BorderThickness="1"
+                    Width="420"
+                    MaxHeight="560"
+                    VerticalAlignment="Center"
+                    Padding="20"
+                    CornerRadius="8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Manage Crew"
+                               FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,0,0,12"/>
+
+                    <TextBlock Grid.Row="1"
+                               Text="{Binding DialogError}"
+                               Foreground="#FF6B6B" FontWeight="SemiBold"
+                               TextWrapping="Wrap" Margin="0,0,0,12"/>
+
+                    <ListView Grid.Row="2"
+                              ItemsSource="{Binding AvailableCrew}"
+                              Background="Transparent" BorderThickness="0" Margin="0,0,0,12">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:CrewSelectionWrapper">
+                                <StackPanel Spacing="6" Margin="0,4,0,4">
+                                    <TextBlock Visibility="{x:Bind RoleHeaderVisibility}"
+                                               Text="{x:Bind RoleHeader}"
+                                               Foreground="White" FontWeight="Bold" Margin="0,8,0,0"/>
+                                    <CheckBox Content="{x:Bind Employee.Name}"
+                                              IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
+                                              Foreground="White"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                        <Button Content="Save"
+                                Background="{StaticResource CustomAccentBrush}" Foreground="White"
+                                Command="{Binding SaveCrewCommand}"/>
+                        <Button Content="Cancel" Command="{Binding CloseCrewDialogCommand}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Page>

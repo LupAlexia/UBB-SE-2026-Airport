@@ -340,13 +340,25 @@ namespace AirportApp.Src.ViewModel
             OnPropertyChanged(nameof(SelectedFAQEntry));
         }
 
-        public FAQNavigationData BuildNavigationData(int currentPersonId)
+        public FAQAddEditNavigationArgs BuildNavigationData(int currentPersonId)
         {
-            return new FAQNavigationData
+            return new FAQAddEditNavigationArgs
             {
+                ViewModel = this,
                 CurrentPersonId = currentPersonId,
-                IsEmployee = IsAdmin,
+                IsAdmin = IsAdmin,
                 FAQEntry = SelectedFAQEntry
+            };
+        }
+
+        public FAQAddEditNavigationArgs BuildAddNavigationData(int currentPersonId)
+        {
+            return new FAQAddEditNavigationArgs
+            {
+                ViewModel = this,
+                CurrentPersonId = currentPersonId,
+                IsAdmin = IsAdmin,
+                FAQEntry = null
             };
         }
     }

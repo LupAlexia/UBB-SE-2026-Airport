@@ -3,6 +3,7 @@ using AirportApp.ClassLibrary.Entity.Dto;
 using AirportApp.ClassLibrary.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Route = AirportApp.ClassLibrary.Entity.Domain.Route;
 
@@ -53,13 +54,15 @@ public class FlightRoutesController(IFlightRouteService flightRouteService) : Co
     [HttpGet("flights")]
     public async Task<ActionResult<IEnumerable<FlightDTO>>> GetAllFlights()
     {
-        return this.Ok((await flightRouteService.GetAllFlightsAsync()).Select(MapToFlightDTO));
+        var flights = await flightRouteService.GetAllFlightsAsync();
+        return Ok(flights.Select(MapToFlightDTO));
     }
 
     [HttpGet("flights/details")]
     public async Task<ActionResult<IEnumerable<FlightDTO>>> GetAllFlightsWithDetails()
     {
-        return this.Ok((await flightRouteService.GetAllFlightsWithDetailsAsync()).Select(MapToFlightDTO));
+        var flights = await flightRouteService.GetAllFlightsWithDetailsAsync();
+        return Ok(flights.Select(MapToFlightDTO));
     }
 
     [HttpGet("flights/{flightId:int}")]
@@ -78,7 +81,8 @@ public class FlightRoutesController(IFlightRouteService flightRouteService) : Co
     [HttpGet("flights/by-company/{companyId:int}")]
     public async Task<ActionResult<IEnumerable<FlightDTO>>> GetFlightsByCompanyId(int companyId)
     {
-        return this.Ok((await flightRouteService.GetFlightsByCompanyIdAsync(companyId)).Select(MapToFlightDTO));
+        var flights = await flightRouteService.GetFlightsByCompanyIdAsync(companyId);
+        return Ok(flights.Select(MapToFlightDTO));
     }
 
     [HttpDelete("flights/{flightId:int}")]
@@ -95,13 +99,14 @@ public class FlightRoutesController(IFlightRouteService flightRouteService) : Co
     }
 
     [HttpGet("routes")]
-    public async Task<ActionResult<IEnumerable<Route>>> GetAllRoutes()
+    public async Task<ActionResult<IEnumerable<RouteDTO>>> GetAllRoutes()
     {
-        return this.Ok(await flightRouteService.GetAllRoutesAsync());
+        var routes = await flightRouteService.GetAllRoutesAsync();
+        return Ok(routes.Select(MapToRouteDataTransferObject));
     }
 
     [HttpGet("routes/{routeId:int}")]
-    public async Task<ActionResult<Route>> GetRouteById(int routeId)
+    public async Task<ActionResult<RouteDTO>> GetRouteById(int routeId)
     {
         Route? route = await flightRouteService.GetRouteByIdAsync(routeId);
 
@@ -110,7 +115,7 @@ public class FlightRoutesController(IFlightRouteService flightRouteService) : Co
             return this.NotFound();
         }
 
-        return this.Ok(route);
+        return this.Ok(MapToRouteDataTransferObject(route));
     }
 
     private static FlightDTO MapToFlightDTO(Flight flight)
@@ -144,15 +149,45 @@ public class FlightRoutesController(IFlightRouteService flightRouteService) : Co
                 companyDTO);
         }
 
+        RunwayDTO? runwayDto = flight.Runway is { Id: > 0 } runway ? runway.ToDto() : null;
+        GateDTO? gateDto = flight.Gate is { Id: > 0 } gate ? gate.ToDto() : null;
+
         return new FlightDTO(
             flight.Id,
             flight.Route?.Id ?? 0,
             flight.Gate?.Id ?? 0,
-            flight.Gate?.GateName ?? string.Empty,
             flight.Runway?.Id ?? 0,
-            flight.Runway?.Name ?? string.Empty,
             flight.Date,
             flight.FlightNumber,
-            routeDTO);
+            routeDTO,
+            runwayDto,
+            gateDto);
+    }
+
+    private static RouteDTO MapToRouteDataTransferObject(Route route)
+    {
+        AirportDTO? airportDataTransferObject = route.Airport != null
+            ? new AirportDTO(
+                route.Airport.Id,
+                route.Airport.AirportCode,
+                route.Airport.City,
+                route.Airport.Name)
+            : null;
+
+        CompanyDTO? companyDataTransferObject = route.Company != null
+            ? new CompanyDTO(route.Company.Id, route.Company.Name)
+            : null;
+
+        return new RouteDTO(
+            route.Id,
+            route.RouteType,
+            route.StartDate,
+            route.EndDate,
+            route.DepartureTime,
+            route.ArrivalTime,
+            route.Capacity,
+            route.RecurrenceInterval,
+            airportDataTransferObject,
+            companyDataTransferObject);
     }
 }

@@ -16,6 +16,9 @@ namespace AirportApp.WinUI.AirportAdmin
         private readonly FlightsDashboardViewModel flightsViewModel;
         private readonly EmployeesDashboardViewModel employeesViewModel;
         private readonly AirportDashboardViewModel airportViewModel;
+        private readonly FAQViewModel faqViewModel;
+        private readonly ComplaintTicketViewModel ticketsViewModel;
+        private readonly AllReviewsViewModel reviewsViewModel;
 
         public AirportAdminPage()
         {
@@ -23,6 +26,9 @@ namespace AirportApp.WinUI.AirportAdmin
             flightsViewModel = App.Services.GetRequiredService<FlightsDashboardViewModel>();
             employeesViewModel = App.Services.GetRequiredService<EmployeesDashboardViewModel>();
             airportViewModel = App.Services.GetRequiredService<AirportDashboardViewModel>();
+            faqViewModel = App.Services.GetRequiredService<FAQViewModel>();
+            ticketsViewModel = App.Services.GetRequiredService<ComplaintTicketViewModel>();
+            reviewsViewModel = App.Services.GetRequiredService<AllReviewsViewModel>();
 
             InitializeComponent();
             DataContext = ViewModel;
@@ -70,6 +76,33 @@ namespace AirportApp.WinUI.AirportAdmin
 
                     HighlightSelectedButton(AirportButton);
                     break;
+
+                case AirportAdminSection.FAQ:
+                    if (ContentFrame.CurrentSourcePageType != typeof(FAQAdminDashboardPage))
+                    {
+                        ContentFrame.Navigate(typeof(FAQAdminDashboardPage), faqViewModel);
+                    }
+
+                    HighlightSelectedButton(FAQButton);
+                    break;
+
+                case AirportAdminSection.Tickets:
+                    if (ContentFrame.CurrentSourcePageType != typeof(TicketsAdminDashboardPage))
+                    {
+                        ContentFrame.Navigate(typeof(TicketsAdminDashboardPage), ticketsViewModel);
+                    }
+
+                    HighlightSelectedButton(TicketsButton);
+                    break;
+
+                case AirportAdminSection.Reviews:
+                    if (ContentFrame.CurrentSourcePageType != typeof(ReviewsAdminDashboardPage))
+                    {
+                        ContentFrame.Navigate(typeof(ReviewsAdminDashboardPage), reviewsViewModel);
+                    }
+
+                    HighlightSelectedButton(ReviewsButton);
+                    break;
             }
         }
 
@@ -78,6 +111,9 @@ namespace AirportApp.WinUI.AirportAdmin
             FlightsButton.Background = null;
             EmployeesButton.Background = null;
             AirportButton.Background = null;
+            FAQButton.Background = null;
+            TicketsButton.Background = null;
+            ReviewsButton.Background = null;
 
             selectedButton.Background = new SolidColorBrush(Microsoft.UI.Colors.LightGray);
         }

@@ -16,7 +16,8 @@ public class FlightsController(IFlightService flightService, IFlightSearchServic
     [HttpGet]
     public async Task<ActionResult<IEnumerable<FlightDTO>>> GetAllFlights()
     {
-        return Ok((await flightService.GetAllFlightsAsync()).Select(MapToFlightDTO));
+        var flights = await flightService.GetAllFlightsAsync();
+        return Ok(flights.Select(MapToFlightDTO));
     }
 
     [HttpGet("{flightId:int}")]
@@ -34,7 +35,8 @@ public class FlightsController(IFlightService flightService, IFlightSearchServic
     [HttpGet("by-route/{routeId:int}")]
     public async Task<ActionResult<IEnumerable<FlightDTO>>> GetFlightsByRouteId(int routeId)
     {
-        return Ok((await flightService.GetFlightsByRouteIdAsync(routeId)).Select(MapToFlightDTO));
+        var flights = await flightService.GetFlightsByRouteIdAsync(routeId);
+        return Ok(flights.Select(MapToFlightDTO));
     }
 
     [HttpPost]

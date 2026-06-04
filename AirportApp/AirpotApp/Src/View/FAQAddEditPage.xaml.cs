@@ -36,7 +36,6 @@ namespace AirportApp.Src.View.Faq
         {
             this.InitializeComponent();
 
-            var app = (App)Application.Current;
             viewModel = App.Services.GetRequiredService<FAQViewModel>();
             navigationService = App.Services.GetRequiredService<INavigationService>();
         }
@@ -46,45 +45,62 @@ namespace AirportApp.Src.View.Faq
             base.OnNavigatedTo(arguments);
 
             var app = (App)Application.Current;
-            if (app.User == null && app.Employee == null)
+            FAQEntryDTO? faqEntry = null;
+            var isAdminContext = false;
+
+            if (arguments.Parameter is FAQAddEditNavigationArgs navArgs)
+            {
+                viewModel = navArgs.ViewModel;
+                currentPersonId = navArgs.CurrentPersonId;
+                isAdminContext = navArgs.IsAdmin;
+                faqEntry = navArgs.FAQEntry;
+            }
+            else if (arguments.Parameter is FAQNavigationData legacyNavData)
+            {
+                currentPersonId = legacyNavData.CurrentPersonId;
+                isAdminContext = legacyNavData.IsEmployee;
+                faqEntry = legacyNavData.FAQEntry;
+            }
+            else
+            {
+                isAdminContext = app.IsEmployee;
+            }
+
+            viewModel.IsAdmin = isAdminContext;
+
+            if (!isAdminContext && app.User == null && app.Employee == null)
             {
                 navigationService.NavigateTo(typeof(ChoosingPage));
                 return;
             }
 
-            if (arguments.Parameter is FAQNavigationData navData)
+            if (faqEntry is not null)
             {
-                currentPersonId = navData.CurrentPersonId;
-                viewModel.IsAdmin = navData.IsEmployee;
+                editingFaq = faqEntry;
+                isEditMode = true;
+                viewModel.SelectedFAQEntry = faqEntry;
 
-                if (navData.FAQEntry is not null)
-                {
-                    editingFaq = navData.FAQEntry;
-                    isEditMode = true;
-                    viewModel.SelectedFAQEntry = navData.FAQEntry;
+                QuestionTextBox.Text = editingFaq.Question;
+                AnswerTextBox.Text = editingFaq.Answer;
+                CategoryComboBox.SelectedItem = FindCategoryComboBoxItem(editingFaq.Category);
 
-                    QuestionTextBox.Text = editingFaq.Question;
-                    AnswerTextBox.Text = editingFaq.Answer;
-                    CategoryComboBox.SelectedItem = FindCategoryComboBoxItem(editingFaq.Category);
+                PageTitleText.Text = "Edit FAQ";
+                PageSubtitleText.Text = "Update the selected frequently asked question entry";
+                SaveButton.Content = "Save Changes";
+            }
+            else if (arguments.Parameter is FAQAddEditNavigationArgs or FAQNavigationData)
+            {
+                editingFaq = null;
+                isEditMode = false;
+                viewModel.SelectedFAQEntry = null;
 
-                    PageTitleText.Text = "Edit FAQ";
-                    PageSubtitleText.Text = "Update the selected frequently asked question entry";
-                    SaveButton.Content = "Save Changes";
-                }
-                else
-                {
-                    editingFaq = null;
-                    isEditMode = false;
-                    viewModel.SelectedFAQEntry = null;
+                QuestionTextBox.Text = string.Empty;
+                AnswerTextBox.Text = string.Empty;
+                CategoryComboBox.SelectedItem = null;
 
-                    QuestionTextBox.Text = string.Empty;
-                    AnswerTextBox.Text = string.Empty;
-                    CategoryComboBox.SelectedItem = null;
-
-                    PageTitleText.Text = "Add FAQ";
-                    PageSubtitleText.Text = "Create a frequently asked question entry";
-                    SaveButton.Content = "Add FAQ";
-                }
+                PageTitleText.Text = "Add FAQ";
+                PageSubtitleText.Text = "Create a frequently asked question entry";
+                SaveButton.Content = "Add FAQ";
             }
         }
 
@@ -123,15 +139,16 @@ namespace AirportApp.Src.View.Faq
                     QuestionTextBox.Text,
                     AnswerTextBox.Text,
                     (CategoryComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString());
-
-                if (navigationService.CanGoBack)
-                {
-                    navigationService.GoBack();
-                }
             }
             catch (Exception exceptionThrown)
             {
                 await ShowMessage("Save failed", exceptionThrown.Message);
+                return;
+            }
+
+            if (navigationService.CanGoBack)
+            {
+                navigationService.GoBack();
             }
         }
         private async System.Threading.Tasks.Task ShowMessage(string title, string message)
@@ -141,7 +158,8 @@ namespace AirportApp.Src.View.Faq
                 Title = title,
                 Content = message,
                 CloseButtonText = "OK",
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                RequestedTheme = ElementTheme.Dark
             };
 
             await dialog.ShowAsync();

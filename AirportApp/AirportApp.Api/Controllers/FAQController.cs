@@ -102,7 +102,7 @@ namespace AirportApp.Api.Controllers
         public async Task<ActionResult> CreateAsync([FromBody] FAQEntry entry)
         {
             await faqService.AddFAQEntryAsync(entry);
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = entry.Id }, entry);
+            return NoContent();
         }
 
         [HttpPut("{id}")]
