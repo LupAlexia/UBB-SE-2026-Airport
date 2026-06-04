@@ -88,7 +88,9 @@ public class AuthServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClie
                     Name = customerTransferObject.membership.name,
                     FlightDiscountPercentage = customerTransferObject.membership.flightDiscountPercentage
                 }
-                : null
+                : customerTransferObject.membershipId.HasValue
+                    ? new Membership { Id = customerTransferObject.membershipId.Value }
+                    : null
         };
     }
 }

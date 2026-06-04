@@ -52,10 +52,19 @@ namespace AirportApp.Web.Controllers
             try
             {
                 Customer customer = await authService.GetByIdAsync(userId);
-                if (customer?.Membership != null)
+                if (customer?.Membership?.Id > 0)
                 {
-                    var addonDiscounts = await membershipService.GetAddonDiscountsAsync(customer.Membership.Id);
-                    customer.Membership.AddonDiscounts = addonDiscounts.ToList();
+                    Membership? fullMembership = await membershipService.GetMembershipByIdAsync(customer.Membership.Id);
+                    if (fullMembership != null)
+                    {
+                        customer.Membership = fullMembership;
+                    }
+
+                    if (customer.Membership != null)
+                    {
+                        var addonDiscounts = await membershipService.GetAddonDiscountsAsync(customer.Membership.Id);
+                        customer.Membership.AddonDiscounts = addonDiscounts.ToList();
+                    }
                 }
                 return customer ?? new Customer { Id = userId };
             }
@@ -93,6 +102,7 @@ namespace AirportApp.Web.Controllers
             float basePrice = await pricingService.CalculateBasePriceAsync(flight);
 
             Customer customer = await GetCustomerWithMembershipAsync(userId.Value);
+            string? membershipName = customer.Membership?.Name;
             float flightDiscountPct = customer.Membership?.FlightDiscountPercentage ?? 0f;
             var addonDiscountMap = new Dictionary<int, float>();
             if (customer.Membership?.AddonDiscounts != null)
@@ -105,6 +115,8 @@ namespace AirportApp.Web.Controllers
                     }
                 }
             }
+
+            float estimatedMembershipSavings = (basePrice * initialCount) * (flightDiscountPct / 100f);
 
             var form = new BookingFormModel
             {
@@ -126,6 +138,8 @@ namespace AirportApp.Web.Controllers
                 MaximumPassengers = maxPassengers,
                 Form = form,
                 FlightDiscountPercentage = flightDiscountPct,
+                MembershipName = membershipName,
+                EstimatedMembershipSavings = estimatedMembershipSavings,
                 AddonDiscountPercentages = addonDiscountMap
             };
 
@@ -178,6 +192,7 @@ namespace AirportApp.Web.Controllers
 
             float basePrice = await pricingService.CalculateBasePriceAsync(flight);
             List<FlightTicket> tickets = bookingService.CreateTickets(flight, customer, passengerDataList, basePrice);
+            var priceBreakdown = await pricingService.CalculatePriceBreakdownAsync(flight, customer, tickets);
 
             foreach (FlightTicket ticket in tickets)
             {
@@ -190,7 +205,7 @@ namespace AirportApp.Web.Controllers
                 return await RedisplayBookingPage(form, flight, "Booking could not be saved. Please try again.");
             }
 
-            float totalPaid = tickets.Sum(ticket => ticket.Price);
+            float totalPaid = priceBreakdown.FinalTotal > 0 ? priceBreakdown.FinalTotal : tickets.Sum(ticket => ticket.Price);
 
             TempData["ConfirmedFlightNumber"] = flight.FlightNumber;
             TempData["ConfirmedFlightDate"] = flight.Date.ToString("g");
@@ -227,11 +242,12 @@ namespace AirportApp.Web.Controllers
             float basePrice = await pricingService.CalculateBasePriceAsync(flight);
 
             int? userId = GetCurrentUserId();
+            Customer? customer = null;
             float flightDiscountPct = 0f;
             var addonDiscountMap = new Dictionary<int, float>();
             if (userId.HasValue)
             {
-                Customer customer = await GetCustomerWithMembershipAsync(userId.Value);
+                customer = await GetCustomerWithMembershipAsync(userId.Value);
                 flightDiscountPct = customer.Membership?.FlightDiscountPercentage ?? 0f;
                 if (customer.Membership?.AddonDiscounts != null)
                 {
@@ -240,6 +256,22 @@ namespace AirportApp.Web.Controllers
                         if (d.AddOn != null)
                         {
                             addonDiscountMap[d.AddOn.Id] = d.DiscountPercentage;
+                        }
+                    }
+                }
+            }
+
+            float estimatedMembershipSavings = (basePrice * form.Passengers.Count) * (flightDiscountPct / 100f);
+            foreach (var passenger in form.Passengers)
+            {
+                foreach (int addOnId in passenger.SelectedAddOnIds)
+                {
+                    if (addonDiscountMap.TryGetValue(addOnId, out float addOnDiscount))
+                    {
+                        AddOn? addOn = availableAddOns.FirstOrDefault(item => item.Id == addOnId);
+                        if (addOn != null)
+                        {
+                            estimatedMembershipSavings += addOn.BasePrice * (addOnDiscount / 100f);
                         }
                     }
                 }
@@ -257,6 +289,8 @@ namespace AirportApp.Web.Controllers
                 Form = form,
                 ValidationMessage = validationMessage,
                 FlightDiscountPercentage = flightDiscountPct,
+                MembershipName = customer?.Membership?.Name,
+                EstimatedMembershipSavings = estimatedMembershipSavings,
                 AddonDiscountPercentages = addonDiscountMap
             };
 

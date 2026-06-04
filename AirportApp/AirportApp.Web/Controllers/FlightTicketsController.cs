@@ -67,7 +67,13 @@ namespace AirportApp.Web.Controllers
         }
 
         // GET: FlightTickets
-        public async Task<IActionResult> Index(string ticketFilter = "Upcoming")
+        public IActionResult Index()
+        {
+            return RedirectToAction(nameof(Search));
+        }
+
+        // GET: FlightTickets/MyTickets
+        public async Task<IActionResult> MyTickets(string ticketFilter = "Upcoming")
         {
             SetCurrentUserViewData();
             int? resolvedUserId = GetCurrentUserId();
@@ -82,7 +88,7 @@ namespace AirportApp.Web.Controllers
                 ? await dashboardService.GetUserTicketsAsync(resolvedUserId.Value, selectedTicketFilter)
                 : new List<FlightTicket>();
 
-            return View(tickets);
+            return View("Index", tickets);
         }
 
         // GET: FlightTickets/Details/5
