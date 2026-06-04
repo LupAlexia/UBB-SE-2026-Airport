@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AirportApp.Api\AirportApp.Api.csproj" />
     <ProjectReference Include="..\AirportApp.ClassLibrary\AirportApp.ClassLibrary.csproj" />
   </ItemGroup>
 

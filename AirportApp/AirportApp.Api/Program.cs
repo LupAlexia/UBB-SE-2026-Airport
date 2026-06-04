@@ -277,3 +277,5 @@ application.Lifetime.ApplicationStarted.Register(() =>
 });
 
 application.Run();
+
+public partial class Program { }
