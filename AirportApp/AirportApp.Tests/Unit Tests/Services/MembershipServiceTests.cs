@@ -49,9 +49,7 @@ public class MembershipServiceTests
 
         var result = (await _membershipService.GetAllMembershipsAsync()).ToList();
 
-        Assert.That(result.Count, Is.EqualTo(2));
-        Assert.That(result, Contains.Item(firstMembership));
-        Assert.That(result, Contains.Item(secondMembership));
+        Assert.That(result, Is.EquivalentTo(new[] { firstMembership, secondMembership }));
     }
 
     [Test]
@@ -64,8 +62,18 @@ public class MembershipServiceTests
 
         var result = (await _membershipService.GetAllMembershipsAsync()).ToList();
 
-        Assert.That(result, Has.Count.EqualTo(1));
         Assert.That(result[0].AddonDiscounts, Contains.Item(discount));
+    }
+
+    [Test]
+    public async Task GetAllMembershipsAsync_SingleMembership_CallsGetDiscountsByMembershipId()
+    {
+        var membership = CreateMembership(DefaultMembershipId);
+        _membershipRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Membership>>(new List<Membership> { membership }));
+        _membershipRepository.GetDiscountsByMembershipIdAsync(DefaultMembershipId).Returns(Task.FromResult<IEnumerable<MembershipAddonDiscount>>(new List<MembershipAddonDiscount>()));
+
+        await _membershipService.GetAllMembershipsAsync();
+
         await _membershipRepository.Received(1).GetDiscountsByMembershipIdAsync(DefaultMembershipId);
     }
 
@@ -90,7 +98,7 @@ public class MembershipServiceTests
     }
 
     [Test]
-    public async Task GetAllMembershipsAsync_MultipleMemberships_FillsAddonDiscountsForEachMembership()
+    public async Task GetAllMembershipsAsync_MultipleMemberships_FillsAddonDiscountsForFirstMembership()
     {
         var firstMembership = CreateMembership(DefaultMembershipId);
         var secondMembership = CreateMembership(SecondMembershipId);
@@ -103,11 +111,26 @@ public class MembershipServiceTests
         var result = (await _membershipService.GetAllMembershipsAsync()).ToList();
 
         Assert.That(result[0].AddonDiscounts, Contains.Item(firstDiscount));
+    }
+
+    [Test]
+    public async Task GetAllMembershipsAsync_MultipleMemberships_FillsAddonDiscountsForSecondMembership()
+    {
+        var firstMembership = CreateMembership(DefaultMembershipId);
+        var secondMembership = CreateMembership(SecondMembershipId);
+        var firstDiscount = CreateAddonDiscount(firstMembership);
+        var secondDiscount = CreateAddonDiscount(secondMembership);
+        _membershipRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Membership>>(new List<Membership> { firstMembership, secondMembership }));
+        _membershipRepository.GetDiscountsByMembershipIdAsync(DefaultMembershipId).Returns(Task.FromResult<IEnumerable<MembershipAddonDiscount>>(new List<MembershipAddonDiscount> { firstDiscount }));
+        _membershipRepository.GetDiscountsByMembershipIdAsync(SecondMembershipId).Returns(Task.FromResult<IEnumerable<MembershipAddonDiscount>>(new List<MembershipAddonDiscount> { secondDiscount }));
+
+        var result = (await _membershipService.GetAllMembershipsAsync()).ToList();
+
         Assert.That(result[1].AddonDiscounts, Contains.Item(secondDiscount));
     }
 
     [Test]
-    public async Task GetAllMembershipsAsync_MultipleMemberships_CallsGetDiscountsByMembershipIdForEachMembership()
+    public async Task GetAllMembershipsAsync_MultipleMemberships_CallsGetDiscountsForFirstMembership()
     {
         var firstMembership = CreateMembership(DefaultMembershipId);
         var secondMembership = CreateMembership(SecondMembershipId);
@@ -117,6 +140,18 @@ public class MembershipServiceTests
         await _membershipService.GetAllMembershipsAsync();
 
         await _membershipRepository.Received(1).GetDiscountsByMembershipIdAsync(DefaultMembershipId);
+    }
+
+    [Test]
+    public async Task GetAllMembershipsAsync_MultipleMemberships_CallsGetDiscountsForSecondMembership()
+    {
+        var firstMembership = CreateMembership(DefaultMembershipId);
+        var secondMembership = CreateMembership(SecondMembershipId);
+        _membershipRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Membership>>(new List<Membership> { firstMembership, secondMembership }));
+        _membershipRepository.GetDiscountsByMembershipIdAsync(Arg.Any<int>()).Returns(Task.FromResult<IEnumerable<MembershipAddonDiscount>>(new List<MembershipAddonDiscount>()));
+
+        await _membershipService.GetAllMembershipsAsync();
+
         await _membershipRepository.Received(1).GetDiscountsByMembershipIdAsync(SecondMembershipId);
     }
 
