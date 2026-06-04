@@ -124,7 +124,7 @@ public class PricingServiceTests
         var ticket = new FlightTicket
         {
             Price = StandardFlightBasePrice,
-            User = null,
+            User = null!,
             SelectedAddOns = new List<AddOn> { new AddOn { BasePrice = FirstAddOnBasePrice } }
         };
         float expectedTotal = StandardFlightBasePrice + FirstAddOnBasePrice;

@@ -149,7 +149,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public async Task GetAllMessagesAsync_ExcludesMessagesFromOtherChats()
+    public async Task GetAllMessagesAsync_WithMessagesFromOtherChats_ExcludesMessagesFromOtherChats()
     {
         var (_, messageRepository, _, _, service) = CreateService();
         var chat = CreateActiveChat(ValidChatId);
@@ -169,7 +169,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public async Task GetAllMessagesAsync_ReturnsMessagesOrderedByTimestampAscending()
+    public async Task GetAllMessagesAsync_WithUnsortedMessages_ReturnsMessagesOrderedByTimestampAscending()
     {
         var (_, messageRepository, _, _, service) = CreateService();
         var chat = CreateActiveChat(ValidChatId);
