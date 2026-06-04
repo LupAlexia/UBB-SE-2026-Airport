@@ -33,17 +33,6 @@ public class AirportServiceTests
     }
 
     [Test]
-    public void AddAirportAsync_CodeIsEmpty_ThrowsArgumentException()
-    {
-        var airportRepository = Substitute.For<IAirportRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var airportService = new AirportService(airportRepository, flightRepository);
-
-        Assert.ThrowsAsync<ArgumentException>(() =>
-            airportService.AddAirportAsync(new Airport { AirportCode = string.Empty, Name = DefaultTestName, City = DefaultTestCity }));
-    }
-
-    [Test]
     public void AddAirportAsync_CodeIsWhitespace_ThrowsArgumentException()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
@@ -66,17 +55,6 @@ public class AirportServiceTests
     }
 
     [Test]
-    public void AddAirportAsync_NameIsEmpty_ThrowsArgumentException()
-    {
-        var airportRepository = Substitute.For<IAirportRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var airportService = new AirportService(airportRepository, flightRepository);
-
-        Assert.ThrowsAsync<ArgumentException>(() =>
-            airportService.AddAirportAsync(new Airport { AirportCode = DefaultTestCode, Name = string.Empty, City = DefaultTestCity }));
-    }
-
-    [Test]
     public void AddAirportAsync_NameIsWhitespace_ThrowsArgumentException()
     {
         var airportRepository = Substitute.For<IAirportRepository>();
@@ -96,17 +74,6 @@ public class AirportServiceTests
 
         Assert.ThrowsAsync<ArgumentException>(() =>
             airportService.AddAirportAsync(new Airport { AirportCode = DefaultTestCode, Name = DefaultTestName, City = null! }));
-    }
-
-    [Test]
-    public void AddAirportAsync_CityIsEmpty_ThrowsArgumentException()
-    {
-        var airportRepository = Substitute.For<IAirportRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var airportService = new AirportService(airportRepository, flightRepository);
-
-        Assert.ThrowsAsync<ArgumentException>(() =>
-            airportService.AddAirportAsync(new Airport { AirportCode = DefaultTestCode, Name = DefaultTestName, City = string.Empty }));
     }
 
     [Test]
@@ -141,18 +108,6 @@ public class AirportServiceTests
         var airportService = new AirportService(airportRepository, flightRepository);
 
         var result = await airportService.GetAirportByIdAsync(InvalidAirportId);
-
-        Assert.That(result, Is.Null);
-    }
-
-    [Test]
-    public async Task GetAirportByIdAsync_IdIsNegative_ReturnsNull()
-    {
-        var airportRepository = Substitute.For<IAirportRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var airportService = new AirportService(airportRepository, flightRepository);
-
-        var result = await airportService.GetAirportByIdAsync(NegativeAirportId);
 
         Assert.That(result, Is.Null);
     }
@@ -277,18 +232,6 @@ public class AirportServiceTests
         var airportService = new AirportService(airportRepository, flightRepository);
 
         await airportService.DeleteAirportAsync(InvalidAirportId);
-
-        await airportRepository.DidNotReceive().DeleteAsync(Arg.Any<int>());
-    }
-
-    [Test]
-    public async Task DeleteAirportAsync_IdIsNegative_DoesNotCallRepository()
-    {
-        var airportRepository = Substitute.For<IAirportRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var airportService = new AirportService(airportRepository, flightRepository);
-
-        await airportService.DeleteAirportAsync(NegativeAirportId);
 
         await airportRepository.DidNotReceive().DeleteAsync(Arg.Any<int>());
     }

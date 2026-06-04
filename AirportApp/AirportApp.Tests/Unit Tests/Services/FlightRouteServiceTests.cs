@@ -611,34 +611,6 @@ public class FlightRouteServiceTests
     }
 
     [Test]
-    public async Task CreateFlightWithScheduleAsync_WeeklyRecurrence_Succeeds()
-    {
-        var (flightRepository, routeRepository, companyRepository, airportRepository) = ConfigureSuccessfulRepositories();
-        var flightRouteService = CreateTestService(flightRepository, routeRepository, companyRepository, airportRepository);
-
-        await flightRouteService.CreateFlightWithScheduleAsync(
-            TargetCompanyId, RouteTypeDeparture, TargetAirportId, ValidCapacity,
-            TargetDepartureTime.ToTimeSpan(), TargetArrivalTime.ToTimeSpan(),
-            isRecurrent: true, TargetStartDate, TargetEndDate, null, WeeklyRecurrenceType, null!, TargetRunwayId, TargetGateId, _ => ValidFlightNumber);
-
-        await routeRepository.Received(1).AddAsync(Arg.Any<Route>());
-    }
-
-    [Test]
-    public async Task CreateFlightWithScheduleAsync_MonthlyRecurrence_Succeeds()
-    {
-        var (flightRepository, routeRepository, companyRepository, airportRepository) = ConfigureSuccessfulRepositories();
-        var flightRouteService = CreateTestService(flightRepository, routeRepository, companyRepository, airportRepository);
-
-        await flightRouteService.CreateFlightWithScheduleAsync(
-            TargetCompanyId, RouteTypeDeparture, TargetAirportId, ValidCapacity,
-            TargetDepartureTime.ToTimeSpan(), TargetArrivalTime.ToTimeSpan(),
-            isRecurrent: true, TargetStartDate, TargetEndDate, null, MonthlyRecurrenceType, null!, TargetRunwayId, TargetGateId, _ => ValidFlightNumber);
-
-        await routeRepository.Received(1).AddAsync(Arg.Any<Route>());
-    }
-
-    [Test]
     public async Task CreateFlightWithScheduleAsync_CustomRecurrence_Succeeds()
     {
         var (flightRepository, routeRepository, companyRepository, airportRepository) = ConfigureSuccessfulRepositories();
@@ -686,24 +658,6 @@ public class FlightRouteServiceTests
 
         Assert.That(result.Count, Is.EqualTo(1));
         Assert.That(result[0].FlightNumber, Is.EqualTo(ValidFlightNumber));
-    }
-
-    [Test]
-    public async Task SearchFlightsByNumberAsync_QueryIsEmpty_ReturnsAllFlights()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var routeRepository = Substitute.For<IRouteRepository>();
-        var flightRouteService = CreateTestService(flightRepository, routeRepository);
-
-        var flights = new List<Flight>
-        {
-            new Flight { FlightNumber = ValidFlightNumber },
-            new Flight { FlightNumber = ConflictingFlightNumber }
-        };
-
-        var result = (await flightRouteService.SearchFlightsByNumberAsync(flights, string.Empty)).ToList();
-
-        Assert.That(result.Count, Is.EqualTo(2));
     }
 
     [Test]

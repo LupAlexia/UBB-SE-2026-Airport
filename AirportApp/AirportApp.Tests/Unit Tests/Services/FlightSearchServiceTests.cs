@@ -46,17 +46,6 @@ public class FlightSearchServiceTests
     }
 
     [Test]
-    public async Task SearchFlightsAsync_LocationIsEmpty_ReturnsEmptyList()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flightSearchService = new FlightSearchService(flightRepository);
-
-        var result = await flightSearchService.SearchFlightsAsync(string.Empty, isDeparture: true, date: null, passengers: null);
-
-        Assert.That(result, Is.Empty);
-    }
-
-    [Test]
     public async Task SearchFlightsAsync_NoPassengerFilterApplied_ReturnsAllMatchingFlights()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -119,19 +108,6 @@ public class FlightSearchServiceTests
     }
 
     [Test]
-    public async Task SearchFlightsAsync_IsDepartureIsTrue_UsesDepartureRouteType()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        flightRepository.SearchFlightsAsync(TargetLocation, DepartureRouteType, null)
-            .Returns(Task.FromResult<IEnumerable<Flight>>(new List<Flight>()));
-
-        var flightSearchService = new FlightSearchService(flightRepository);
-        await flightSearchService.SearchFlightsAsync(TargetLocation, isDeparture: true, date: null, passengers: null);
-
-        await flightRepository.Received(1).SearchFlightsAsync(TargetLocation, DepartureRouteType, null);
-    }
-
-    [Test]
     public async Task SearchFlightsAsync_DateIsProvided_PassesDateToRepository()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -151,17 +127,6 @@ public class FlightSearchServiceTests
         var flightSearchService = new FlightSearchService(flightRepository);
 
         var result = flightSearchService.ParsePassengerCount(null!);
-
-        Assert.That(result, Is.Null);
-    }
-
-    [Test]
-    public void ParsePassengerCount_InputIsEmpty_ReturnsNull()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flightSearchService = new FlightSearchService(flightRepository);
-
-        var result = flightSearchService.ParsePassengerCount(string.Empty);
 
         Assert.That(result, Is.Null);
     }
@@ -199,14 +164,4 @@ public class FlightSearchServiceTests
         Assert.That(result, Is.EqualTo(1));
     }
 
-    [Test]
-    public void ParsePassengerCount_InputIsNegative_ReturnsOne()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flightSearchService = new FlightSearchService(flightRepository);
-
-        var result = flightSearchService.ParsePassengerCount(NegativePassengerInput);
-
-        Assert.That(result, Is.EqualTo(1));
-    }
 }

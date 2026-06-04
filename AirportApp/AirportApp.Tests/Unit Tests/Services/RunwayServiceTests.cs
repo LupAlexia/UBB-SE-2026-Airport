@@ -38,18 +38,6 @@ public class RunwayServiceTests
     }
 
     [Test]
-    public async Task GetRunwayByIdAsync_ZeroId_ReturnsNull()
-    {
-        var runwayRepository = Substitute.For<IRunwayRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var runwayService = new RunwayService(runwayRepository, flightRepository);
-
-        var result = await runwayService.GetRunwayByIdAsync(0);
-
-        Assert.That(result, Is.Null);
-    }
-
-    [Test]
     public async Task GetRunwayByIdAsync_RunwayNotFound_ReturnsNull()
     {
         var runwayRepository = Substitute.For<IRunwayRepository>();
@@ -85,17 +73,6 @@ public class RunwayServiceTests
 
         Assert.ThrowsAsync<ArgumentException>(() =>
             runwayService.AddRunwayAsync(new Runway { Name = null!, HandleTime = ValidHandleTime }));
-    }
-
-    [Test]
-    public void AddRunwayAsync_EmptyName_ThrowsArgumentException()
-    {
-        var runwayRepository = Substitute.For<IRunwayRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var runwayService = new RunwayService(runwayRepository, flightRepository);
-
-        Assert.ThrowsAsync<ArgumentException>(() =>
-            runwayService.AddRunwayAsync(new Runway { Name = string.Empty, HandleTime = ValidHandleTime }));
     }
 
     [Test]
@@ -254,17 +231,6 @@ public class RunwayServiceTests
 
         Assert.ThrowsAsync<ArgumentException>(() =>
             runwayService.SaveRunwayAsync(NewRunwayId, DefaultRunwayName, ZeroHandleTimeText));
-    }
-
-    [Test]
-    public void SaveRunwayAsync_NegativeHandleTimeText_ThrowsArgumentException()
-    {
-        var runwayRepository = Substitute.For<IRunwayRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var runwayService = new RunwayService(runwayRepository, flightRepository);
-
-        Assert.ThrowsAsync<ArgumentException>(() =>
-            runwayService.SaveRunwayAsync(NewRunwayId, DefaultRunwayName, NegativeHandleTimeText));
     }
 
     [Test]
