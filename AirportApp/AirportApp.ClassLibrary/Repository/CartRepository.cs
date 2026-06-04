@@ -90,7 +90,7 @@ public class CartRepository(AppDbContext databaseContext) : ICartRepository
 
         if (cart is null)
         {
-            return;
+            throw new KeyNotFoundException($"Cart with ID {cartId} was not found in the database.");
         }
 
         if (itemToAdd.ShopItem is not null)
@@ -98,7 +98,7 @@ public class CartRepository(AppDbContext databaseContext) : ICartRepository
             var existingShopItem = await databaseContext.ShopItems.FindAsync(itemToAdd.ShopItem.Id);
             if (existingShopItem is null)
             {
-                return;
+                throw new KeyNotFoundException($"ShopItem with ID {itemToAdd.ShopItem.Id} was not found. Verify your seeded data match.");
             }
 
             itemToAdd.ShopItem = existingShopItem;

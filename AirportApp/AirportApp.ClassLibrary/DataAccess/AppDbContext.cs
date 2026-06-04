@@ -297,6 +297,12 @@ public class AppDbContext : DbContext
             new AddOn(4, "Fast Track Security", 10f),
             new AddOn(5, "Lounge Access", 35f)
         );
+
+        modelBuilder.Entity<Client>().HasData(
+            new { Id = 1, Name = "John Doe" },
+            new { Id = 2, Name = "Jane Smith" },
+            new { Id = 3, Name = "Alex Cooper" }
+        );
     }
 
     private void SeedSupportInfrastructure(ModelBuilder modelBuilder)

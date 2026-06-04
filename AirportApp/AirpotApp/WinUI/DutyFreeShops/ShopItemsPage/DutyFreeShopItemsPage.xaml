@@ -52,11 +52,14 @@
                     </Grid>
 
                     <Button x:Name="CartButton"
-                            Background="#2bb8c0" CornerRadius="4" Padding="15,8">
-                        <Grid>
-                            <SymbolIcon Symbol="Shop" Foreground="White"/>
-                            <TextBlock Foreground="White" FontSize="18" Margin="30,0,0,0" Text="Cart"/>
-                        </Grid>
+                        Background="#21B4C4"
+                        Foreground="White"
+                        Padding="12,6,12,6">    
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon Glyph="&#xE7BF;" VerticalAlignment="Center"/>
+
+                            <TextBlock Text="Cart" VerticalAlignment="Center"/>
+                        </StackPanel>
                     </Button>
                 </StackPanel>
 
