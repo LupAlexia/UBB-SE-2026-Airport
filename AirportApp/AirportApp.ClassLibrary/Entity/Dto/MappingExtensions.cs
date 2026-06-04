@@ -54,6 +54,8 @@ namespace AirportApp.ClassLibrary.Entity.Dto
             if (flight == null) return null!;
 
             RouteDTO? routeDto = flight.Route != null ? flight.Route.ToDto() : null;
+            RunwayDTO? runwayDto = flight.Runway is { Id: > 0 } runway ? runway.ToDto() : null;
+            GateDTO? gateDto = flight.Gate is { Id: > 0 } gate ? gate.ToDto() : null;
             return new FlightDTO(
                 flight.Id,
                 flight.Route?.Id ?? 0,
@@ -61,7 +63,9 @@ namespace AirportApp.ClassLibrary.Entity.Dto
                 flight.Runway?.Id ?? 0,
                 flight.Date,
                 flight.FlightNumber,
-                routeDto);
+                routeDto,
+                runwayDto,
+                gateDto);
         }
     }
 }

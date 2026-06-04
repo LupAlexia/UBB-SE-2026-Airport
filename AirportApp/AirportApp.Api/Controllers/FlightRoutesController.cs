@@ -149,6 +149,9 @@ public class FlightRoutesController(IFlightRouteService flightRouteService) : Co
                 companyDTO);
         }
 
+        RunwayDTO? runwayDto = flight.Runway is { Id: > 0 } runway ? runway.ToDto() : null;
+        GateDTO? gateDto = flight.Gate is { Id: > 0 } gate ? gate.ToDto() : null;
+
         return new FlightDTO(
             flight.Id,
             flight.Route?.Id ?? 0,
@@ -156,7 +159,9 @@ public class FlightRoutesController(IFlightRouteService flightRouteService) : Co
             flight.Runway?.Id ?? 0,
             flight.Date,
             flight.FlightNumber,
-            routeDTO);
+            routeDTO,
+            runwayDto,
+            gateDto);
     }
 
     private static RouteDTO MapToRouteDataTransferObject(Route route)

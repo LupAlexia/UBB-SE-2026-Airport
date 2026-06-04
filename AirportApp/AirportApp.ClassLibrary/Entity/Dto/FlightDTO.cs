@@ -9,5 +9,7 @@ namespace AirportApp.ClassLibrary.Entity.Dto
         int runwayId,
         DateTime date,
         string flightNumber,
-        RouteDTO? route);
+        RouteDTO? route,
+        RunwayDTO? runway = null,
+        GateDTO? gate = null);
 }
