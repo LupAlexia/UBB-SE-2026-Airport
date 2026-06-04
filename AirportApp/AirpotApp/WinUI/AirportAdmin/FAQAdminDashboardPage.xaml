@@ -10,18 +10,14 @@
     xmlns:dto="using:AirportApp.ClassLibrary.Entity.Dto"
     mc:Ignorable="d"
     Background="Transparent"
-    Foreground="#F8FAFC">
+    Foreground="{StaticResource DarkForegroundBrush}">
 
     <Page.Resources>
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:BooleanToGlyphConverter x:Key="BooleanToGlyphConverter"/>
 
-        <SolidColorBrush x:Key="AdminBorderBrush" Color="#D0D0D0"/>
-        <SolidColorBrush x:Key="AdminMutedTextBrush" Color="#94A3B8"/>
-        <SolidColorBrush x:Key="AdminAccentBrush" Color="#60A5FA"/>
-
         <Style x:Key="SectionBorderStyle" TargetType="Border">
-            <Setter Property="BorderBrush" Value="{StaticResource AdminBorderBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="12"/>
@@ -29,8 +25,8 @@
 
         <Style x:Key="CategoryButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#F8FAFC"/>
-            <Setter Property="BorderBrush" Value="{StaticResource AdminBorderBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource DarkForegroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="16,10"/>
@@ -39,14 +35,14 @@
         </Style>
 
         <Style x:Key="SelectedCategoryButtonStyle" TargetType="Button" BasedOn="{StaticResource CategoryButtonStyle}">
-            <Setter Property="BorderBrush" Value="{StaticResource AdminAccentBrush}"/>
-            <Setter Property="Foreground" Value="{StaticResource AdminAccentBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
         </Style>
 
         <Style x:Key="PopularQuestionButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#F8FAFC"/>
-            <Setter Property="BorderBrush" Value="{StaticResource AdminBorderBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource DarkForegroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="14,11"/>
@@ -85,7 +81,7 @@
                     <TextBlock Text="Popular Questions"
                                FontSize="18"
                                FontWeight="SemiBold"
-                               Foreground="{StaticResource AdminAccentBrush}"/>
+                               Foreground="{StaticResource PrimaryBrush}"/>
                     <ItemsControl ItemsSource="{Binding FilteredFAQs}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -109,17 +105,17 @@
                                                    FontSize="15"
                                                    FontWeight="SemiBold"/>
                                         <Border Grid.Column="1"
-                                                BorderBrush="{StaticResource AdminBorderBrush}"
+                                                BorderBrush="{StaticResource DarkBorderBrush}"
                                                 BorderThickness="1"
                                                 CornerRadius="10"
                                                 Padding="8,4"
                                                 VerticalAlignment="Top">
                                             <StackPanel Orientation="Horizontal" Spacing="4">
-                                                <FontIcon Glyph="&#xE8A7;" FontSize="11" Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                                <FontIcon Glyph="&#xE8A7;" FontSize="11" Foreground="{StaticResource DarkMutedTextBrush}"/>
                                                 <TextBlock Text="{Binding ViewCount}"
                                                            FontSize="11"
                                                            FontWeight="SemiBold"
-                                                           Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                                           Foreground="{StaticResource DarkMutedTextBrush}"/>
                                             </StackPanel>
                                         </Border>
                                     </Grid>
@@ -198,7 +194,7 @@
                         <TextBlock Grid.Column="1"
                                    Text="Manage airport FAQ entries"
                                    FontSize="12"
-                                   Foreground="{StaticResource AdminMutedTextBrush}"
+                                   Foreground="{StaticResource DarkMutedTextBrush}"
                                    VerticalAlignment="Center"/>
                     </Grid>
 
@@ -206,7 +202,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="dto:FAQEntryDTO">
                                 <Border Margin="0,0,0,12"
-                                        BorderBrush="{StaticResource AdminBorderBrush}"
+                                        BorderBrush="{StaticResource DarkBorderBrush}"
                                         BorderThickness="1"
                                         CornerRadius="8"
                                         Padding="14">
@@ -226,20 +222,20 @@
                                                     <StackPanel Orientation="Horizontal" Spacing="10">
                                                         <TextBlock Text="{Binding Category}"
                                                                    FontSize="11"
-                                                                   Foreground="{StaticResource AdminAccentBrush}"/>
+                                                                   Foreground="{StaticResource PrimaryBrush}"/>
                                                         <StackPanel Orientation="Horizontal" Spacing="4">
                                                             <FontIcon Glyph="&#xE8A7;"
                                                                       FontSize="11"
-                                                                      Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                                                      Foreground="{StaticResource DarkMutedTextBrush}"/>
                                                             <TextBlock Text="{Binding ViewCount}"
                                                                        FontSize="11"
-                                                                       Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                                                       Foreground="{StaticResource DarkMutedTextBrush}"/>
                                                         </StackPanel>
                                                     </StackPanel>
                                                 </StackPanel>
                                                 <FontIcon Grid.Column="1"
                                                           Glyph="{Binding IsExpanded, Converter={StaticResource BooleanToGlyphConverter}}"
-                                                          Foreground="{StaticResource AdminMutedTextBrush}"
+                                                          Foreground="{StaticResource DarkMutedTextBrush}"
                                                           VerticalAlignment="Center"/>
                                             </Grid>
                                         </Button>
@@ -249,19 +245,19 @@
                                             <TextBlock Text="{Binding Answer}"
                                                        TextWrapping="Wrap"
                                                        FontSize="13"
-                                                       Foreground="#CBD5E1"
+                                                       Foreground="{StaticResource DarkSubtleTextBrush}"
                                                        LineHeight="22"/>
                                             <StackPanel Spacing="8">
                                                 <TextBlock Text="Feedback summary"
                                                            FontSize="12"
                                                            FontWeight="SemiBold"
-                                                           Foreground="{StaticResource AdminAccentBrush}"/>
+                                                           Foreground="{StaticResource PrimaryBrush}"/>
                                                 <StackPanel Orientation="Horizontal" Spacing="16">
                                                     <TextBlock Text="{Binding HelpfulVotesCount, ConverterParameter='Helpful: \{0\}'}"
-                                                               Foreground="#86EFAC"
+                                                               Foreground="{StaticResource SuccessBrush}"
                                                                FontSize="12"/>
                                                     <TextBlock Text="{Binding NotHelpfulVotesCount, ConverterParameter='Not helpful: \{0\}'}"
-                                                               Foreground="#FCA5A5"
+                                                               Foreground="{StaticResource ErrorBrush}"
                                                                FontSize="12"/>
                                                 </StackPanel>
                                             </StackPanel>

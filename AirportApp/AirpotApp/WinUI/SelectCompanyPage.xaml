@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:domain="using:AirportApp.ClassLibrary.Entity.Domain"
     mc:Ignorable="d"
-    Background="#0F172A">
+    Background="{StaticResource DarkBackgroundBrush}">
 
     <Grid Padding="40">
         <Grid.RowDefinitions>
@@ -19,10 +19,10 @@
             <TextBlock Text="SELECT YOUR COMPANY"
                        FontSize="28"
                        FontWeight="Bold"
-                       Foreground="White"
+                       Foreground="{StaticResource PrimaryTextBrush}"
                        HorizontalAlignment="Center"/>
             <TextBlock Text="Please choose the airline you represent to continue"
-                       Foreground="#94A3B8"
+                       Foreground="{StaticResource DarkMutedTextBrush}"
                        HorizontalAlignment="Center"/>
         </StackPanel>
 
@@ -41,16 +41,16 @@
                             Command="{Binding DataContext.SelectCompanyCommand, ElementName=CompaniesGrid}"
                             CommandParameter="{Binding}">
                         <Grid Width="200" Height="120" Margin="10"
-                              Background="#1E293B"
-                              BorderBrush="#334155"
+                              Background="{StaticResource DarkPanelBrush}"
+                              BorderBrush="{StaticResource DarkBorderBrush}"
                               BorderThickness="1"
                               CornerRadius="8">
                             <StackPanel Spacing="5"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center">
-                                <FontIcon Glyph="&#xEB4D;" FontSize="32" Foreground="#2bb8c0"/>
+                                <FontIcon Glyph="&#xEB4D;" FontSize="32" Foreground="{StaticResource PrimaryBrush}"/>
                                 <TextBlock Text="{x:Bind Name}"
-                                           Foreground="White"
+                                           Foreground="{StaticResource PrimaryTextBrush}"
                                            FontWeight="SemiBold"
                                            FontSize="16"
                                            TextAlignment="Center"/>

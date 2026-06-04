@@ -8,15 +8,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="Transparent"
-    Foreground="#F8FAFC">
+    Foreground="{StaticResource DarkForegroundBrush}">
 
     <Page.Resources>
-        <SolidColorBrush x:Key="AdminBorderBrush" Color="#D0D0D0"/>
-        <SolidColorBrush x:Key="AdminMutedTextBrush" Color="#94A3B8"/>
-        <SolidColorBrush x:Key="AdminAccentBrush" Color="#60A5FA"/>
-
         <Style x:Key="SectionBorderStyle" TargetType="Border">
-            <Setter Property="BorderBrush" Value="{StaticResource AdminBorderBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="12"/>
@@ -24,15 +20,15 @@
 
         <Style x:Key="AdminButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{StaticResource AdminAccentBrush}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource AdminBorderBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="6"/>
             <Setter Property="Padding" Value="12,6"/>
         </Style>
 
         <Style x:Key="StatusLegendStyle" TargetType="Border">
-            <Setter Property="BorderBrush" Value="{StaticResource AdminBorderBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="12"/>
@@ -58,7 +54,7 @@
                            FontWeight="SemiBold"/>
                 <TextBlock Text="Resolve customer requests"
                            FontSize="14"
-                           Foreground="{StaticResource AdminMutedTextBrush}"/>
+                           Foreground="{StaticResource DarkMutedTextBrush}"/>
             </StackPanel>
 
             <Border Grid.Row="2" Style="{StaticResource SectionBorderStyle}">
@@ -74,7 +70,7 @@
                                    FontWeight="SemiBold"/>
                         <TextBlock Text="Change the status of submitted tickets."
                                    FontSize="14"
-                                   Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                   Foreground="{StaticResource DarkMutedTextBrush}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1"
@@ -82,7 +78,7 @@
                                 Spacing="8"
                                 VerticalAlignment="Center">
                         <SymbolIcon Symbol="Filter"
-                                    Foreground="{StaticResource AdminMutedTextBrush}"
+                                    Foreground="{StaticResource DarkMutedTextBrush}"
                                     Width="20"
                                     Height="20"/>
                         <ComboBox Width="180"
@@ -103,7 +99,7 @@
                               ItemsSource="{x:Bind ViewModel.FilteredTicketsForDisplay, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="dto:TicketDTO">
-                            <Border BorderBrush="{StaticResource AdminBorderBrush}"
+                            <Border BorderBrush="{StaticResource DarkBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="8"
                                     Padding="16"
@@ -117,31 +113,31 @@
                                     <StackPanel Spacing="8">
                                         <TextBlock Text="{x:Bind ticketId}"
                                                    FontSize="12"
-                                                   Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                                   Foreground="{StaticResource DarkMutedTextBrush}"/>
                                         <TextBlock Text="{x:Bind subject}"
                                                    FontSize="18"
                                                    FontWeight="Bold"/>
                                         <TextBlock Text="{x:Bind description}"
-                                                   Foreground="#CBD5E1"
+                                                   Foreground="{StaticResource DarkSubtleTextBrush}"
                                                    TextWrapping="Wrap"
                                                    Margin="0,4,0,8"/>
 
                                         <StackPanel Orientation="Horizontal" Spacing="10">
                                             <TextBlock Text="{x:Bind categoryName}"
                                                        FontSize="12"
-                                                       Foreground="{StaticResource AdminMutedTextBrush}"/>
-                                            <TextBlock Text="|" Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                                       Foreground="{StaticResource DarkMutedTextBrush}"/>
+                                            <TextBlock Text="|" Foreground="{StaticResource DarkMutedTextBrush}"/>
                                             <TextBlock Text="{x:Bind subcategoryName}"
                                                        FontSize="12"
-                                                       Foreground="{StaticResource AdminMutedTextBrush}"/>
-                                            <TextBlock Text="|" Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                                       Foreground="{StaticResource DarkMutedTextBrush}"/>
+                                            <TextBlock Text="|" Foreground="{StaticResource DarkMutedTextBrush}"/>
                                             <TextBlock Text="{x:Bind creationTimestamp}"
                                                        FontSize="12"
-                                                       Foreground="{StaticResource AdminMutedTextBrush}"/>
-                                            <TextBlock Text="|" Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                                       Foreground="{StaticResource DarkMutedTextBrush}"/>
+                                            <TextBlock Text="|" Foreground="{StaticResource DarkMutedTextBrush}"/>
                                             <TextBlock Text="{x:Bind creatorEmailAddress}"
                                                        FontSize="12"
-                                                       Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                                       Foreground="{StaticResource DarkMutedTextBrush}"/>
                                         </StackPanel>
                                     </StackPanel>
 
@@ -149,21 +145,21 @@
                                                 Orientation="Horizontal"
                                                 VerticalAlignment="Top"
                                                 Spacing="8">
-                                        <Border BorderBrush="{StaticResource AdminBorderBrush}"
+                                        <Border BorderBrush="{StaticResource DarkBorderBrush}"
                                                 BorderThickness="1"
                                                 Padding="8,4"
                                                 CornerRadius="4">
                                             <TextBlock Text="{x:Bind currentStatus}"
-                                                       Foreground="{StaticResource AdminAccentBrush}"
+                                                       Foreground="{StaticResource PrimaryBrush}"
                                                        FontSize="12"
                                                        FontWeight="SemiBold"/>
                                         </Border>
-                                        <Border BorderBrush="{StaticResource AdminBorderBrush}"
+                                        <Border BorderBrush="{StaticResource DarkBorderBrush}"
                                                 BorderThickness="1"
                                                 Padding="8,4"
                                                 CornerRadius="4">
                                             <TextBlock Text="{x:Bind urgencyLevel}"
-                                                       Foreground="#FCA5A5"
+                                                       Foreground="{StaticResource ErrorBrush}"
                                                        FontSize="12"
                                                        FontWeight="SemiBold"/>
                                         </Border>
@@ -187,49 +183,49 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" Style="{StaticResource StatusLegendStyle}">
+                <Border Grid.Column="0" Style="{StaticResource StatusLegendStyle}" Background="{StaticResource AmberTintBrush}">
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <SymbolIcon Symbol="Clock"
-                                    Foreground="{StaticResource AdminAccentBrush}"
+                                    Foreground="{StaticResource WarningBrush}"
                                     VerticalAlignment="Top"
                                     Margin="0,2,0,0"/>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Open" FontWeight="SemiBold" FontSize="14"/>
                             <TextBlock Text="Awaiting review"
                                        FontSize="11"
-                                       Foreground="{StaticResource AdminMutedTextBrush}"
+                                       Foreground="{StaticResource DarkMutedTextBrush}"
                                        TextWrapping="Wrap"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Column="1" Style="{StaticResource StatusLegendStyle}">
+                <Border Grid.Column="1" Style="{StaticResource StatusLegendStyle}" Background="{StaticResource SkyTintBrush}">
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <SymbolIcon Symbol="Sync"
-                                    Foreground="{StaticResource AdminAccentBrush}"
+                                    Foreground="{StaticResource PrimaryBrush}"
                                     VerticalAlignment="Top"
                                     Margin="0,2,0,0"/>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="In Progress" FontWeight="SemiBold" FontSize="14"/>
                             <TextBlock Text="Under investigation"
                                        FontSize="11"
-                                       Foreground="{StaticResource AdminMutedTextBrush}"
+                                       Foreground="{StaticResource DarkMutedTextBrush}"
                                        TextWrapping="Wrap"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Column="2" Style="{StaticResource StatusLegendStyle}">
+                <Border Grid.Column="2" Style="{StaticResource StatusLegendStyle}" Background="{StaticResource GreenTintBrush}">
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <SymbolIcon Symbol="Accept"
-                                    Foreground="{StaticResource AdminAccentBrush}"
+                                    Foreground="{StaticResource SuccessBrush}"
                                     VerticalAlignment="Top"
                                     Margin="0,2,0,0"/>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Resolved" FontWeight="SemiBold" FontSize="14"/>
                             <TextBlock Text="Issue closed"
                                        FontSize="11"
-                                       Foreground="{StaticResource AdminMutedTextBrush}"
+                                       Foreground="{StaticResource DarkMutedTextBrush}"
                                        TextWrapping="Wrap"/>
                         </StackPanel>
                     </StackPanel>

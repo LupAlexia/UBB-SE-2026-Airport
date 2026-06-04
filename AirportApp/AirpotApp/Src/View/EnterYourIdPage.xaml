@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     RequestedTheme="Light"
     >
-    <Grid Background="{ThemeResource PrimaryBrush}">
+    <Grid Background="{StaticResource PageBackgroundBrush}">
         <Grid.RowDefinitions>
             <!-- Navbar placeholder -->
             <RowDefinition Height="Auto"/>
@@ -49,9 +49,9 @@
                         </Grid>
                         <!-- Title -->
                         <TextBlock Text="Welcome to Assistance Chat"
-                                   FontSize="20"
+                                   FontSize="22"
                                    FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SecondaryTextBrush}"
+                                   Foreground="{StaticResource PrimaryTextBrush}"
                                    HorizontalAlignment="Center"/>
 
                                    
@@ -68,20 +68,21 @@
                                        FontSize="12"
                                        Foreground="{ThemeResource SecondaryTextBrush}"/>
                             <TextBox PlaceholderText="Enter your ID"
-                                     Background="White"
-                                     
+                                     Background="{ThemeResource CardBackgroundBrush}"
                                      Text="{x:Bind ViewModel.UserIdentification, Mode=TwoWay}"
                                      Height="36"/>
 
                         </StackPanel>
                         <!-- Button -->
                         <Button Content="Continue"
-                                Height="40"
-                                Click="LoginButton_Click" 
+                                Height="46"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Click="LoginButton_Click"
                                 Background="{ThemeResource PrimaryBrush}"
                                 Foreground="White"
                                 HorizontalAlignment="Stretch"
-                                CornerRadius="6"/>
+                                CornerRadius="8"/>
                     </StackPanel>
                 </Border>
             </Grid>
@@ -94,8 +95,8 @@
         Background="Transparent"
         BorderThickness="0">
             <StackPanel Orientation="Horizontal" Spacing="8">
-                <FontIcon Glyph="&#xE72B;" FontSize="16" Foreground="White"/>
-                <TextBlock Text="Back to Welcome" Foreground="White" FontWeight="SemiBold"/>
+                <FontIcon Glyph="&#xE72B;" FontSize="16" Foreground="{StaticResource PrimaryBrush}"/>
+                <TextBlock Text="Back to Welcome" Foreground="{StaticResource PrimaryBrush}" FontWeight="SemiBold"/>
             </StackPanel>
         </Button>
     </Grid>

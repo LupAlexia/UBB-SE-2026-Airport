@@ -10,71 +10,71 @@
     mc:Ignorable="d"
     RequestedTheme="Light">
 
-    <Grid Padding="24" Background="White">
+    <Grid Padding="24" Background="{StaticResource PageBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Spacing="20" Margin="0,0,0,30">
-            <TextBlock Text="Find your next flight" FontSize="28" FontWeight="Bold" Foreground="#2bb8c0"/>
+            <TextBlock Text="Find your next flight" FontSize="28" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
 
             <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Bottom">
 
                 <StackPanel Spacing="4">
-                    <TextBlock Text="Location" FontSize="12" Foreground="#374151" FontWeight="SemiBold"/>
+                    <TextBlock Text="Location" FontSize="12" Foreground="{StaticResource SecondaryTextBrush}" FontWeight="SemiBold"/>
                     <TextBox x:Name="locationInput"
                              PlaceholderText="e.g. Barcelona..."
                              Width="180"
-                             Foreground="#111827"
-                             BorderBrush="#D1D5DB"
+                             Foreground="{StaticResource PrimaryTextBrush}"
+                             BorderBrush="{StaticResource BorderBrush}"
                              Text="{x:Bind ViewModel.Location, Mode=TwoWay}" />
                 </StackPanel>
 
                 <StackPanel Spacing="4">
-                    <TextBlock Text="Flight Type" FontSize="12" Foreground="#374151" FontWeight="SemiBold"/>
+                    <TextBlock Text="Flight Type" FontSize="12" Foreground="{StaticResource SecondaryTextBrush}" FontWeight="SemiBold"/>
                     <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" Height="32">
-                        <RadioButton x:Name="flightTypeDeparture" Content="Departure" Foreground="#111827"
+                        <RadioButton x:Name="flightTypeDeparture" Content="Departure" Foreground="{StaticResource PrimaryTextBrush}"
                                      IsChecked="{x:Bind ViewModel.IsDeparture, Mode=TwoWay}" />
-                        <RadioButton x:Name="flightTypeArrival" Content="Arrival" Foreground="#111827"/>
+                        <RadioButton x:Name="flightTypeArrival" Content="Arrival" Foreground="{StaticResource PrimaryTextBrush}"/>
                     </StackPanel>
                 </StackPanel>
 
                 <StackPanel Spacing="4">
-                    <TextBlock Text="Date" FontSize="12" Foreground="#374151" FontWeight="SemiBold"/>
+                    <TextBlock Text="Date" FontSize="12" Foreground="{StaticResource SecondaryTextBrush}" FontWeight="SemiBold"/>
                     <StackPanel Orientation="Horizontal" Spacing="4">
                         <CalendarDatePicker x:Name="datePicker"
                                             PlaceholderText="Select date"
                                             Width="150"
                                             Date="{x:Bind ViewModel.FlightDate, Mode=TwoWay}"
                                             CalendarViewDayItemChanging="DatePicker_CalendarViewDayItemChanging"
-                                            BorderBrush="#D1D5DB">
+                                            BorderBrush="{StaticResource BorderBrush}">
                             <CalendarDatePicker.Resources>
-                                <SolidColorBrush x:Key="CalendarDatePickerBorderBrush" Color="#D1D5DB"/>
-                                <SolidColorBrush x:Key="CalendarDatePickerForeground" Color="#111827"/>
-                                <SolidColorBrush x:Key="CalendarDatePickerTextForeground" Color="#111827"/>
-                                <SolidColorBrush x:Key="CalendarDatePickerBackground" Color="White"/>
+                                <SolidColorBrush x:Key="CalendarDatePickerBorderBrush" Color="{StaticResource BorderColor}"/>
+                                <SolidColorBrush x:Key="CalendarDatePickerForeground" Color="{StaticResource PrimaryTextColor}"/>
+                                <SolidColorBrush x:Key="CalendarDatePickerTextForeground" Color="{StaticResource PrimaryTextColor}"/>
+                                <SolidColorBrush x:Key="CalendarDatePickerBackground" Color="{StaticResource CardBackgroundColor}"/>
                             </CalendarDatePicker.Resources>
                         </CalendarDatePicker>
-                        <Button Content="✕" Background="Transparent" Foreground="#6B7280"
+                        <Button Content="✕" Background="Transparent" Foreground="{StaticResource SecondaryTextBrush}"
                                 BorderThickness="0" VerticalAlignment="Center"
                                 Height="32" ToolTipService.ToolTip="Clear Date"
                                 Click="ClearDateButton_Click">
                             <Button.Resources>
-                                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#F3F4F6"/>
-                                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="#374151"/>
+                                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource BorderColor}"/>
+                                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="{StaticResource PrimaryTextColor}"/>
                             </Button.Resources>
                         </Button>
                     </StackPanel>
                 </StackPanel>
 
                 <StackPanel Spacing="4">
-                    <TextBlock Text="Passengers" FontSize="12" Foreground="#374151" FontWeight="SemiBold"/>
+                    <TextBlock Text="Passengers" FontSize="12" Foreground="{StaticResource SecondaryTextBrush}" FontWeight="SemiBold"/>
                     <TextBox x:Name="passengersInput"
                              PlaceholderText="Nr"
                              Width="80"
-                             Foreground="#111827"
-                             BorderBrush="#D1D5DB"
+                             Foreground="{StaticResource PrimaryTextBrush}"
+                             BorderBrush="{StaticResource BorderBrush}"
                              Text="{x:Bind ViewModel.Passengers, Mode=TwoWay}"
                              InputScope="Number"
                              BeforeTextChanging="PassengersInput_BeforeTextChanging"/>
@@ -82,15 +82,15 @@
 
                 <Button x:Name="searchButton" Content="SEARCH"
                         Command="{x:Bind ViewModel.SearchCommand}"
-                        Background="#2bb8c0"
+                        Background="{StaticResource PrimaryBrush}"
                         Foreground="White"
                         FontWeight="Bold"
                         Height="32"
                         VerticalAlignment="Bottom">
                     <Button.Resources>
-                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#22989e"/>
+                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource PrimaryLightColor}"/>
                         <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
-                        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#1b7c81"/>
+                        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource PrimaryMutedColor}"/>
                         <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
                     </Button.Resources>
                 </Button>
@@ -105,12 +105,12 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Text="Available Flights" FontSize="20" FontWeight="SemiBold" Foreground="#111827" Margin="0,0,0,10"/>
+            <TextBlock Grid.Row="0" Text="Available Flights" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource PrimaryTextBrush}" Margin="0,0,0,10"/>
 
-            <TextBlock Grid.Row="1" Text="{x:Bind ViewModel.SearchResultMessage, Mode=OneWay}" Foreground="Gray" Margin="0,0,0,10"/>
+            <TextBlock Grid.Row="1" Text="{x:Bind ViewModel.SearchResultMessage, Mode=OneWay}" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,10"/>
 
-            <ListView x:Name="flightsGrid" ItemsSource="{x:Bind ViewModel.AvailableFlights, Mode=OneWay}" 
-                      Grid.Row="2" BorderBrush="#2bb8c0" BorderThickness="1" CornerRadius="8" SelectionMode="Single">
+            <ListView x:Name="flightsGrid" ItemsSource="{x:Bind ViewModel.AvailableFlights, Mode=OneWay}"
+                      Grid.Row="2" BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="1" CornerRadius="8" SelectionMode="Single">
 
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
@@ -120,7 +120,7 @@
 
                 <ListView.HeaderTemplate>
                     <DataTemplate>
-                        <Grid Background="White" Padding="12" BorderBrush="#2bb8c0" BorderThickness="0,0,0,1">
+                        <Grid Background="{StaticResource CardBackgroundBrush}" Padding="12" BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="0,0,0,1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100"/>
                                 <ColumnDefinition Width="200"/>
@@ -128,18 +128,18 @@
                                 <ColumnDefinition Width="140"/>
                                 <ColumnDefinition Width="110"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Flight Nr" FontWeight="Bold" Foreground="#111827"/>
-                            <TextBlock Grid.Column="1" Text="Route" FontWeight="Bold" Foreground="#111827"/>
-                            <TextBlock Grid.Column="2" Text="Date &amp; Time" FontWeight="Bold" Foreground="#111827"/>
-                            <TextBlock Grid.Column="3" Text="Base Price / person" FontWeight="Bold" Foreground="#111827"/>
-                            <TextBlock Grid.Column="4" Text="Action" FontWeight="Bold" Foreground="#111827"/>
+                            <TextBlock Grid.Column="0" Text="Flight Nr" FontWeight="Bold" Foreground="{StaticResource PrimaryTextBrush}"/>
+                            <TextBlock Grid.Column="1" Text="Route" FontWeight="Bold" Foreground="{StaticResource PrimaryTextBrush}"/>
+                            <TextBlock Grid.Column="2" Text="Date &amp; Time" FontWeight="Bold" Foreground="{StaticResource PrimaryTextBrush}"/>
+                            <TextBlock Grid.Column="3" Text="Base Price / person" FontWeight="Bold" Foreground="{StaticResource PrimaryTextBrush}"/>
+                            <TextBlock Grid.Column="4" Text="Action" FontWeight="Bold" Foreground="{StaticResource PrimaryTextBrush}"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.HeaderTemplate>
 
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="domain:FlightDisplayModel">
-                        <Grid Background="White" Padding="12" BorderBrush="#2bb8c0" BorderThickness="0,0,0,1">
+                        <Grid Background="{StaticResource CardBackgroundBrush}" Padding="12" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100"/>
                                 <ColumnDefinition Width="200"/>
@@ -148,17 +148,17 @@
                                 <ColumnDefinition Width="110"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="0" Text="{x:Bind FlightNumber}" VerticalAlignment="Center" Foreground="#111827"/>
-                            <TextBlock Grid.Column="1" Text="{x:Bind RouteCity}" VerticalAlignment="Center" Foreground="#111827"/>
-                            <TextBlock Grid.Column="2" Text="{x:Bind DisplayDate}" VerticalAlignment="Center" Foreground="#111827"/>
-                            <TextBlock Grid.Column="3" Text="{x:Bind DisplayPrice}" VerticalAlignment="Center" Foreground="#111827"/>
+                            <TextBlock Grid.Column="0" Text="{x:Bind FlightNumber}" VerticalAlignment="Center" Foreground="{StaticResource PrimaryTextBrush}"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind RouteCity}" VerticalAlignment="Center" Foreground="{StaticResource PrimaryTextBrush}"/>
+                            <TextBlock Grid.Column="2" Text="{x:Bind DisplayDate}" VerticalAlignment="Center" Foreground="{StaticResource PrimaryTextBrush}"/>
+                            <TextBlock Grid.Column="3" Text="{x:Bind DisplayPrice}" VerticalAlignment="Center" Foreground="{StaticResource PrimaryTextBrush}"/>
 
-                            <Button Grid.Column="4" Content="Book" Background="#2bb8c0" Foreground="White" CornerRadius="4" Height="30" HorizontalAlignment="Right" Margin="8,0,0,0" 
+                            <Button Grid.Column="4" Content="Book" Background="{StaticResource PrimaryBrush}" Foreground="White" CornerRadius="4" Height="30" HorizontalAlignment="Right" Margin="8,0,0,0"
                                     Command="{Binding DataContext.BookFlightCommand, ElementName=flightsGrid}" CommandParameter="{x:Bind}">
                                 <Button.Resources>
-                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#22989e"/>
+                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource PrimaryLightColor}"/>
                                     <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
-                                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#1b7c81"/>
+                                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource PrimaryMutedColor}"/>
                                     <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
                                 </Button.Resources>
                             </Button>

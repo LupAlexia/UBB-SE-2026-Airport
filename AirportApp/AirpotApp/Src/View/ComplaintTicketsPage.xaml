@@ -136,11 +136,11 @@
 
                                                             <TextBlock Text="{x:Bind ticketId}" FontSize="12" Foreground="{ThemeResource SecondaryTextBrush}" VerticalAlignment="Center"/>
                                                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                                                                <Border CornerRadius="4" Padding="6,2" Background="#dbeafe">
-                                                                    <TextBlock Text="{x:Bind currentStatus}" FontSize="12" Foreground="#383cb8"/>
+                                                                <Border CornerRadius="4" Padding="6,2" Background="{StaticResource PrimaryMutedBrush}">
+                                                                    <TextBlock Text="{x:Bind currentStatus}" FontSize="12" Foreground="{StaticResource PrimaryBrush}"/>
                                                                 </Border>
-                                                                <Border CornerRadius="4" Padding="6,2" Background="#ffe2e2">
-                                                                    <TextBlock Text="{x:Bind urgencyLevel}" FontSize="12" Foreground="#aa161e"/>
+                                                                <Border CornerRadius="4" Padding="6,2" Background="#fee2e2">
+                                                                    <TextBlock Text="{x:Bind urgencyLevel}" FontSize="12" Foreground="{StaticResource ErrorBrush}"/>
                                                                 </Border>
                                                             </StackPanel>
                                                         </Grid>
@@ -172,9 +172,9 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Border Grid.Column="0" Background="#fff4e5" CornerRadius="8" Padding="16">
+                    <Border Grid.Column="0" Background="#FEF3C7" CornerRadius="8" Padding="16">
                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <SymbolIcon Symbol="Clock" Foreground="#ffb347"/>
+                            <SymbolIcon Symbol="Clock" Foreground="{StaticResource WarningBrush}"/>
                             <StackPanel>
                                 <TextBlock Text="Open" FontWeight="SemiBold" Foreground="{ThemeResource PrimaryTextBrush}"/>
                                 <TextBlock Text="Your ticket has been received and is awaiting review" FontSize="12" Foreground="{ThemeResource SecondaryTextBrush}" TextWrapping="Wrap"/>
@@ -182,9 +182,9 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Column="1" Background="#e5f0ff" CornerRadius="8" Padding="16">
+                    <Border Grid.Column="1" Background="{StaticResource PrimaryMutedBrush}" CornerRadius="8" Padding="16">
                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <SymbolIcon Symbol="Sync" Foreground="#5ca0ff"/>
+                            <SymbolIcon Symbol="Sync" Foreground="{StaticResource PrimaryBrush}"/>
                             <StackPanel>
                                 <TextBlock Text="In Progress" FontWeight="SemiBold" Foreground="{ThemeResource PrimaryTextBrush}"/>
                                 <TextBlock Text="An employee is currently investigating or resolving your issue" FontSize="12" Foreground="{ThemeResource SecondaryTextBrush}" TextWrapping="Wrap"/>
@@ -192,9 +192,9 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Column="2" Background="#e6ffed" CornerRadius="8" Padding="16">
+                    <Border Grid.Column="2" Background="#D1FAE5" CornerRadius="8" Padding="16">
                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <SymbolIcon Symbol="Accept" Foreground="#22c55e"/>
+                            <SymbolIcon Symbol="Accept" Foreground="{StaticResource SuccessBrush}"/>
                             <StackPanel>
                                 <TextBlock Text="Resolved" FontWeight="SemiBold" Foreground="{ThemeResource PrimaryTextBrush}"/>
                                 <TextBlock Text="Your issue has been addressed and the ticket is closed" FontSize="12" Foreground="{ThemeResource SecondaryTextBrush}" TextWrapping="Wrap"/>

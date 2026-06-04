@@ -7,28 +7,18 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid x:Name="Root" Background="#F6F7F9">
+    <Grid x:Name="Root" Background="{StaticResource PageBackgroundBrush}">
         <Grid.Resources>
-            <SolidColorBrush x:Key="AccentTeal" Color="#2BB8C0"/>
-            <SolidColorBrush x:Key="MutedText" Color="#6B7280"/>
-            <SolidColorBrush x:Key="DarkText" Color="#111827"/>
-            <SolidColorBrush x:Key="DisabledCartBrush" Color="#808080"/>
-            <SolidColorBrush x:Key="TextBoxBorderBrush" Color="#D1D5DB"/>
-
-            <SolidColorBrush x:Key="TextControlForeground" Color="#111827"/>
-            <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="#111827"/>
-            <SolidColorBrush x:Key="TextControlForegroundFocused" Color="#111827"/>
-
             <Style x:Key="VisibleTextBoxStyle" TargetType="TextBox">
-                <Setter Property="Foreground" Value="{StaticResource DarkText}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource TextBoxBorderBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="HeaderTemplate">
                     <Setter.Value>
                         <DataTemplate>
-                            <TextBlock Text="{Binding}" 
-                               Foreground="{StaticResource DarkText}" 
-                               FontWeight="SemiBold" 
+                            <TextBlock Text="{Binding}"
+                               Foreground="{StaticResource PrimaryTextBrush}"
+                               FontWeight="SemiBold"
                                Margin="0,0,0,4"/>
                         </DataTemplate>
                     </Setter.Value>
@@ -41,7 +31,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Background="White" Padding="16,12" ColumnSpacing="12">
+        <Grid Grid.Row="0" Background="{StaticResource CardBackgroundBrush}" Padding="16,12" ColumnSpacing="12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -52,14 +42,14 @@
             <Button Grid.Column="0" Click="BackButton_Click"
                     Background="Transparent" BorderThickness="0">
                 <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <FontIcon Glyph="&#xE72B;" FontSize="18" Foreground="{StaticResource DarkText}"/>
-                    <TextBlock Text="Back" Foreground="{StaticResource DarkText}" VerticalAlignment="Center"/>
+                    <FontIcon Glyph="&#xE72B;" FontSize="18" Foreground="{StaticResource PrimaryTextBrush}"/>
+                    <TextBlock Text="Back" Foreground="{StaticResource PrimaryTextBrush}" VerticalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
             <TextBlock Grid.Column="1" Text="Duty-free shops" Margin="14,0"
                        VerticalAlignment="Center" FontSize="28" FontWeight="SemiBold"
-                       Foreground="{StaticResource AccentTeal}"/>
+                       Foreground="{StaticResource PrimaryBrush}"/>
 
             <Button x:Name="ViewCartButton" Grid.Column="3" Click="ViewCart_Click">
                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -76,63 +66,60 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" CornerRadius="16" Background="White"
-                        BorderBrush="#E5E7EB" BorderThickness="1" Height="300">
+                <Border Grid.Column="0" CornerRadius="16" Background="{StaticResource CardBackgroundBrush}"
+                        BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Height="300">
                     <Image Source="/Assets/PlaceHolder.png" Stretch="UniformToFill"/>
                 </Border>
 
                 <StackPanel Grid.Column="1" Spacing="12">
                     <TextBlock x:Name="TitleText" FontSize="28" FontWeight="Bold"
-                               Foreground="{StaticResource DarkText}" TextWrapping="Wrap"/>
+                               Foreground="{StaticResource PrimaryTextBrush}" TextWrapping="Wrap"/>
 
-                    <TextBlock x:Name="DescText" FontSize="14" Foreground="{StaticResource MutedText}"
+                    <TextBlock x:Name="DescText" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}"
                                TextWrapping="Wrap"/>
 
                     <TextBlock x:Name="PriceText" FontSize="32" FontWeight="Bold"
-                               Foreground="{StaticResource AccentTeal}"/>
+                               Foreground="{StaticResource PrimaryBrush}"/>
 
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock Text="In stock:" Foreground="{StaticResource MutedText}" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="StockUnitsRun" Foreground="{StaticResource DarkText}" VerticalAlignment="Center"/>
+                        <TextBlock Text="In stock:" Foreground="{StaticResource SecondaryTextBrush}" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="StockUnitsRun" Foreground="{StaticResource PrimaryTextBrush}" VerticalAlignment="Center"/>
                     </StackPanel>
 
                     <StackPanel x:Name="ClientActionsPanel" Spacing="12">
                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <!-- Minus Button -->
-                            <Button Content="-" 
-            Width="40" 
-            Height="40" 
-            FontSize="18"
-            FontWeight="Bold"
-            Background="#E5E7EB" 
-            Foreground="{StaticResource DarkText}" 
-            CornerRadius="6"
-            Click="QuantityMinus_Click"/>
+                            <Button Content="-"
+                                    Width="40"
+                                    Height="40"
+                                    FontSize="18"
+                                    FontWeight="Bold"
+                                    Background="{StaticResource BorderBrush}"
+                                    Foreground="{StaticResource PrimaryTextBrush}"
+                                    CornerRadius="6"
+                                    Click="QuantityMinus_Click"/>
 
-                            <!-- Cleaned TextBox: No style, direct properties, added Height to match buttons -->
-                            <TextBox x:Name="QuantityBox" 
-             Width="60" 
-             Height="40"
-             TextAlignment="Center"
-             VerticalAlignment="Center"
-             Foreground="{StaticResource DarkText}"
-             BorderBrush="{StaticResource TextBoxBorderBrush}"
-             BorderThickness="1"
-             TextChanged="QuantityBox_TextChanged"/>
+                            <TextBox x:Name="QuantityBox"
+                                     Width="60"
+                                     Height="40"
+                                     TextAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     Foreground="{StaticResource PrimaryTextBrush}"
+                                     BorderBrush="{StaticResource BorderBrush}"
+                                     BorderThickness="1"
+                                     TextChanged="QuantityBox_TextChanged"/>
 
-                            <!-- Plus Button -->
-                            <Button Content="+" 
-            Width="40" 
-            Height="40" 
-            FontSize="18"
-            FontWeight="Bold"
-            Background="#E5E7EB" 
-            Foreground="{StaticResource DarkText}" 
-            CornerRadius="6"
-            Click="QuantityPlus_Click"/>
+                            <Button Content="+"
+                                    Width="40"
+                                    Height="40"
+                                    FontSize="18"
+                                    FontWeight="Bold"
+                                    Background="{StaticResource BorderBrush}"
+                                    Foreground="{StaticResource PrimaryTextBrush}"
+                                    CornerRadius="6"
+                                    Click="QuantityPlus_Click"/>
                         </StackPanel>
 
-                        <Button Content="Add to Cart" Background="{StaticResource AccentTeal}"
+                        <Button Content="Add to Cart" Background="{StaticResource PrimaryBrush}"
                                 Foreground="White" CornerRadius="8" Padding="16,10"
                                 Click="AddToCart_Click"/>
                     </StackPanel>
@@ -142,8 +129,8 @@
                         <TextBox x:Name="AdminDescBox" Header="Description" PlaceholderText="Description" Style="{StaticResource VisibleTextBoxStyle}"/>
                         <TextBox x:Name="AdminPriceBox" Header="Price" PlaceholderText="0.00" Style="{StaticResource VisibleTextBoxStyle}"/>
                         <TextBox x:Name="AdminStockBox" Header="Stock" PlaceholderText="0" Style="{StaticResource VisibleTextBoxStyle}"/>
-                        <TextBlock x:Name="AdminStatusText" Foreground="#FF6B6B" FontWeight="SemiBold"/>
-                        <Button Content="Save Changes" Background="{StaticResource AccentTeal}"
+                        <TextBlock x:Name="AdminStatusText" Foreground="{StaticResource ErrorBrush}" FontWeight="SemiBold"/>
+                        <Button Content="Save Changes" Background="{StaticResource PrimaryBrush}"
                                 Foreground="White" CornerRadius="8" Padding="16,10"
                                 Click="AdminSave_Click"/>
                     </StackPanel>

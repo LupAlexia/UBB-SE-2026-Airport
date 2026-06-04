@@ -7,15 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="Transparent"
-    Foreground="#F8FAFC">
+    Foreground="{StaticResource DarkForegroundBrush}">
 
     <Page.Resources>
-        <SolidColorBrush x:Key="AdminBorderBrush" Color="#D0D0D0"/>
-        <SolidColorBrush x:Key="AdminMutedTextBrush" Color="#94A3B8"/>
-        <SolidColorBrush x:Key="AdminAccentBrush" Color="#60A5FA"/>
-
         <Style x:Key="SectionBorderStyle" TargetType="Border">
-            <Setter Property="BorderBrush" Value="{StaticResource AdminBorderBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="12"/>
@@ -38,7 +34,7 @@
                            FontSize="24"
                            FontWeight="SemiBold"/>
                 <TextBlock Text="View customer feedback and ratings (read-only)"
-                           Foreground="{StaticResource AdminMutedTextBrush}"
+                           Foreground="{StaticResource DarkMutedTextBrush}"
                            FontSize="14"/>
             </StackPanel>
 
@@ -47,15 +43,15 @@
                     <TextBlock Text="Overall Statistics"
                                FontSize="18"
                                FontWeight="SemiBold"
-                               Foreground="{StaticResource AdminAccentBrush}"/>
+                               Foreground="{StaticResource PrimaryBrush}"/>
 
                     <Grid ColumnDefinitions="*, *, *, *, *">
                         <StackPanel Grid.Column="0" HorizontalAlignment="Center" Spacing="4">
                             <TextBlock Text="Total Reviews"
-                                       Foreground="{StaticResource AdminMutedTextBrush}"
+                                       Foreground="{StaticResource DarkMutedTextBrush}"
                                        FontSize="14"/>
                             <TextBlock Text="{Binding TotalReviews}"
-                                       Foreground="{StaticResource AdminAccentBrush}"
+                                       Foreground="{StaticResource PrimaryBrush}"
                                        FontSize="32"
                                        FontWeight="Bold"
                                        HorizontalAlignment="Center"/>
@@ -63,57 +59,61 @@
 
                         <StackPanel Grid.Column="1" HorizontalAlignment="Center" Spacing="4">
                             <TextBlock Text="Duty Free Shops"
-                                       Foreground="{StaticResource AdminMutedTextBrush}"
+                                       Foreground="{StaticResource DarkMutedTextBrush}"
                                        FontSize="14"
                                        HorizontalAlignment="Center"/>
                             <RatingControl Value="{Binding AverageDutyFree}"
                                              IsReadOnly="True"
-                                             Foreground="{StaticResource AdminAccentBrush}"/>
+                                             Foreground="{StaticResource SkyBrush}"/>
                             <TextBlock Text="{Binding AverageDutyFree}"
                                        FontSize="16"
                                        FontWeight="Bold"
+                                       Foreground="{StaticResource SkyBrush}"
                                        HorizontalAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2" HorizontalAlignment="Center" Spacing="4">
                             <TextBlock Text="Flight Experience"
-                                       Foreground="{StaticResource AdminMutedTextBrush}"
+                                       Foreground="{StaticResource DarkMutedTextBrush}"
                                        FontSize="14"
                                        HorizontalAlignment="Center"/>
                             <RatingControl Value="{Binding AverageFlightExperience}"
                                              IsReadOnly="True"
-                                             Foreground="{StaticResource AdminAccentBrush}"/>
+                                             Foreground="{StaticResource IndigoBrush}"/>
                             <TextBlock Text="{Binding AverageFlightExperience}"
                                        FontSize="16"
                                        FontWeight="Bold"
+                                       Foreground="{StaticResource IndigoBrush}"
                                        HorizontalAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="3" HorizontalAlignment="Center" Spacing="4">
                             <TextBlock Text="Staff Friendliness"
-                                       Foreground="{StaticResource AdminMutedTextBrush}"
+                                       Foreground="{StaticResource DarkMutedTextBrush}"
                                        FontSize="14"
                                        HorizontalAlignment="Center"/>
                             <RatingControl Value="{Binding AverageStaffFriendliness}"
                                              IsReadOnly="True"
-                                             Foreground="{StaticResource AdminAccentBrush}"/>
+                                             Foreground="{StaticResource PinkBrush}"/>
                             <TextBlock Text="{Binding AverageStaffFriendliness}"
                                        FontSize="16"
                                        FontWeight="Bold"
+                                       Foreground="{StaticResource PinkBrush}"
                                        HorizontalAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="4" HorizontalAlignment="Center" Spacing="4">
                             <TextBlock Text="Cleanliness"
-                                       Foreground="{StaticResource AdminMutedTextBrush}"
+                                       Foreground="{StaticResource DarkMutedTextBrush}"
                                        FontSize="14"
                                        HorizontalAlignment="Center"/>
                             <RatingControl Value="{Binding AverageCleanliness}"
                                              IsReadOnly="True"
-                                             Foreground="{StaticResource AdminAccentBrush}"/>
+                                             Foreground="{StaticResource VioletBrush}"/>
                             <TextBlock Text="{Binding AverageCleanliness}"
                                        FontSize="16"
                                        FontWeight="Bold"
+                                       Foreground="{StaticResource VioletBrush}"
                                        HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
@@ -128,13 +128,13 @@
                                 <Grid ColumnDefinitions="Auto, *, Auto">
                                     <Border Width="48"
                                             Height="48"
-                                            BorderBrush="{StaticResource AdminBorderBrush}"
+                                            BorderBrush="{StaticResource DarkBorderBrush}"
                                             BorderThickness="1"
                                             CornerRadius="24">
                                         <TextBlock Text="{Binding userId}"
                                                    HorizontalAlignment="Center"
                                                    VerticalAlignment="Center"
-                                                   Foreground="{StaticResource AdminAccentBrush}"
+                                                   Foreground="{StaticResource PrimaryBrush}"
                                                    FontWeight="Bold"/>
                                     </Border>
 
@@ -151,12 +151,12 @@
                                                 HorizontalAlignment="Right">
                                         <TextBlock Text="Overall Rating"
                                                    FontSize="12"
-                                                   Foreground="{StaticResource AdminMutedTextBrush}"
+                                                   Foreground="{StaticResource DarkMutedTextBrush}"
                                                    HorizontalAlignment="Right"
                                                    Margin="0,0,0,2"/>
                                         <RatingControl Value="{Binding overallRating}"
                                                        IsReadOnly="True"
-                                                       Foreground="{StaticResource AdminAccentBrush}"/>
+                                                       Foreground="{StaticResource PrimaryBrush}"/>
                                     </StackPanel>
                                 </Grid>
 
@@ -166,45 +166,45 @@
                                     <StackPanel Grid.Column="0" Spacing="4">
                                         <TextBlock Text="Duty Free Shops"
                                                    FontSize="12"
-                                                   Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                                   Foreground="{StaticResource DarkMutedTextBrush}"/>
                                         <RatingControl Value="{Binding dutyFreeRating}"
                                                        IsReadOnly="True"
-                                                       Foreground="{StaticResource AdminAccentBrush}"/>
+                                                       Foreground="{StaticResource PrimaryBrush}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Spacing="4">
                                         <TextBlock Text="Flight Experience"
                                                    FontSize="12"
-                                                   Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                                   Foreground="{StaticResource DarkMutedTextBrush}"/>
                                         <RatingControl Value="{Binding flightExperienceRating}"
                                                        IsReadOnly="True"
-                                                       Foreground="{StaticResource AdminAccentBrush}"/>
+                                                       Foreground="{StaticResource PrimaryBrush}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="2" Spacing="4">
                                         <TextBlock Text="Staff Friendliness"
                                                    FontSize="12"
-                                                   Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                                   Foreground="{StaticResource DarkMutedTextBrush}"/>
                                         <RatingControl Value="{Binding staffFriendlinessRating}"
                                                        IsReadOnly="True"
-                                                       Foreground="{StaticResource AdminAccentBrush}"/>
+                                                       Foreground="{StaticResource PrimaryBrush}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="3" Spacing="4">
                                         <TextBlock Text="Cleanliness"
                                                    FontSize="12"
-                                                   Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                                   Foreground="{StaticResource DarkMutedTextBrush}"/>
                                         <RatingControl Value="{Binding cleanlinessRating}"
                                                        IsReadOnly="True"
-                                                       Foreground="{StaticResource AdminAccentBrush}"/>
+                                                       Foreground="{StaticResource PrimaryBrush}"/>
                                     </StackPanel>
                                 </Grid>
 
                                 <Border Grid.Row="2"
-                                        BorderBrush="{StaticResource AdminBorderBrush}"
+                                        BorderBrush="{StaticResource DarkBorderBrush}"
                                         BorderThickness="1"
                                         CornerRadius="8"
                                         Padding="16">
                                     <TextBlock Text="{Binding message}"
                                                FontStyle="Italic"
-                                               Foreground="#CBD5E1"
+                                               Foreground="{StaticResource DarkSubtleTextBrush}"
                                                FontSize="15"
                                                TextWrapping="Wrap"/>
                                 </Border>

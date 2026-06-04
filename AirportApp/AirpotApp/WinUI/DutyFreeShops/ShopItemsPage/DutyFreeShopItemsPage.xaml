@@ -21,24 +21,24 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Background="White" Padding="0">
+        <Border Background="{StaticResource CardBackgroundBrush}" Padding="0">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
                             VerticalAlignment="Top" Margin="5" Spacing="5">
 
                     <Button Click="BackToShops_Click" Background="Transparent" BorderThickness="0">
                         <Grid>
-                            <SymbolIcon Width="10" Height="10" Foreground="#2bb8c0"
+                            <SymbolIcon Width="10" Height="10" Foreground="{StaticResource PrimaryBrush}"
                                         HorizontalAlignment="Left" Symbol="Back"/>
                             <TextBlock Margin="20,0,0,0" VerticalAlignment="Center"
-                                       Foreground="#2bb8c0" Text="Back to Shops"/>
+                                       Foreground="{StaticResource PrimaryBrush}" Text="Back to Shops"/>
                         </Grid>
                     </Button>
 
-                    <Border Width="1" Background="LightGray" Margin="5,0" Height="30"/>
+                    <Border Width="1" Background="{StaticResource BorderBrush}" Margin="5,0" Height="30"/>
 
                     <TextBlock x:Name="ShopNameTextBlock" VerticalAlignment="Center"
-                               FontSize="24" Foreground="#2bb8c0" Text=""/>
+                               FontSize="24" Foreground="{StaticResource PrimaryBrush}" Text=""/>
 
                     <Grid Padding="50,0,0,0" Width="500" Height="50">
                         <TextBox FontSize="18" x:Name="SearchBox"
@@ -48,32 +48,31 @@
                                  VerticalAlignment="Stretch"
                                  HorizontalAlignment="Stretch"/>
                         <SymbolIcon Symbol="Find" VerticalAlignment="Center"
-                                    HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="Gray"/>
+                                    HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="{StaticResource SecondaryTextBrush}"/>
                     </Grid>
 
                     <Button x:Name="CartButton"
-                        Background="#21B4C4"
+                        Background="{StaticResource PrimaryBrush}"
                         Foreground="White"
-                        Padding="12,6,12,6">    
+                        Padding="12,6,12,6">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <FontIcon Glyph="&#xE7BF;" VerticalAlignment="Center"/>
-
                             <TextBlock Text="Cart" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
 
-                <Border Height="2" Background="LightGray" Margin="0,10,0,0"/>
+                <Border Height="2" Background="{StaticResource BorderBrush}" Margin="0,10,0,0"/>
             </StackPanel>
         </Border>
 
-        <ScrollViewer Grid.Row="1" Padding="150,25,150,25" Background="White">
+        <ScrollViewer Grid.Row="1" Padding="150,25,150,25" Background="{StaticResource CardBackgroundBrush}">
             <StackPanel Spacing="20">
                 <Button x:Name="AddButton"
                         Click="AddButton_Click"
                         FontSize="16" Foreground="White"
                         Content="+ Add Item"
-                        CornerRadius="15" Background="#2bb8c0"
+                        CornerRadius="15" Background="{StaticResource PrimaryBrush}"
                         Width="130" Height="50"
                         Visibility="Collapsed"/>
 
@@ -89,12 +88,12 @@
 
                 <GridView x:Name="ItemsGridView"
                           IsItemClickEnabled="True"
-                          Background="White"
+                          Background="{StaticResource CardBackgroundBrush}"
                           ItemClick="GridView_ItemClick"
                           Tag="{x:Bind ViewModel.IsAdmin, Mode=OneWay}">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="domain:ShopItem">
-                            <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Padding="10" Margin="5">
+                            <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="10" Margin="5">
                                 <StackPanel Width="250" Height="300">
                                     <Grid Height="180" Width="200">
                                         <Image Source="{Binding Photo, Converter={StaticResource PathToImageConverter}}"
@@ -108,13 +107,13 @@
                                                 <SymbolIcon Symbol="Edit"/>
                                             </Button>
                                             <Button Click="DeleteButton_Click" Tag="{x:Bind}">
-                                                <SymbolIcon Foreground="DarkRed" Symbol="Delete"/>
+                                                <SymbolIcon Foreground="{StaticResource ErrorBrush}" Symbol="Delete"/>
                                             </Button>
                                         </StackPanel>
                                     </Grid>
 
-                                    <TextBlock Text="{x:Bind Name}" FontWeight="Bold" Margin="0,20,0,0" Foreground="Black"/>
-                                    <TextBlock Text="{x:Bind Description}" Margin="0,10,0,5" Foreground="Black"/>
+                                    <TextBlock Text="{x:Bind Name}" FontWeight="Bold" Margin="0,20,0,0" Foreground="{StaticResource PrimaryTextBrush}"/>
+                                    <TextBlock Text="{x:Bind Description}" Margin="0,10,0,5" Foreground="{StaticResource PrimaryTextBrush}"/>
 
                                     <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
                                         <TextBlock Grid.Column="0" Text="{Binding Quantity}"
@@ -125,13 +124,13 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="$" FontWeight="Bold" FontSize="24" Foreground="#2bb8c0"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding Price}" FontWeight="Bold" FontSize="24" Foreground="#2bb8c0"/>
+                                            <TextBlock Grid.Column="0" Text="$" FontWeight="Bold" FontSize="24" Foreground="{StaticResource PrimaryBrush}"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Price}" FontWeight="Bold" FontSize="24" Foreground="{StaticResource PrimaryBrush}"/>
                                         </Grid>
 
                                         <Button Grid.Column="1"
                                                 Content="Add to Cart"
-                                                Background="#2bb8c0"
+                                                Background="{StaticResource PrimaryBrush}"
                                                 Click="AddItemToCartButton_Click"
                                                 Tag="{x:Bind}"
                                                 Foreground="White"

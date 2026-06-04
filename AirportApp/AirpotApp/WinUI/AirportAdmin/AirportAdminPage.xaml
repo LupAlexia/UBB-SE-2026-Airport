@@ -7,12 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:components="using:AirportApp.WinUI.Components"
     mc:Ignorable="d"
-    Background="#0F172A">
+    Background="{StaticResource DarkBackgroundBrush}">
 
     <Page.Resources>
-        <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#1E293B"/>
-        <SolidColorBrush x:Key="PanelBorderBrush" Color="#3F3F46"/>
-
         <Style x:Key="SidebarNavItemStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -40,14 +37,14 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0"
-                    Background="{StaticResource PanelBackgroundBrush}"
-                    BorderBrush="{StaticResource PanelBorderBrush}"
+                    Background="{StaticResource DarkPanelBrush}"
+                    BorderBrush="{StaticResource DarkBorderBrush}"
                     BorderThickness="1"
                     CornerRadius="8"
                     Padding="10">
                 <StackPanel Spacing="4">
                     <TextBlock Text="ADMIN PANEL"
-                               Foreground="White"
+                               Foreground="{StaticResource PrimaryTextBrush}"
                                FontSize="18"
                                FontWeight="Bold"
                                Margin="10,10,10,20"/>
@@ -56,7 +53,7 @@
                             Style="{StaticResource SidebarNavItemStyle}"
                             Command="{x:Bind ViewModel.ShowFlightsCommand}">
                         <Grid Height="44" Padding="14,0">
-                            <TextBlock Text="FLIGHTS" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Text="FLIGHTS" Foreground="{StaticResource PrimaryTextBrush}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </Grid>
                     </Button>
 
@@ -64,7 +61,7 @@
                             Style="{StaticResource SidebarNavItemStyle}"
                             Command="{x:Bind ViewModel.ShowEmployeesCommand}">
                         <Grid Height="44" Padding="14,0">
-                            <TextBlock Text="EMPLOYEES" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Text="EMPLOYEES" Foreground="{StaticResource PrimaryTextBrush}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </Grid>
                     </Button>
 
@@ -72,7 +69,7 @@
                             Style="{StaticResource SidebarNavItemStyle}"
                             Command="{x:Bind ViewModel.ShowAirportCommand}">
                         <Grid Height="44" Padding="14,0">
-                            <TextBlock Text="AIRPORT" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Text="AIRPORT" Foreground="{StaticResource PrimaryTextBrush}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </Grid>
                     </Button>
 
@@ -80,7 +77,7 @@
                             Style="{StaticResource SidebarNavItemStyle}"
                             Command="{x:Bind ViewModel.ShowFAQCommand}">
                         <Grid Height="44" Padding="14,0">
-                            <TextBlock Text="FAQ" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Text="FAQ" Foreground="{StaticResource PrimaryTextBrush}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </Grid>
                     </Button>
 
@@ -88,7 +85,7 @@
                             Style="{StaticResource SidebarNavItemStyle}"
                             Command="{x:Bind ViewModel.ShowTicketsCommand}">
                         <Grid Height="44" Padding="14,0">
-                            <TextBlock Text="TICKETS" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Text="TICKETS" Foreground="{StaticResource PrimaryTextBrush}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </Grid>
                     </Button>
 
@@ -96,15 +93,15 @@
                             Style="{StaticResource SidebarNavItemStyle}"
                             Command="{x:Bind ViewModel.ShowReviewsCommand}">
                         <Grid Height="44" Padding="14,0">
-                            <TextBlock Text="REVIEWS" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Text="REVIEWS" Foreground="{StaticResource PrimaryTextBrush}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </Grid>
                     </Button>
                 </StackPanel>
             </Border>
 
             <Border Grid.Column="2"
-                    Background="{StaticResource PanelBackgroundBrush}"
-                    BorderBrush="{StaticResource PanelBorderBrush}"
+                    Background="{StaticResource DarkPanelBrush}"
+                    BorderBrush="{StaticResource DarkBorderBrush}"
                     BorderThickness="1"
                     CornerRadius="8"
                     Padding="20">
@@ -119,7 +116,7 @@
                                Text="AIRPORT ADMINISTRATION"
                                FontSize="20"
                                FontWeight="Bold"
-                               Foreground="White"
+                               Foreground="{StaticResource PrimaryTextBrush}"
                                HorizontalAlignment="Center"/>
 
                     <Frame x:Name="ContentFrame" Grid.Row="2" Background="Transparent"/>

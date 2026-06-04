@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="#F9FAFB" Padding="20" RequestedTheme="Light">
+    <Grid Background="{StaticResource PageBackgroundBrush}" Padding="20" RequestedTheme="Light">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -27,10 +27,10 @@
                         <FontIcon Glyph="&#xE72B;" FontSize="16"/>
                     </Button>
                     <TextBlock Text="Duty-free shops" FontSize="22" FontWeight="SemiBold"
-                               Foreground="#2bb8c0" VerticalAlignment="Center" Margin="15,0,0,0"/>
+                               Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Center" Margin="15,0,0,0"/>
                 </StackPanel>
             </Grid>
-            <Border BorderBrush="#EEEEEE" BorderThickness="0,0,0,1"/>
+            <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1"/>
         </StackPanel>
 
         <ListView Grid.Row="1"
@@ -39,7 +39,7 @@
                   MaxWidth="1300">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="0,15,0,15" BorderBrush="#EEEEEE" BorderThickness="0,0,0,1" Padding="20">
+                    <Grid Margin="0,15,0,15" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
@@ -51,7 +51,7 @@
 
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="{Binding ShopItem.Name}" FontSize="18" FontWeight="SemiBold"/>
-                            <TextBlock Text="{Binding DisplayPrice}" FontSize="14" Foreground="Gray"/>
+                            <TextBlock Text="{Binding DisplayPrice}" FontSize="14" Foreground="{StaticResource SecondaryTextBrush}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,40,0">
@@ -61,36 +61,36 @@
                         </StackPanel>
 
                         <TextBlock Grid.Column="3" Text="{Binding ItemTotalPrice}" VerticalAlignment="Center"
-                                   FontSize="18" FontWeight="SemiBold" Foreground="#2bb8c0"/>
+                                   FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource PrimaryBrush}"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
-        <Grid Grid.Row="2" Margin="0,30,0,0" BorderBrush="#EEEEEE" BorderThickness="0,1,0,0" Padding="0,20,0,0">
+        <Grid Grid.Row="2" Margin="0,30,0,0" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,20,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0" Content="Empty Cart" HorizontalAlignment="Left"
-                    Background="Transparent" BorderBrush="#2bb8c0" BorderThickness="1"
-                    Foreground="#2bb8c0" Click="EmptyCart_Click"/>
+                    Background="Transparent" BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="1"
+                    Foreground="{StaticResource PrimaryBrush}" Click="EmptyCart_Click"/>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                 <StackPanel Orientation="Vertical" Margin="0,0,25,0" HorizontalAlignment="Right">
-                    <TextBlock Text="Overall Total Price" FontSize="12" Foreground="Gray" HorizontalAlignment="Right"/>
+                    <TextBlock Text="Overall Total Price" FontSize="12" Foreground="{StaticResource SecondaryTextBrush}" HorizontalAlignment="Right"/>
                     <TextBlock Text="{x:Bind ViewModel.OverallTotal, Mode=OneWay}"
-                               FontSize="28" FontWeight="Bold" Foreground="#2bb8c0" HorizontalAlignment="Right"/>
+                               FontSize="28" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" HorizontalAlignment="Right"/>
                 </StackPanel>
 
                 <Button Content="Reserve" Width="140" Height="50"
-                        Background="#2bb8c0" Foreground="White" FontSize="16" FontWeight="SemiBold"
+                        Background="{StaticResource PrimaryBrush}" Foreground="White" FontSize="16" FontWeight="SemiBold"
                         IsEnabled="{x:Bind ViewModel.IsReserveButtonEnabled, Mode=OneWay}"
                         Command="{x:Bind ViewModel.ReserveCartCommand}"/>
 
                 <Button Content="Cancel Reservation" Width="170" Height="50"
-                        Background="LightPink" Foreground="DarkRed" FontSize="16" FontWeight="SemiBold"
+                        Background="{StaticResource ErrorBrush}" Foreground="White" FontSize="16" FontWeight="SemiBold"
                         Visibility="{x:Bind BoolToVisibility(ViewModel.IsCancelButtonVisible), Mode=OneWay}"
                         Margin="15,0,0,0"
                         Command="{x:Bind ViewModel.CancelReservationCommand}"/>

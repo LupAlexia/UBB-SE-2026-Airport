@@ -246,7 +246,7 @@
                             <TextBox PlaceholderText="Tell us about your experience..."
                              Text="{Binding ReviewMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              PlaceholderForeground="{ThemeResource SecondaryTextBrush}"
-                             Foreground="Black"
+                             Foreground="{ThemeResource PrimaryTextBrush}"
                              AcceptsReturn="True"
                              Height="140"
                              TextWrapping="Wrap"

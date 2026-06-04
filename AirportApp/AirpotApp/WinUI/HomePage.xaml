@@ -6,15 +6,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="#0F172A">
+    Background="{StaticResource DarkBackgroundBrush}">
 
     <Page.Resources>
         <Style x:Key="RoleCardStyle" TargetType="Button">
             <Setter Property="Width" Value="220"/>
             <Setter Property="MinHeight" Value="160"/>
             <Setter Property="Margin" Value="12"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="CornerRadius" Value="12"/>
@@ -32,40 +32,40 @@
             <TextBlock Text="Staff Portal"
                        FontSize="38"
                        FontWeight="Bold"
-                       Foreground="White"
+                       Foreground="{StaticResource PrimaryTextBrush}"
                        HorizontalAlignment="Center"
                        Margin="0,0,0,10"/>
 
             <TextBlock Text="Select your role to continue"
                        FontSize="15"
-                       Foreground="#A0AEC0"
+                       Foreground="{StaticResource DarkMutedTextBrush}"
                        HorizontalAlignment="Center"
                        Margin="0,0,0,36"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <StackPanel.Resources>
                     <ResourceDictionary>
-                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="White"/>
-                        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="#111827"/>
-                        <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="#2bb8c0"/>
-                        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#F8FAFC"/>
-                        <SolidColorBrush x:Key="ButtonForegroundPressed" Color="#111827"/>
-                        <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="#2bb8c0"/>
+                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource CardBackgroundColor}"/>
+                        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="{StaticResource PrimaryTextColor}"/>
+                        <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="{StaticResource PrimaryColor}"/>
+                        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource PageBackgroundColor}"/>
+                        <SolidColorBrush x:Key="ButtonForegroundPressed" Color="{StaticResource PrimaryTextColor}"/>
+                        <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="{StaticResource PrimaryColor}"/>
                     </ResourceDictionary>
                 </StackPanel.Resources>
 
-                <!-- Admin -->
                 <Button Style="{StaticResource RoleCardStyle}"
+                        Background="{StaticResource IndigoTintBrush}"
                         Command="{x:Bind ViewModel.NavigateToAdminCommand}">
                     <StackPanel Spacing="10" HorizontalAlignment="Center">
                         <TextBlock Text="Admin"
                                    FontSize="20"
                                    FontWeight="SemiBold"
-                                   Foreground="#111827"
+                                   Foreground="{StaticResource IndigoBrush}"
                                    HorizontalAlignment="Center"/>
                         <TextBlock Text="Manage FAQ, tickets, reviews, employees, routes, and gates."
                                    FontSize="13"
-                                   Foreground="#6B7280"
+                                   Foreground="{StaticResource SecondaryTextBrush}"
                                    TextWrapping="Wrap"
                                    TextAlignment="Center"
                                    HorizontalAlignment="Center"
@@ -73,18 +73,18 @@
                     </StackPanel>
                 </Button>
 
-                <!-- Manager (Company Representative) -->
                 <Button Style="{StaticResource RoleCardStyle}"
+                        Background="{StaticResource TealTintBrush}"
                         Command="{x:Bind ViewModel.NavigateToCompanyCommand}">
                     <StackPanel Spacing="10" HorizontalAlignment="Center">
                         <TextBlock Text="Manager"
                                    FontSize="20"
                                    FontWeight="SemiBold"
-                                   Foreground="#111827"
+                                   Foreground="{StaticResource PrimaryBrush}"
                                    HorizontalAlignment="Center"/>
                         <TextBlock Text="Flight company manager – add and manage flights."
                                    FontSize="13"
-                                   Foreground="#6B7280"
+                                   Foreground="{StaticResource SecondaryTextBrush}"
                                    TextWrapping="Wrap"
                                    TextAlignment="Center"
                                    HorizontalAlignment="Center"
@@ -92,18 +92,18 @@
                     </StackPanel>
                 </Button>
 
-                <!-- Employee (Airport Staff Member) -->
                 <Button Style="{StaticResource RoleCardStyle}"
+                        Background="{StaticResource AmberTintBrush}"
                         Command="{x:Bind ViewModel.NavigateToStaffCommand}">
                     <StackPanel Spacing="10" HorizontalAlignment="Center">
                         <TextBlock Text="Employee"
                                    FontSize="20"
                                    FontWeight="SemiBold"
-                                   Foreground="#111827"
+                                   Foreground="{StaticResource WarningBrush}"
                                    HorizontalAlignment="Center"/>
                         <TextBlock Text="Flight crew – view schedule and assigned flights."
                                    FontSize="13"
-                                   Foreground="#6B7280"
+                                   Foreground="{StaticResource SecondaryTextBrush}"
                                    TextWrapping="Wrap"
                                    TextAlignment="Center"
                                    HorizontalAlignment="Center"
@@ -114,7 +114,7 @@
 
             <HyperlinkButton Content="← Back to role selection"
                  HorizontalAlignment="Center"
-                 Foreground="#A0AEC0"
+                 Foreground="{StaticResource DarkMutedTextBrush}"
                  Margin="0,28,0,0"
                  Command="{x:Bind ViewModel.NavigateToAirportCommand}"/>
         </StackPanel>

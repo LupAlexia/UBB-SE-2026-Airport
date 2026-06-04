@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="#0F172A">
+    Background="{StaticResource DarkBackgroundBrush}">
 
     <Page.Resources>
         <converters:BoolToActiveBrushConverter x:Key="BoolToActiveBrushConverter" />
@@ -23,8 +23,8 @@
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0"
-                Background="#1E293B"
-                BorderBrush="#3F3F46"
+                Background="{StaticResource DarkPanelBrush}"
+                BorderBrush="{StaticResource DarkBorderBrush}"
                 BorderThickness="0,0,0,1"
                 Padding="30,15,30,15">
             <Grid>
@@ -37,7 +37,7 @@
                            Text="Airport Management System"
                            FontSize="18"
                            FontWeight="Bold"
-                           Foreground="#2bb8c0"
+                           Foreground="{StaticResource PrimaryBrush}"
                            VerticalAlignment="Center" />
 
                 <StackPanel Grid.Column="1"
@@ -51,7 +51,7 @@
                             Background="{x:Bind ViewModel.IsAirportTabActive, Converter={StaticResource BoolToActiveBrushConverter}}"
                             BorderBrush="{x:Bind ViewModel.IsAirportTabActive, Converter={StaticResource BoolToActiveBorderBrushConverter}}"
                             BorderThickness="{x:Bind ViewModel.IsAirportTabActive, Converter={StaticResource BoolToActiveBorderThicknessConverter}}"
-                            Foreground="White"
+                            Foreground="{StaticResource PrimaryTextBrush}"
                             Padding="15,8"
                             CornerRadius="6"
                             FontWeight="SemiBold" />
@@ -61,7 +61,7 @@
                             Background="{x:Bind ViewModel.IsAirportTabActive, Converter={StaticResource BoolToInactiveBrushConverter}}"
                             BorderBrush="{x:Bind ViewModel.IsAirportTabActive, Converter={StaticResource BoolToActiveBorderBrushConverter}, ConverterParameter=Invert}"
                             BorderThickness="{x:Bind ViewModel.IsAirportTabActive, Converter={StaticResource BoolToActiveBorderThicknessConverter}, ConverterParameter=Invert}"
-                            Foreground="White"
+                            Foreground="{StaticResource PrimaryTextBrush}"
                             Padding="15,8"
                             CornerRadius="6"
                             FontWeight="SemiBold" />
@@ -71,6 +71,6 @@
 
         <Frame x:Name="ContentFrame"
                Grid.Row="1"
-               Background="#0F172A" />
+               Background="{StaticResource DarkBackgroundBrush}" />
     </Grid>
 </Page>

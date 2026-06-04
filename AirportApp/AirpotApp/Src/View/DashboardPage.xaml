@@ -8,7 +8,7 @@
     xmlns:local="using:AirportApp.Src.View"
     xmlns:viewmodel="using:AirportApp.Src.ViewModel"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{StaticResource PageBackgroundBrush}">
 
     <Grid Padding="30">
         <Grid.RowDefinitions>
@@ -16,15 +16,13 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <TextBlock Grid.Row="0" 
-                   Text="{Binding WelcomeMessage}" 
-                   FontSize="32" 
-                   FontWeight="SemiBold" 
+        <TextBlock Grid.Row="0"
+                   Text="{Binding WelcomeMessage}"
+                   FontSize="32"
+                   FontWeight="SemiBold"
+                   Foreground="{StaticResource PrimaryTextBrush}"
                    Margin="0,0,0,20"/>
 
-        <!-- Dashboard Content -->
-        <!-- Acum Grid-ul are o singură coloană care ocupă tot spațiul -->
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -37,7 +35,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text="My Tickets" FontSize="24" FontWeight="SemiBold"/>
+                <TextBlock Grid.Column="0" Text="My Tickets" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource PrimaryTextBrush}"/>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <TextBlock Text="Show:" VerticalAlignment="Center"/>
@@ -47,11 +45,10 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Lista de bilete extinsă pe tot ecranul -->
-            <ListView Grid.Row="1" 
-                      ItemsSource="{Binding MyTickets}" 
+            <ListView Grid.Row="1"
+                      ItemsSource="{Binding MyTickets}"
                       SelectionMode="None"
-                      Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                      Background="{StaticResource PageBackgroundBrush}"
                       CornerRadius="8"
                       Padding="10">
                 <ListView.ItemContainerStyle>
@@ -62,9 +59,9 @@
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="{ThemeResource SystemControlBackgroundAltHighBrush}" 
+                        <Border Background="{StaticResource CardBackgroundBrush}"
                                 CornerRadius="6"
-                                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1"
                                 Padding="15">
                             <Grid>
@@ -73,42 +70,35 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Informatii Bilet -->
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <!-- Nr zbor si Data -->
                                     <StackPanel Orientation="Horizontal" Spacing="10">
                                         <TextBlock Text="Flight:" FontWeight="SemiBold"/>
                                         <TextBlock Text="{Binding Flight.FlightNumber}" FontWeight="Bold" FontSize="16"/>
                                         <TextBlock Text="•"/>
-                                        <TextBlock Text="{Binding Flight.Date}" Foreground="Gray"/>
+                                        <TextBlock Text="{Binding Flight.Date}" Foreground="{StaticResource SecondaryTextBrush}"/>
                                     </StackPanel>
 
-                                    <!-- Scaun, Pret, Status -->
                                     <StackPanel Orientation="Horizontal" Spacing="15" Margin="0,5,0,0">
-                                        <TextBlock Text="Seat:" Foreground="Gray"/>
+                                        <TextBlock Text="Seat:" Foreground="{StaticResource SecondaryTextBrush}"/>
                                         <TextBlock Text="{Binding Seat, TargetNullValue='No Seat Assigned'}" FontWeight="SemiBold"/>
-                                        <TextBlock Text="•" Foreground="Gray"/>
+                                        <TextBlock Text="•" Foreground="{StaticResource SecondaryTextBrush}"/>
                                         <TextBlock Text="{Binding Price}" FontWeight="SemiBold"/>
-                                        <TextBlock Text="EUR" Foreground="Gray"/>
-                                        <TextBlock Text="•" Foreground="Gray"/>
-                                        <!-- Statusul -->
-                                        <TextBlock Text="{Binding Status}" FontWeight="SemiBold" Foreground="#0078D7"/>
+                                        <TextBlock Text="EUR" Foreground="{StaticResource SecondaryTextBrush}"/>
+                                        <TextBlock Text="•" Foreground="{StaticResource SecondaryTextBrush}"/>
+                                        <TextBlock Text="{Binding Status}" FontWeight="SemiBold" Foreground="{StaticResource PrimaryBrush}"/>
                                     </StackPanel>
                                 </StackPanel>
 
-                                <!-- Butoane Actiune -->
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="10">
-                                    <!-- Buton Download PDF -->
-                                    <Button Content="Download PDF" 
-                                            Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
+                                    <Button Content="Download PDF"
+                                            Background="{StaticResource PrimaryBrush}"
                                             Foreground="White"
                                             Command="{Binding ElementName=RootPage, Path=DataContext.DownloadPdfCommand}"
-                                            CommandParameter="{Binding}" 
+                                            CommandParameter="{Binding}"
                                             HorizontalAlignment="Stretch" />
 
-                                    <!-- Buton Cancel -->
-                                    <Button Content="Cancel" 
-                                            Background="#FF4444" 
+                                    <Button Content="Cancel"
+                                            Background="{StaticResource ErrorBrush}"
                                             Foreground="White"
                                             Command="{Binding ElementName=RootPage, Path=DataContext.CancelTicketCommand}"
                                             CommandParameter="{Binding}"
