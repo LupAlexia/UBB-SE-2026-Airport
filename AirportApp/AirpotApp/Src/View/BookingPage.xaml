@@ -18,12 +18,12 @@
 
         <ScrollViewer Grid.Column="0" Margin="0,0,20,0">
             <StackPanel>
-                <TextBlock Text="Complete Your Booking" FontSize="28" FontWeight="Bold" Foreground="#2bb8c0" Margin="0,0,0,20"/>
+                <TextBlock Text="Complete Your Booking" FontSize="28" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,20"/>
 
                 <Border BorderBrush="#2bb8c0" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,20">
                     <StackPanel>
                         <TextBlock Text="Passengers" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
-                        <TextBlock Margin="0,0,0,10" Foreground="Gray">
+                        <TextBlock Margin="0,0,0,10" Foreground="{StaticResource SecondaryTextBrush}">
                             <Run Text="Maximum passengers for this booking: "/>
                             <Run Text="{x:Bind ViewModel.MaximumPassengers, Mode=OneWay, FallbackValue='0'}"/>
                         </TextBlock>
@@ -71,15 +71,15 @@
                                             <Button Content="Remove Passenger" 
                                                     Command="{Binding ElementName=RootPage, Path=ViewModel.RemovePassengerCommand}" 
                                                     IsEnabled="{Binding ElementName=RootPage, Path=ViewModel.CanRemovePassenger}"
-                                                    CommandParameter="{Binding}" 
-                                                    Background="#d9534f" Foreground="White" CornerRadius="4"/>
+                                                    CommandParameter="{Binding}"
+                                                    Background="{StaticResource ErrorBrush}" Foreground="White" CornerRadius="4"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <Button Content="+ Add Passenger" Command="{x:Bind ViewModel.AddPassengerCommand}" IsEnabled="{x:Bind ViewModel.CanAddPassenger, Mode=OneWay}" Background="Transparent" Foreground="#2bb8c0" BorderBrush="#2bb8c0" BorderThickness="1" Margin="0,10,0,0" CornerRadius="4"/>
+                        <Button Content="+ Add Passenger" Command="{x:Bind ViewModel.AddPassengerCommand}" IsEnabled="{x:Bind ViewModel.CanAddPassenger, Mode=OneWay}" Background="Transparent" Foreground="{StaticResource PrimaryBrush}" BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="1" Margin="0,10,0,0" CornerRadius="4"/>
                     </StackPanel>
                 </Border>
 
@@ -97,7 +97,7 @@
                         <Grid x:Name="seatMapGrid" HorizontalAlignment="Left">
                         </Grid>
                         <TextBlock Text="Legend: light gray = available, teal = selected passenger seat, medium gray = occupied"
-                                   Foreground="Gray"
+                                   Foreground="{StaticResource SecondaryTextBrush}"
                                    Margin="0,10,0,0"/>
                     </StackPanel>
                 </Border>
@@ -128,21 +128,21 @@
                     <TextBlock Text="{x:Bind ViewModel.MembershipSavingsDisplay, Mode=OneWay, FallbackValue='0.00 €'}" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#2bb8c0"/>
                 </Grid>
 
-                <Rectangle Height="1" Fill="#ddd" Margin="0,10"/>
+                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,10"/>
 
                 <Grid Margin="0,5">
                     <TextBlock Text="TOTAL:" FontSize="18" FontWeight="Bold" HorizontalAlignment="Left" Foreground="#333333"/>
                     <TextBlock Text="{x:Bind ViewModel.FinalTotalPriceDisplay, Mode=OneWay, FallbackValue='0.00 €'}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Right" Foreground="#2bb8c0"/>
                 </Grid>
 
-                <Button Content="Confirm Booking" 
-                        Command="{x:Bind ViewModel.ConfirmBookingCommand}" 
-                        Background="#2bb8c0" Foreground="White" FontWeight="Bold" 
+                <Button Content="Confirm Booking"
+                        Command="{x:Bind ViewModel.ConfirmBookingCommand}"
+                        Background="{StaticResource PrimaryBrush}" Foreground="White" FontWeight="Bold"
                         Height="45" HorizontalAlignment="Stretch" CornerRadius="8" Margin="0,20,0,0"/>
 
                 <TextBlock Text="{x:Bind ViewModel.ValidationMessage, Mode=OneWay}"
                            TextWrapping="WrapWholeWords"
-                           Foreground="#b22222"
+                           Foreground="{StaticResource ErrorBrush}"
                            Margin="0,10,0,0"/>
             </StackPanel>
         </Border>

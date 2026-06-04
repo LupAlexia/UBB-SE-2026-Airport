@@ -179,8 +179,8 @@
                                                             <StackPanel Spacing="8" Visibility="{Binding DataContext.IsAdmin, ElementName=RootPage, Converter={StaticResource BooleanToVisibilityConverter}}">
                                                                 <TextBlock Text="Feedback summary" FontSize="12" FontWeight="SemiBold"/>
                                                                 <StackPanel Orientation="Horizontal" Spacing="16">
-                                                                    <TextBlock Text="{Binding HelpfulVotesCount, ConverterParameter='Helpful: \{0\}'}" Foreground="#15803D" FontSize="12"/>
-                                                                    <TextBlock Text="{Binding NotHelpfulVotesCount, ConverterParameter='Not helpful: \{0\}'}" Foreground="#B42318" FontSize="12"/>
+                                                                    <TextBlock Text="{Binding HelpfulVotesCount, ConverterParameter='Helpful: \{0\}'}" Foreground="{StaticResource SuccessBrush}" FontSize="12"/>
+                                                                    <TextBlock Text="{Binding NotHelpfulVotesCount, ConverterParameter='Not helpful: \{0\}'}" Foreground="{StaticResource ErrorBrush}" FontSize="12"/>
                                                                 </StackPanel>
                                                             </StackPanel>
 

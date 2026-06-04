@@ -152,11 +152,11 @@
                                                 </StackPanel>
 
                                                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Spacing="8">
-                                                    <Border Background="#eef2ff" Padding="8,4" CornerRadius="4">
-                                                        <TextBlock Text="{x:Bind currentStatus}" Foreground="#4f46e5" FontSize="12" FontWeight="SemiBold"/>
+                                                    <Border Background="{StaticResource PrimaryMutedBrush}" Padding="8,4" CornerRadius="4">
+                                                        <TextBlock Text="{x:Bind currentStatus}" Foreground="{StaticResource PrimaryBrush}" FontSize="12" FontWeight="SemiBold"/>
                                                     </Border>
-                                                    <Border Background="#fef2f2" Padding="8,4" CornerRadius="4">
-                                                        <TextBlock Text="{x:Bind urgencyLevel}" Foreground="#ef4444" FontSize="12" FontWeight="SemiBold"/>
+                                                    <Border Background="#fee2e2" Padding="8,4" CornerRadius="4">
+                                                        <TextBlock Text="{x:Bind urgencyLevel}" Foreground="{StaticResource ErrorBrush}" FontSize="12" FontWeight="SemiBold"/>
                                                     </Border>
                                                     <Button Content="Update Status" 
                                 Click="EditTicketStatus_Click" 
@@ -182,9 +182,9 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" Background="#fff4e5" CornerRadius="8" Padding="12" Height="70">
+                <Border Grid.Column="0" Background="#FEF3C7" CornerRadius="8" Padding="12" Height="70">
                     <StackPanel Orientation="Horizontal" Spacing="12">
-                        <SymbolIcon Symbol="Clock" Foreground="#ffb347" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                        <SymbolIcon Symbol="Clock" Foreground="{StaticResource WarningBrush}" VerticalAlignment="Top" Margin="0,2,0,0"/>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Open" FontWeight="SemiBold" FontSize="14" Foreground="{ThemeResource PrimaryTextBrush}"/>
                             <TextBlock Text="Awaiting review" FontSize="11" Foreground="{ThemeResource SecondaryTextBrush}" TextWrapping="Wrap"/>
@@ -192,9 +192,9 @@
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Column="1" Background="#e5f0ff" CornerRadius="8" Padding="12" Height="70">
+                <Border Grid.Column="1" Background="{StaticResource PrimaryMutedBrush}" CornerRadius="8" Padding="12" Height="70">
                     <StackPanel Orientation="Horizontal" Spacing="12">
-                        <SymbolIcon Symbol="Sync" Foreground="#5ca0ff" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                        <SymbolIcon Symbol="Sync" Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Top" Margin="0,2,0,0"/>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="In Progress" FontWeight="SemiBold" FontSize="14" Foreground="{ThemeResource PrimaryTextBrush}"/>
                             <TextBlock Text="Under investigation" FontSize="11" Foreground="{ThemeResource SecondaryTextBrush}" TextWrapping="Wrap"/>
@@ -202,9 +202,9 @@
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Column="2" Background="#e6ffed" CornerRadius="8" Padding="12" Height="70">
+                <Border Grid.Column="2" Background="#D1FAE5" CornerRadius="8" Padding="12" Height="70">
                     <StackPanel Orientation="Horizontal" Spacing="12">
-                        <SymbolIcon Symbol="Accept" Foreground="#22c55e" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                        <SymbolIcon Symbol="Accept" Foreground="{StaticResource SuccessBrush}" VerticalAlignment="Top" Margin="0,2,0,0"/>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Resolved" FontWeight="SemiBold" FontSize="14" Foreground="{ThemeResource PrimaryTextBrush}"/>
                             <TextBlock Text="Issue closed" FontSize="11" Foreground="{ThemeResource SecondaryTextBrush}" TextWrapping="Wrap"/>

@@ -8,11 +8,7 @@
     xmlns:components="using:AirportApp.WinUI.Components"
     xmlns:data="using:AirportApp.ClassLibrary.Entity.Domain"
     mc:Ignorable="d"
-    Background="#0F172A">
-
-    <Page.Resources>
-        <SolidColorBrush x:Key="CustomAccentBrush" Color="#2bb8c0"/>
-    </Page.Resources>
+    Background="{StaticResource DarkBackgroundBrush}">
 
     <Grid Padding="30">
         <Grid.RowDefinitions>
@@ -23,10 +19,10 @@
         <components:Header Grid.Row="0"/>
 
         <Border Grid.Row="1"
-                BorderBrush="#1E293B"
+                BorderBrush="{StaticResource DarkPanelBrush}"
                 BorderThickness="1"
                 CornerRadius="8"
-                Background="#1E293B"
+                Background="{StaticResource DarkPanelBrush}"
                 Width="980"
                 Height="620"
                 HorizontalAlignment="Center"
@@ -48,12 +44,12 @@
                     <TextBlock Text="MY SCHEDULED FLIGHTS"
                                FontSize="20"
                                FontWeight="Bold"
-                               Foreground="White"
+                               Foreground="{StaticResource PrimaryTextBrush}"
                                VerticalAlignment="Center"/>
 
                     <Button Grid.Column="1"
                             Content="Refresh"
-                            Background="{StaticResource CustomAccentBrush}"
+                            Background="{StaticResource PrimaryBrush}"
                             Foreground="White"
                             Padding="16,8"
                             CornerRadius="4"
@@ -67,29 +63,29 @@
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Border Grid.Column="0" Background="#0F172A" CornerRadius="8" Padding="15">
+                    <Border Grid.Column="0" Background="{StaticResource TealTintBrush}" CornerRadius="8" Padding="15">
                         <StackPanel>
-                            <TextBlock Text="EMPLOYEE ID" Foreground="#A0A0A0" FontSize="12"/>
-                            <TextBlock Text="{x:Bind ViewModel.EmployeeIdText, Mode=OneWay}" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+                            <TextBlock Text="EMPLOYEE ID" Foreground="{StaticResource DarkMutedTextBrush}" FontSize="12"/>
+                            <TextBlock Text="{x:Bind ViewModel.EmployeeIdText, Mode=OneWay}" Foreground="{StaticResource PrimaryBrush}" FontSize="18" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Column="1" Background="#0F172A" CornerRadius="8" Padding="15">
+                    <Border Grid.Column="1" Background="{StaticResource IndigoTintBrush}" CornerRadius="8" Padding="15">
                         <StackPanel>
-                            <TextBlock Text="ROLE" Foreground="#A0A0A0" FontSize="12"/>
-                            <TextBlock Text="{x:Bind ViewModel.RoleText, Mode=OneWay}" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+                            <TextBlock Text="ROLE" Foreground="{StaticResource DarkMutedTextBrush}" FontSize="12"/>
+                            <TextBlock Text="{x:Bind ViewModel.RoleText, Mode=OneWay}" Foreground="{StaticResource IndigoBrush}" FontSize="18" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Column="2" Background="#0F172A" CornerRadius="8" Padding="15">
+                    <Border Grid.Column="2" Background="{StaticResource AmberTintBrush}" CornerRadius="8" Padding="15">
                         <StackPanel>
-                            <TextBlock Text="ASSIGNED FLIGHTS" Foreground="#A0A0A0" FontSize="12"/>
-                            <TextBlock Text="{x:Bind ViewModel.FlightsCountText, Mode=OneWay}" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+                            <TextBlock Text="ASSIGNED FLIGHTS" Foreground="{StaticResource DarkMutedTextBrush}" FontSize="12"/>
+                            <TextBlock Text="{x:Bind ViewModel.FlightsCountText, Mode=OneWay}" Foreground="{StaticResource WarningBrush}" FontSize="18" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Border>
                 </Grid>
 
-                <Grid Grid.Row="2" Background="{StaticResource CustomAccentBrush}" Padding="15,10">
+                <Grid Grid.Row="2" Background="{StaticResource TealTintBrush}" Padding="15,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.6*"/>
                         <ColumnDefinition Width="1.4*"/>
@@ -100,13 +96,13 @@
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" Text="ID" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Column="1" Text="FLIGHT NO." Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Column="2" Text="TYPE" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Column="3" Text="DATE" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Column="4" Text="GATE" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Column="5" Text="RUNWAY" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Column="6" Text="TIME" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="0" Text="ID" Foreground="{StaticResource PrimaryTextBrush}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="FLIGHT NO." Foreground="{StaticResource PrimaryTextBrush}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="TYPE" Foreground="{StaticResource PrimaryTextBrush}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="3" Text="DATE" Foreground="{StaticResource PrimaryTextBrush}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="4" Text="GATE" Foreground="{StaticResource PrimaryTextBrush}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="5" Text="RUNWAY" Foreground="{StaticResource PrimaryTextBrush}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="6" Text="TIME" Foreground="{StaticResource PrimaryTextBrush}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                 </Grid>
 
                 <Grid Grid.Row="3">
@@ -115,7 +111,7 @@
                               ItemsSource="{x:Bind ViewModel.ScheduledFlights, Mode=OneWay}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="data:EmployeeScheduleItem">
-                                <Grid Padding="15,12" BorderThickness="0,0,0,1" BorderBrush="#334155">
+                                <Grid Padding="15,12" BorderThickness="0,0,0,1" BorderBrush="{StaticResource DarkBorderBrush}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="0.6*"/>
                                         <ColumnDefinition Width="1.4*"/>
@@ -126,20 +122,20 @@
                                         <ColumnDefinition Width="1*"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Column="0" Foreground="#888888" HorizontalAlignment="Center" Text="{Binding Id}"/>
-                                    <TextBlock Grid.Column="1" Foreground="#E0E0E0" FontWeight="Bold" HorizontalAlignment="Center" Text="{Binding FlightNumber}"/>
-                                    <TextBlock Grid.Column="2" Foreground="#E0E0E0" HorizontalAlignment="Center" Text="{Binding FlightType}"/>
-                                    <TextBlock Grid.Column="3" Foreground="#E0E0E0" HorizontalAlignment="Center" Text="{Binding Date}"/>
-                                    <TextBlock Grid.Column="4" Foreground="#E0E0E0" HorizontalAlignment="Center" Text="{Binding GateName}"/>
-                                    <TextBlock Grid.Column="5" Foreground="#E0E0E0" HorizontalAlignment="Center" Text="{Binding RunwayName}"/>
-                                    <TextBlock Grid.Column="6" Foreground="#2bb8c0" FontWeight="SemiBold" HorizontalAlignment="Center" Text="{Binding FlightTime}"/>
+                                    <TextBlock Grid.Column="0" Foreground="{StaticResource DarkMutedTextBrush}" HorizontalAlignment="Center" Text="{Binding Id}"/>
+                                    <TextBlock Grid.Column="1" Foreground="{StaticResource DarkForegroundBrush}" FontWeight="Bold" HorizontalAlignment="Center" Text="{Binding FlightNumber}"/>
+                                    <TextBlock Grid.Column="2" Foreground="{StaticResource DarkForegroundBrush}" HorizontalAlignment="Center" Text="{Binding FlightType}"/>
+                                    <TextBlock Grid.Column="3" Foreground="{StaticResource DarkForegroundBrush}" HorizontalAlignment="Center" Text="{Binding Date}"/>
+                                    <TextBlock Grid.Column="4" Foreground="{StaticResource DarkForegroundBrush}" HorizontalAlignment="Center" Text="{Binding GateName}"/>
+                                    <TextBlock Grid.Column="5" Foreground="{StaticResource DarkForegroundBrush}" HorizontalAlignment="Center" Text="{Binding RunwayName}"/>
+                                    <TextBlock Grid.Column="6" Foreground="{StaticResource PrimaryBrush}" FontWeight="SemiBold" HorizontalAlignment="Center" Text="{Binding FlightTime}"/>
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
 
                     <TextBlock Text="This employee has no scheduled flights."
-                               Foreground="#A0A0A0"
+                               Foreground="{StaticResource DarkMutedTextBrush}"
                                FontSize="18"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"

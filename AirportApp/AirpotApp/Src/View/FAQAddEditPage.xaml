@@ -6,23 +6,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="#0F172A"
-    Foreground="#F8FAFC">
+    Background="{StaticResource DarkBackgroundBrush}"
+    Foreground="{StaticResource DarkForegroundBrush}">
 
     <Page.Resources>
-        <SolidColorBrush x:Key="AdminBorderBrush" Color="#D0D0D0"/>
-        <SolidColorBrush x:Key="AdminMutedTextBrush" Color="#94A3B8"/>
-        <SolidColorBrush x:Key="AdminAccentBrush" Color="#60A5FA"/>
-        <SolidColorBrush x:Key="AdminPanelBrush" Color="#1E293B"/>
-
         <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="{StaticResource AdminAccentBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
         </Style>
 
         <Style x:Key="InputBorderStyle" TargetType="Border">
-            <Setter Property="BorderBrush" Value="{StaticResource AdminBorderBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="10,6"/>
@@ -30,8 +25,8 @@
 
         <Style x:Key="OutlineButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#F8FAFC"/>
-            <Setter Property="BorderBrush" Value="{StaticResource AdminBorderBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource DarkForegroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="18,10"/>
@@ -39,8 +34,8 @@
 
         <Style x:Key="AccentButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{StaticResource AdminAccentBrush}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource AdminAccentBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="18,10"/>
@@ -51,8 +46,8 @@
         <Border HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 MaxWidth="900"
-                Background="{StaticResource AdminPanelBrush}"
-                BorderBrush="{StaticResource AdminBorderBrush}"
+                Background="{StaticResource DarkPanelBrush}"
+                BorderBrush="{StaticResource DarkBorderBrush}"
                 BorderThickness="1"
                 CornerRadius="8"
                 Padding="24">
@@ -66,7 +61,7 @@
                     <TextBlock x:Name="PageSubtitleText"
                                Text="Create a frequently asked question entry"
                                FontSize="13"
-                               Foreground="{StaticResource AdminMutedTextBrush}"/>
+                               Foreground="{StaticResource DarkMutedTextBrush}"/>
                 </StackPanel>
 
                 <StackPanel Spacing="8">

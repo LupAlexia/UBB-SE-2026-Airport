@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="#F9FAFB" Padding="100 0 0 0" RequestedTheme="Light">
+    <Grid Background="{StaticResource PageBackgroundBrush}" Padding="100 0 0 0" RequestedTheme="Light">
         <Grid.Resources>
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
         </Grid.Resources>
@@ -32,7 +32,7 @@
                        Text="DutyFree Shops"
                        FontSize="32"
                        FontWeight="SemiBold"
-                       Foreground="#2bb8c0"/>
+                       Foreground="{StaticResource PrimaryBrush}"/>
 
             <AutoSuggestBox Grid.Column="1"
                             Height="40"
@@ -41,10 +41,10 @@
                             CornerRadius="8"
                             Width="500"
                             Margin="0 5 0 0"
-                            BorderBrush="LightGray"/>
+                            BorderBrush="{StaticResource BorderBrush}"/>
 
             <Button Grid.Column="3"
-                    Background="#2bb8c0"
+                    Background="{StaticResource PrimaryBrush}"
                     Foreground="White"
                     CornerRadius="4"
                     Padding="15,8"
@@ -64,7 +64,7 @@
                     Margin="20 0 0 0"
                     x:Name="AddShopButton"
                     Height="35" Width="110"
-                    Background="#2bb8c0" Foreground="White"
+                    Background="{StaticResource PrimaryBrush}" Foreground="White"
                     Padding="5"
                     Content="+ Add Shop"/>
 
@@ -94,7 +94,7 @@
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="domain:Shop">
                         <Border MinWidth="300" Height="120" Margin="10"
-                                CornerRadius="12" Background="WhiteSmoke" Padding="15">
+                                CornerRadius="12" Background="{StaticResource CardBackgroundBrush}" Padding="15">
                             <StackPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -105,7 +105,7 @@
 
                                     <TextBlock Text="{x:Bind Name}"
                                                FontSize="16" FontWeight="SemiBold"
-                                               Foreground="Black" Grid.Column="0"
+                                               Foreground="{StaticResource PrimaryTextBrush}" Grid.Column="0"
                                                VerticalAlignment="Center"/>
 
                                     <Button Width="40" Height="30" Grid.Column="1"
@@ -133,7 +133,7 @@
                                 <TextBlock Text="{x:Bind Type}"
                                            Margin="0,5,0,0"
                                            Opacity="0.6"
-                                           Foreground="Black"/>
+                                           Foreground="{StaticResource PrimaryTextBrush}"/>
                             </StackPanel>
                         </Border>
                     </DataTemplate>

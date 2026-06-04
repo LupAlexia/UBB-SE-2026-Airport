@@ -8,7 +8,7 @@
     xmlns:local="using:AirportApp.WinUI.AirportAdmin.Components"
     xmlns:vm="using:AirportApp.Src.ViewModel"
     mc:Ignorable="d"
-    Foreground="#F8FAFC">
+    Foreground="{StaticResource DarkForegroundBrush}">
 
     <Grid Padding="20">
         <Grid.RowDefinitions>
@@ -39,8 +39,8 @@
         <Grid Grid.RowSpan="3"
               Background="#80000000"
               Visibility="{x:Bind ViewModel.CrewDialogVisibility, Mode=OneWay}">
-            <Border Background="#1E293B"
-                    BorderBrush="#334155"
+            <Border Background="{StaticResource DarkPanelBrush}"
+                    BorderBrush="{StaticResource DarkBorderBrush}"
                     BorderThickness="1"
                     Width="420"
                     MaxHeight="560"
@@ -56,11 +56,11 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Text="Manage Crew"
-                               FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,0,0,12"/>
+                               FontSize="20" FontWeight="Bold" Foreground="{StaticResource PrimaryTextBrush}" Margin="0,0,0,12"/>
 
                     <TextBlock Grid.Row="1"
                                Text="{x:Bind ViewModel.DialogError, Mode=OneWay}"
-                               Foreground="#FF6B6B" FontWeight="SemiBold"
+                               Foreground="{StaticResource ErrorBrush}" FontWeight="SemiBold"
                                TextWrapping="Wrap" Margin="0,0,0,12"/>
 
                     <ListView Grid.Row="2"
@@ -71,10 +71,10 @@
                                 <StackPanel Spacing="6" Margin="0,4,0,4">
                                     <TextBlock Visibility="{x:Bind RoleHeaderVisibility}"
                                                Text="{x:Bind RoleHeader}"
-                                               Foreground="White" FontWeight="Bold" Margin="0,8,0,0"/>
+                                               Foreground="{StaticResource PrimaryTextBrush}" FontWeight="Bold" Margin="0,8,0,0"/>
                                     <CheckBox Content="{x:Bind Employee.Name}"
                                               IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
-                                              Foreground="White"/>
+                                              Foreground="{StaticResource PrimaryTextBrush}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>
