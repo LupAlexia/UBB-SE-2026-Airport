@@ -17,10 +17,16 @@ public class ShopItemService(IShopItemRepository shopItemRepository) : IShopItem
         return await shopItemRepository.GetAsync();
     }
 
-    public async Task<ShopItem?> GetByIdAsync(int shopItemId)
+    public async Task<ShopItem> GetByIdAsync(int shopItemId)
     {
-        // Return null when item not found; callers handle not-found cases.
-        return await shopItemRepository.GetByIdAsync(shopItemId);
+        ShopItem? shopItem = await shopItemRepository.GetByIdAsync(shopItemId);
+
+        if (shopItem == null)
+        {
+            throw new InvalidOperationException(string.Format(ItemNotFoundErrorMessage, shopItemId));
+        }
+
+        return shopItem;
     }
 
     public async Task<IEnumerable<ShopItem>> GetItemsByShopIdAsync(int shopId)

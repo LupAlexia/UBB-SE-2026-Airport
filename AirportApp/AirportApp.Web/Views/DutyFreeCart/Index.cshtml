@@ -86,7 +86,7 @@ else
                                     <input type="number" name="quantity" value="@item.Quantity"
                                            min="1" class="form-control form-control-sm text-center"
                                            style="width: 65px;" />
-                                    <button type="submit" class="btn btn-outline-secondary btn-sm">Update</button>
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">â†µ</button>
                                 </form>
                             </td>
                             <td class="text-end fw-semibold">@subtotal.ToString("C")</td>
@@ -115,14 +115,6 @@ else
         </a>
 
         <div class="d-flex align-items-center gap-4">
-            @if (TempData["CartSuccess"] != null)
-            {
-                <div class="alert alert-success me-3 mb-0">@TempData["CartSuccess"]</div>
-            }
-            @if (TempData["CartError"] != null)
-            {
-                <div class="alert alert-danger me-3 mb-0">@TempData["CartError"]</div>
-            }
             <div class="fs-5">
                 <span class="text-muted">Total:</span>
                 <strong class="ms-2" style="color: #00bcd4;">@Model.Total.ToString("C")</strong>
