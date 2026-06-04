@@ -14,7 +14,9 @@ namespace AirportApp.Web.Models.Booking
         public int MaximumPassengers { get; set; }
         public BookingFormModel Form { get; set; } = new BookingFormModel();
         public string? ValidationMessage { get; set; }
+        public string? MembershipName { get; set; }
         public float FlightDiscountPercentage { get; set; }
+        public float EstimatedMembershipSavings { get; set; }
         public Dictionary<int, float> AddonDiscountPercentages { get; set; } = new Dictionary<int, float>();
     }
 }
