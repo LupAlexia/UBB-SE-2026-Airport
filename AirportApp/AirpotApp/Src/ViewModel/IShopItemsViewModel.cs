@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 using AirportApp.ClassLibrary.Entity.Domain;
 
-namespace AirportApp.Src.ViewModel.DutyFreeShops.Interface
+namespace AirportApp.Src.ViewModel
 {
     public interface IShopItemsViewModel : INotifyPropertyChanged
     {

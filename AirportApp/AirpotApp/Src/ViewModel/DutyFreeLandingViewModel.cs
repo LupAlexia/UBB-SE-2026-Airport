@@ -1,15 +1,15 @@
 using System.Windows.Input;
 
 using AirportApp.ClassLibrary.Service.Interface;
-using AirportApp.Src.ViewModel.DutyFreeShops.Interface;
+using AirportApp.Src.ViewModel;
 
 using UserSession = AirportLib.Domain.User.UserSession;
 
 using CommunityToolkit.Mvvm.Input;
 
-namespace AirportApp.Src.ViewModel.DutyFreeShops
+namespace AirportApp.Src.ViewModel
 {
-    public class LandingViewModel : ILandingViewModel
+    public class DutyFreeLandingViewModel : IDutyFreeLandingViewModel
     {
         private readonly IClientService clientService;
         private readonly IManagerService managerService;
@@ -22,7 +22,7 @@ namespace AirportApp.Src.ViewModel.DutyFreeShops
         public ICommand SelectAdminCommand { get; }
         public ICommand SelectClientCommand { get; }
 
-        public LandingViewModel(IClientService clientService, IManagerService managerService, UserSession session)
+        public DutyFreeLandingViewModel(IClientService clientService, IManagerService managerService, UserSession session)
         {
             this.clientService = clientService;
             this.managerService = managerService;

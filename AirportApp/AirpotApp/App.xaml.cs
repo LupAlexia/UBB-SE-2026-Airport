@@ -153,17 +153,17 @@ namespace AirportApp
             services.AddTransient<AirportApp.Src.ViewModel.FlightsDashboardViewModel>();
 
             // DutyFree ViewModels and interfaces
-            services.AddTransient<AirportApp.Src.ViewModel.DutyFreeShops.Interface.ILandingViewModel,
-                AirportApp.Src.ViewModel.DutyFreeShops.LandingViewModel>();
-            services.AddTransient<AirportApp.Src.ViewModel.DutyFreeShops.Interface.IShopPageViewModel,
-                AirportApp.Src.ViewModel.DutyFreeShops.ShopPageViewModel>();
-            services.AddTransient<AirportApp.Src.ViewModel.DutyFreeShops.Interface.ICartViewModel,
-                AirportApp.Src.ViewModel.DutyFreeShops.CartViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.IDutyFreeLandingViewModel,
+                AirportApp.Src.ViewModel.DutyFreeLandingViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.IShopPageViewModel,
+                AirportApp.Src.ViewModel.ShopPageViewModel>();
+            services.AddTransient<AirportApp.Src.ViewModel.ICartViewModel,
+                AirportApp.Src.ViewModel.CartViewModel>();
 
             // DutyFree factory registrations for shop-context ViewModels
             services.AddTransient<Func<AirportApp.ClassLibrary.Entity.Domain.Shop,
-                AirportApp.Src.ViewModel.DutyFreeShops.Interface.IShopItemsViewModel>>(sp => (shop) =>
-                new AirportApp.Src.ViewModel.DutyFreeShops.ShopItemsViewModel(
+                AirportApp.Src.ViewModel.IShopItemsViewModel>>(sp => (shop) =>
+                new AirportApp.Src.ViewModel.ShopItemsViewModel(
                     sp.GetRequiredService<IShopItemService>(),
                     sp.GetRequiredService<ICartService>(),
                     sp.GetRequiredService<AirportLib.Domain.User.UserSession>(),
@@ -171,8 +171,8 @@ namespace AirportApp
 
             services.AddTransient<Func<AirportApp.ClassLibrary.Entity.Domain.ShopItem,
                 AirportApp.ClassLibrary.Entity.Domain.Shop,
-                AirportApp.Src.ViewModel.DutyFreeShops.Interface.IItemDetailsViewModel>>(sp => (item, shop) =>
-                new AirportApp.Src.ViewModel.DutyFreeShops.ItemDetailsViewModel(
+                AirportApp.Src.ViewModel.IItemDetailsViewModel>>(sp => (item, shop) =>
+                new AirportApp.Src.ViewModel.ItemDetailsViewModel(
                     sp.GetRequiredService<ICartService>(),
                     sp.GetRequiredService<IShopItemService>(),
                     sp.GetRequiredService<AirportLib.Domain.User.UserSession>(),

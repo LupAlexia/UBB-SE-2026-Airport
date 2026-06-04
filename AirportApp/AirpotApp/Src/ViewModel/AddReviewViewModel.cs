@@ -72,7 +72,16 @@ namespace AirportApp.Src.ViewModel
                     return;
                 }
 
-                await reviewService.CreateReviewAsync(1, currentUser, ReviewMessage, DutyRating, FlightRating, StaffRating, CleanRating);
+                var review = new Review
+                {
+                    User = currentUser,
+                    Message = ReviewMessage,
+                    DutyFreeRating = DutyRating,
+                    FlightExperienceRating = FlightRating,
+                    StaffFriendlinessRating = StaffRating,
+                    CleanlinessRating = CleanRating
+                };
+                await reviewService.AddAsync(review);
 
                 DutyRating = 0;
                 FlightRating = 0;

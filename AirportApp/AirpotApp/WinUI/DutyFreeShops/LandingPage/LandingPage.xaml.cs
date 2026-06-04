@@ -1,4 +1,4 @@
-using AirportApp.Src.ViewModel.DutyFreeShops.Interface;
+using AirportApp.Src.ViewModel;
 using AirportApp.WinUI.DutyFreeShops.ShopPage;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -9,11 +9,11 @@ namespace AirportApp.WinUI.DutyFreeShops
 {
     public sealed partial class LandingPage : Page
     {
-        public ILandingViewModel ViewModel { get; }
+        public IDutyFreeLandingViewModel ViewModel { get; }
 
         public LandingPage()
         {
-            ViewModel = App.Services.GetRequiredService<ILandingViewModel>();
+            ViewModel = App.Services.GetRequiredService<IDutyFreeLandingViewModel>();
             InitializeComponent();
             DataContext = ViewModel;
         }

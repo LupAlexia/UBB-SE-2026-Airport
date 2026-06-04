@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 using AirportApp.ClassLibrary.Entity.Domain;
 
-namespace AirportApp.Src.ViewModel.DutyFreeShops.Interface
+namespace AirportApp.Src.ViewModel
 {
     public interface IItemDetailsViewModel : INotifyPropertyChanged
     {

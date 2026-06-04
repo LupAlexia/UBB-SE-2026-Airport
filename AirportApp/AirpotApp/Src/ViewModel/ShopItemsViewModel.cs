@@ -2,13 +2,13 @@ using System.ComponentModel;
 
 using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Service.Interface;
-using AirportApp.Src.ViewModel.DutyFreeShops.Interface;
+using AirportApp.Src.ViewModel;
 
 using System.Collections.ObjectModel;
 
 using UserSession = AirportLib.Domain.User.UserSession;
 
-namespace AirportApp.Src.ViewModel.DutyFreeShops
+namespace AirportApp.Src.ViewModel
 {
     public class ShopItemsViewModel : IShopItemsViewModel
     {
