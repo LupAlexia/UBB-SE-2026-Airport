@@ -80,6 +80,6 @@ public class FlightServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpCl
         var routeDto = flight.Route is not null ? RouteServiceProxy.MapToDto(flight.Route) : null;
         RunwayDTO? runwayDto = flight.Runway is { Id: > 0 } runway ? runway.ToDto() : null;
         GateDTO? gateDto = flight.Gate is { Id: > 0 } gate ? gate.ToDto() : null;
-        return new FlightDTO(flight.Id, flight.Route?.Id ?? 0, flight.Gate?.Id ?? 0, flight.Runway?.Id ?? 0, flight.Date, flight.FlightNumber, routeDto, runwayDto, gateDto);
+        return new FlightDTO(flight.Id, flight.Route?.Id ?? 0, flight.Gate?.Id ?? 0, flight.Gate?.GateName ?? string.Empty, flight.Runway?.Id ?? 0, flight.Runway?.Name ?? string.Empty, flight.Date, flight.FlightNumber, routeDto, runwayDto, gateDto);
     }
 }
