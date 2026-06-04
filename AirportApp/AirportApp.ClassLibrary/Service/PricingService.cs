@@ -11,8 +11,15 @@ public class PricingService : IPricingService
 {
     private const float PricePerMinuteMultiplier = 1.25f;
     private const float MinimumFlightPrice = 40f;
-    private const float PercentageDivisor = 100.0f;
     private const float ZeroPrice = 0f;
+
+    // Hands us the right discount strategy for each customer (member vs. non-member).
+    private readonly IMembershipPricingStrategyFactory pricingStrategyFactory;
+
+    public PricingService(IMembershipPricingStrategyFactory pricingStrategyFactory)
+    {
+        this.pricingStrategyFactory = pricingStrategyFactory;
+    }
 
     public Task<float> CalculateBasePriceAsync(Flight flight)
     {
@@ -26,41 +33,10 @@ public class PricingService : IPricingService
 
     public Task<float> CalculateTotalPriceAsync(FlightTicket ticket)
     {
-        float finalTotal = ticket.Price;
-
-        if (ticket.User != null && ticket.User.Membership != null)
-        {
-            float flightDiscount = ticket.User.Membership.FlightDiscountPercentage;
-            finalTotal -= finalTotal * (flightDiscount / PercentageDivisor);
-
-            foreach (var addon in ticket.SelectedAddOns)
-            {
-                float addonPrice = addon.BasePrice;
-                float specificAddonDiscount = ZeroPrice;
-
-                if (ticket.User.Membership.AddonDiscounts != null)
-                {
-                    foreach (var discount in ticket.User.Membership.AddonDiscounts)
-                    {
-                        if (discount.AddOn != null && discount.AddOn.Id == addon.Id)
-                        {
-                            specificAddonDiscount = discount.DiscountPercentage;
-                            break;
-                        }
-                    }
-                }
-
-                finalTotal += addonPrice - (addonPrice * (specificAddonDiscount / PercentageDivisor));
-            }
-        }
-        else
-        {
-            foreach (var addon in ticket.SelectedAddOns)
-            {
-                finalTotal += addon.BasePrice;
-            }
-        }
-
+        // Pick the pricing rules based on the ticket's customer, then let that
+        // strategy do the actual math (base fare + add-ons, with any discounts).
+        IMembershipPricingStrategy pricingStrategy = pricingStrategyFactory.Create(ticket.User);
+        float finalTotal = pricingStrategy.CalculateTicketTotal(ticket);
         return Task.FromResult(finalTotal);
     }
 
