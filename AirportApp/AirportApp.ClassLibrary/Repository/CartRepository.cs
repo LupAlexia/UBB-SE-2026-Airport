@@ -37,6 +37,8 @@ public class CartRepository(AppDbContext databaseContext) : ICartRepository
             throw new ArgumentNullException(nameof(cart));
         }
 
+        cart.Id = 0;
+
         if (cart.Client is not null)
         {
             var existingClient = await databaseContext.Clients.FindAsync(cart.Client.Id);
