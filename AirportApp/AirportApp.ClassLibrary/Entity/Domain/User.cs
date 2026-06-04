@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AirportApp.ClassLibrary.Entity.Domain
 {
-    [Table("Users")]
     public class User : Sender
     {
         // Id, FullName, EmailAddress inherited from Sender

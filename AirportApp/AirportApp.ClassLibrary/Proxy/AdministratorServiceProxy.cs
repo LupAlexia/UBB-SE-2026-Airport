@@ -52,11 +52,11 @@ public class AdministratorServiceProxy(HttpClient httpClient) : ServiceProxyBase
 
     private static Administrator MapToEntity(AdministratorDTO dto)
     {
-        return new Administrator(0, dto.name, dto.email);
+        return new Administrator(dto.id, dto.name, dto.email);
     }
 
     private static AdministratorDTO MapToDto(Administrator admin)
     {
-        return new AdministratorDTO(admin.FullName, admin.EmailAddress);
+        return new AdministratorDTO(admin.Id, admin.FullName, admin.EmailAddress);
     }
 }
