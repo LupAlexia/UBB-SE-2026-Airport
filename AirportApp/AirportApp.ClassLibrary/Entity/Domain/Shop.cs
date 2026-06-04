@@ -7,6 +7,7 @@ namespace AirportApp.ClassLibrary.Entity.Domain
     {
         [Key]
         [Column("Shop_Id")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]

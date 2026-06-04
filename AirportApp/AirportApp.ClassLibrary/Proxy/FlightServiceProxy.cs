@@ -56,7 +56,7 @@ public class FlightServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpCl
             Date = dto.date,
             FlightNumber = dto.flightNumber,
             Gate = new Gate { Id = dto.gateId },
-            Runway = new Runway()
+            Runway = new Runway { Id = dto.runwayId }
         };
 
         if (dto.route is not null)

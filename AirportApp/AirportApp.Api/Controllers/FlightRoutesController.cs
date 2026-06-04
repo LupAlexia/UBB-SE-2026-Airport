@@ -76,9 +76,34 @@ public class FlightRoutesController(IFlightRouteService flightRouteService) : Co
     }
 
     [HttpGet("flights/by-company/{companyId:int}")]
-    public async Task<ActionResult<IEnumerable<Flight>>> GetFlightsByCompanyId(int companyId)
+    public async Task<ActionResult<IEnumerable<FlightDTO>>> GetFlightsByCompanyId(int companyId)
     {
-        return this.Ok(await flightRouteService.GetFlightsByCompanyIdAsync(companyId));
+        IEnumerable<Flight> flights = await flightRouteService.GetFlightsByCompanyIdAsync(companyId);
+        return this.Ok(flights.Select(MapToFlightDTO));
+    }
+
+    private static FlightDTO MapToFlightDTO(Flight flight)
+    {
+        RouteDTO? routeDTO = null;
+        if (flight.Route != null)
+        {
+            AirportDTO? airportDTO = flight.Route.Airport != null
+                ? new AirportDTO(flight.Route.Airport.Id, flight.Route.Airport.AirportCode, flight.Route.Airport.City, flight.Route.Airport.Name)
+                : null;
+            CompanyDTO? companyDTO = flight.Route.Company != null
+                ? new CompanyDTO(flight.Route.Company.Id, flight.Route.Company.Name)
+                : null;
+            routeDTO = new RouteDTO(flight.Route.Id, flight.Route.RouteType, flight.Route.StartDate, flight.Route.EndDate,
+                flight.Route.DepartureTime, flight.Route.ArrivalTime, flight.Route.Capacity, flight.Route.RecurrenceInterval, airportDTO, companyDTO);
+        }
+        return new FlightDTO(
+            flight.Id,
+            flight.Route?.Id ?? 0,
+            flight.Gate?.Id ?? 0,
+            flight.Runway?.Id ?? 0,
+            flight.Date,
+            flight.FlightNumber,
+            routeDTO);
     }
 
     [HttpDelete("flights/{flightId:int}")]
