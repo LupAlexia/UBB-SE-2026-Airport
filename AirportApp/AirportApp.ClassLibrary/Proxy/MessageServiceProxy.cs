@@ -23,7 +23,20 @@ public class MessageServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpC
             NextNodeId = selectedOption.NextOption?.NodeId
         };
 
-        return await PostForResultAsync<SendMessageRequestDTO, BotMessage>($"{BaseUrl}/send", payload);
+        var replyDto = await PostForResultAsync<SendMessageRequestDTO, BotReplyDTO>($"{BaseUrl}/send", payload);
+
+        return new BotMessage(
+            replyDto.MessageId,
+            sender,
+            new Chat { Id = chatId },
+            replyDto.Text,
+            replyDto.FAQOptions.Select(option => new FAQOption
+            {
+                OptionId = option.OptionId,
+                Label = option.Label,
+                NextOption = option.NextNodeId.HasValue ? new FAQNode { NodeId = option.NextNodeId.Value } : null
+            }).ToList(),
+            replyDto.Timestamp);
     }
 
     public async Task<IMessage> GetMessageAsync(int chatId, int messageId)

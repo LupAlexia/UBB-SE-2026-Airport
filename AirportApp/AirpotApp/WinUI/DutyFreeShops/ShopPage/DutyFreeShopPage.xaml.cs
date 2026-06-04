@@ -1,5 +1,5 @@
 using AirportApp.ClassLibrary.Entity.Domain;
-using AirportApp.Src.ViewModel.DutyFreeShops.Interface;
+using AirportApp.Src.ViewModel;
 using AirportApp.WinUI.DutyFreeShops.ShopItemsPage;
 
 using Microsoft.Extensions.DependencyInjection;

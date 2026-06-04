@@ -4,13 +4,13 @@ using System.Runtime.CompilerServices;
 
 using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Service.Interface;
-using AirportApp.Src.ViewModel.DutyFreeShops.Interface;
+using AirportApp.Src.ViewModel;
 
 using UserSession = AirportLib.Domain.User.UserSession;
 
 using CommunityToolkit.Mvvm.Input;
 
-namespace AirportApp.Src.ViewModel.DutyFreeShops
+namespace AirportApp.Src.ViewModel
 {
     public partial class CartViewModel : INotifyPropertyChanged, ICartViewModel
     {
@@ -18,6 +18,7 @@ namespace AirportApp.Src.ViewModel.DutyFreeShops
         private readonly IReservationService reservationService;
         private readonly UserSession session;
         private Reservation? currentReservation;
+        private int currentCartId;
 
         private bool isReserved;
         private double overallTotal;
@@ -57,6 +58,10 @@ namespace AirportApp.Src.ViewModel.DutyFreeShops
             this.reservationService = reservationService;
             this.session = session;
             CartShopItems = new ObservableCollection<CartShopItem>();
+
+            var cart = RunSync(() => cartService.GetOrCreateCartAsync(session.UserId));
+            currentCartId = cart.Id;
+
             LoadCartItems();
             CheckExistingReservation();
         }
@@ -68,41 +73,41 @@ namespace AirportApp.Src.ViewModel.DutyFreeShops
 
         public void ChangeQuantity(CartShopItem cartShopItem, int newQuantity)
         {
-            RunSync(() => cartService.UpdateItemQuantityAsync(cartShopItem.CartItemId, cartShopItem.CartItemId, newQuantity));
+            RunSync(() => cartService.UpdateItemQuantityAsync(currentCartId, cartShopItem.CartItemId, newQuantity));
             cartShopItem.Quantity = newQuantity;
-            overallTotal = RunSync(() => cartService.GetCartTotalAsync(session.UserId));
+            overallTotal = RunSync(() => cartService.GetCartTotalAsync(currentCartId));
             OnPropertyChanged(nameof(OverallTotal));
         }
 
         [RelayCommand]
         public void RemoveShopItem(CartShopItem cartShopItem)
         {
-            RunSync(() => cartService.RemoveItemFromCartAsync(session.UserId, cartShopItem.CartItemId));
+            RunSync(() => cartService.RemoveItemFromCartAsync(currentCartId, cartShopItem.CartItemId));
             CartShopItems.Remove(cartShopItem);
-            overallTotal = RunSync(() => cartService.GetCartTotalAsync(session.UserId));
+            overallTotal = RunSync(() => cartService.GetCartTotalAsync(currentCartId));
             OnPropertyChanged(nameof(OverallTotal));
         }
 
         [RelayCommand]
         public void EmptyCart()
         {
-            RunSync(() => cartService.ClearCartAsync(session.UserId));
+            RunSync(() => cartService.ClearCartAsync(currentCartId));
             CartShopItems.Clear();
-            overallTotal = RunSync(() => cartService.GetCartTotalAsync(session.UserId));
+            overallTotal = RunSync(() => cartService.GetCartTotalAsync(currentCartId));
             OnPropertyChanged(nameof(OverallTotal));
         }
 
         [RelayCommand]
         public void DecreaseQuantity(CartShopItem cartShopItem)
         {
-            RunSync(() => cartService.DecreaseItemQuantityAsync(session.UserId, cartShopItem.CartItemId));
+            RunSync(() => cartService.DecreaseItemQuantityAsync(currentCartId, cartShopItem.CartItemId));
             Reload();
         }
 
         [RelayCommand]
         public void ReserveCart()
         {
-            var cart = RunSync(() => cartService.GetCartByIdAsync(session.UserId));
+            var cart = RunSync(() => cartService.GetCartByIdAsync(currentCartId));
             if (cart == null)
             {
                 return;
@@ -129,7 +134,7 @@ namespace AirportApp.Src.ViewModel.DutyFreeShops
 
         public bool IsLastItem(CartShopItem cartShopItem)
         {
-            return RunSync(() => cartService.IsLastCartItemAsync(session.UserId, cartShopItem.CartItemId));
+            return RunSync(() => cartService.IsLastCartItemAsync(currentCartId, cartShopItem.CartItemId));
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
@@ -139,7 +144,7 @@ namespace AirportApp.Src.ViewModel.DutyFreeShops
 
         private void CheckExistingReservation()
         {
-            var cart = RunSync(() => cartService.GetCartByIdAsync(session.UserId));
+            var cart = RunSync(() => cartService.GetCartByIdAsync(currentCartId));
             if (cart == null)
             {
                 return;
@@ -156,7 +161,7 @@ namespace AirportApp.Src.ViewModel.DutyFreeShops
         private void LoadCartItems()
         {
             CartShopItems.Clear();
-            var cartItems = RunSync(() => cartService.GetCartItemsAsync(session.UserId));
+            var cartItems = RunSync(() => cartService.GetCartItemsAsync(currentCartId));
             foreach (var existingCartItem in cartItems)
             {
                 CartShopItems.Add(new CartShopItem
@@ -167,7 +172,7 @@ namespace AirportApp.Src.ViewModel.DutyFreeShops
                 });
             }
 
-            overallTotal = RunSync(() => cartService.GetCartTotalAsync(session.UserId));
+            overallTotal = RunSync(() => cartService.GetCartTotalAsync(currentCartId));
             OnPropertyChanged(nameof(OverallTotal));
         }
 

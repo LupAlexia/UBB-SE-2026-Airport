@@ -2,11 +2,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-using AirportApp.Src.ViewModel.DutyFreeShops;
-
 using CommunityToolkit.Mvvm.Input;
 
-namespace AirportApp.Src.ViewModel.DutyFreeShops.Interface
+namespace AirportApp.Src.ViewModel
 {
     public interface ICartViewModel : INotifyPropertyChanged
     {

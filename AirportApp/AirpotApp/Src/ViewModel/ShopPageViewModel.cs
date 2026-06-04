@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Service.Interface;
-using AirportApp.Src.ViewModel.DutyFreeShops.Interface;
+using AirportApp.Src.ViewModel;
 
 using System.Collections.ObjectModel;
 
@@ -11,7 +11,7 @@ using UserSession = AirportLib.Domain.User.UserSession;
 
 using CommunityToolkit.Mvvm.Input;
 
-namespace AirportApp.Src.ViewModel.DutyFreeShops
+namespace AirportApp.Src.ViewModel
 {
     public partial class ShopPageViewModel : IShopPageViewModel
     {

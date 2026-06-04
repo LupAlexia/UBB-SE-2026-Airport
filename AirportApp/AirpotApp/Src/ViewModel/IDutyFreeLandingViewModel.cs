@@ -1,9 +1,9 @@
 using System;
 using System.Windows.Input;
 
-namespace AirportApp.Src.ViewModel.DutyFreeShops.Interface
+namespace AirportApp.Src.ViewModel
 {
-    public interface ILandingViewModel
+    public interface IDutyFreeLandingViewModel
     {
         bool IsRoleSelected { get; }
         string ErrorMessage { get; }
