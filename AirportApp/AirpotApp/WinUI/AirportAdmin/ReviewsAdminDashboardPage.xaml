@@ -6,112 +6,213 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    RequestedTheme="Light"
-    Background="Transparent">
+    Background="Transparent"
+    Foreground="#F8FAFC">
 
     <Page.Resources>
-        <Style x:Key="ReviewCardStyle" TargetType="Border">
-            <Setter Property="Background" Value="{ThemeResource CardBackgroundBrush}"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="24"/>
-            <Setter Property="BorderBrush" Value="{ThemeResource BorderBrush}"/>
+        <SolidColorBrush x:Key="AdminBorderBrush" Color="#D0D0D0"/>
+        <SolidColorBrush x:Key="AdminMutedTextBrush" Color="#94A3B8"/>
+        <SolidColorBrush x:Key="AdminAccentBrush" Color="#60A5FA"/>
+
+        <Style x:Key="SectionBorderStyle" TargetType="Border">
+            <Setter Property="BorderBrush" Value="{StaticResource AdminBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Margin" Value="0,0,0,20"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
         </Style>
     </Page.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Padding="20" Spacing="0">
-            <StackPanel Margin="0,0,0,32">
-                <TextBlock Text="Customer Reviews" FontSize="32" FontWeight="Bold" Foreground="{ThemeResource PrimaryTextBrush}"/>
-                <TextBlock Text="View customer feedback and ratings (Read-only)" Foreground="{ThemeResource SecondaryTextBrush}" FontSize="16" Margin="0,4,0,0"/>
+        <Grid Padding="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="16"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="16"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Spacing="4">
+                <TextBlock Text="Customer Reviews"
+                           FontSize="24"
+                           FontWeight="SemiBold"/>
+                <TextBlock Text="View customer feedback and ratings (read-only)"
+                           Foreground="{StaticResource AdminMutedTextBrush}"
+                           FontSize="14"/>
             </StackPanel>
 
-            <Border Style="{StaticResource ReviewCardStyle}">
+            <Border Grid.Row="2" Style="{StaticResource SectionBorderStyle}">
                 <StackPanel Spacing="24">
-                    <TextBlock Text="Overall Statistics" FontSize="18" FontWeight="SemiBold" Foreground="{ThemeResource PrimaryTextBrush}"/>
+                    <TextBlock Text="Overall Statistics"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource AdminAccentBrush}"/>
 
                     <Grid ColumnDefinitions="*, *, *, *, *">
                         <StackPanel Grid.Column="0" HorizontalAlignment="Center" Spacing="4">
-                            <TextBlock Text="Total Reviews" Foreground="{ThemeResource SecondaryTextBrush}" FontSize="14"/>
-                            <TextBlock Text="{Binding TotalReviews}" Foreground="{ThemeResource PrimaryBrush}" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Total Reviews"
+                                       Foreground="{StaticResource AdminMutedTextBrush}"
+                                       FontSize="14"/>
+                            <TextBlock Text="{Binding TotalReviews}"
+                                       Foreground="{StaticResource AdminAccentBrush}"
+                                       FontSize="32"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" HorizontalAlignment="Center" Spacing="4">
-                            <TextBlock Text="Duty Free Shops" Foreground="{ThemeResource SecondaryTextBrush}" FontSize="14" HorizontalAlignment="Center"/>
-                            <RatingControl Value="{Binding AverageDutyFree}" IsReadOnly="True" RequestedTheme="Light"/>
-                            <TextBlock Text="{Binding AverageDutyFree}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Duty Free Shops"
+                                       Foreground="{StaticResource AdminMutedTextBrush}"
+                                       FontSize="14"
+                                       HorizontalAlignment="Center"/>
+                            <RatingControl Value="{Binding AverageDutyFree}"
+                                             IsReadOnly="True"
+                                             Foreground="{StaticResource AdminAccentBrush}"/>
+                            <TextBlock Text="{Binding AverageDutyFree}"
+                                       FontSize="16"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2" HorizontalAlignment="Center" Spacing="4">
-                            <TextBlock Text="Flight Experience" Foreground="{ThemeResource SecondaryTextBrush}" FontSize="14" HorizontalAlignment="Center"/>
-                            <RatingControl Value="{Binding AverageFlightExperience}" IsReadOnly="True" RequestedTheme="Light"/>
-                            <TextBlock Text="{Binding AverageFlightExperience}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Flight Experience"
+                                       Foreground="{StaticResource AdminMutedTextBrush}"
+                                       FontSize="14"
+                                       HorizontalAlignment="Center"/>
+                            <RatingControl Value="{Binding AverageFlightExperience}"
+                                             IsReadOnly="True"
+                                             Foreground="{StaticResource AdminAccentBrush}"/>
+                            <TextBlock Text="{Binding AverageFlightExperience}"
+                                       FontSize="16"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="3" HorizontalAlignment="Center" Spacing="4">
-                            <TextBlock Text="Staff Friendliness" Foreground="{ThemeResource SecondaryTextBrush}" FontSize="14" HorizontalAlignment="Center"/>
-                            <RatingControl Value="{Binding AverageStaffFriendliness}" IsReadOnly="True" RequestedTheme="Light"/>
-                            <TextBlock Text="{Binding AverageStaffFriendliness}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Staff Friendliness"
+                                       Foreground="{StaticResource AdminMutedTextBrush}"
+                                       FontSize="14"
+                                       HorizontalAlignment="Center"/>
+                            <RatingControl Value="{Binding AverageStaffFriendliness}"
+                                             IsReadOnly="True"
+                                             Foreground="{StaticResource AdminAccentBrush}"/>
+                            <TextBlock Text="{Binding AverageStaffFriendliness}"
+                                       FontSize="16"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="4" HorizontalAlignment="Center" Spacing="4">
-                            <TextBlock Text="Cleanliness" Foreground="{ThemeResource SecondaryTextBrush}" FontSize="14" HorizontalAlignment="Center"/>
-                            <RatingControl Value="{Binding AverageCleanliness}" IsReadOnly="True" RequestedTheme="Light"/>
-                            <TextBlock Text="{Binding AverageCleanliness}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Cleanliness"
+                                       Foreground="{StaticResource AdminMutedTextBrush}"
+                                       FontSize="14"
+                                       HorizontalAlignment="Center"/>
+                            <RatingControl Value="{Binding AverageCleanliness}"
+                                             IsReadOnly="True"
+                                             Foreground="{StaticResource AdminAccentBrush}"/>
+                            <TextBlock Text="{Binding AverageCleanliness}"
+                                       FontSize="16"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
             </Border>
 
-            <ItemsControl ItemsSource="{Binding Reviews}">
+            <ItemsControl Grid.Row="4" ItemsSource="{Binding Reviews}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Style="{StaticResource ReviewCardStyle}">
+                        <Border Style="{StaticResource SectionBorderStyle}">
                             <Grid RowDefinitions="Auto, Auto, Auto">
                                 <Grid ColumnDefinitions="Auto, *, Auto">
-                                    <Grid Width="48" Height="48">
-                                        <Ellipse Fill="{ThemeResource PrimaryBrush}"/>
-                                        <TextBlock Text="{Binding userId}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontWeight="Bold"/>
-                                    </Grid>
+                                    <Border Width="48"
+                                            Height="48"
+                                            BorderBrush="{StaticResource AdminBorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="24">
+                                        <TextBlock Text="{Binding userId}"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{StaticResource AdminAccentBrush}"
+                                                   FontWeight="Bold"/>
+                                    </Border>
 
-                                    <StackPanel Grid.Column="1" Margin="16,0" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding userName}" FontWeight="Bold" FontSize="18" Foreground="{ThemeResource PrimaryTextBrush}"/>
+                                    <StackPanel Grid.Column="1"
+                                                Margin="16,0"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding userName}"
+                                                   FontWeight="Bold"
+                                                   FontSize="18"/>
                                     </StackPanel>
 
-                                    <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                        <TextBlock Text="Overall Rating" FontSize="12" Foreground="{ThemeResource SecondaryTextBrush}" HorizontalAlignment="Right" Margin="0,0,0,2"/>
-                                        <RatingControl Value="{Binding overallRating}" IsReadOnly="True" RequestedTheme="Light"/>
+                                    <StackPanel Grid.Column="2"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Right">
+                                        <TextBlock Text="Overall Rating"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource AdminMutedTextBrush}"
+                                                   HorizontalAlignment="Right"
+                                                   Margin="0,0,0,2"/>
+                                        <RatingControl Value="{Binding overallRating}"
+                                                       IsReadOnly="True"
+                                                       Foreground="{StaticResource AdminAccentBrush}"/>
                                     </StackPanel>
                                 </Grid>
 
-                                <Grid Grid.Row="1" ColumnDefinitions="*, *, *, *" Margin="0,24">
+                                <Grid Grid.Row="1"
+                                      ColumnDefinitions="*, *, *, *"
+                                      Margin="0,24">
                                     <StackPanel Grid.Column="0" Spacing="4">
-                                        <TextBlock Text="Duty Free Shops" FontSize="12" Foreground="{ThemeResource SecondaryTextBrush}"/>
-                                        <RatingControl Value="{Binding dutyFreeRating}" IsReadOnly="True" RequestedTheme="Light" />
+                                        <TextBlock Text="Duty Free Shops"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                        <RatingControl Value="{Binding dutyFreeRating}"
+                                                       IsReadOnly="True"
+                                                       Foreground="{StaticResource AdminAccentBrush}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Spacing="4">
-                                        <TextBlock Text="Flight Experience" FontSize="12" Foreground="{ThemeResource SecondaryTextBrush}"/>
-                                        <RatingControl Value="{Binding flightExperienceRating}" IsReadOnly="True" RequestedTheme="Light"/>
+                                        <TextBlock Text="Flight Experience"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                        <RatingControl Value="{Binding flightExperienceRating}"
+                                                       IsReadOnly="True"
+                                                       Foreground="{StaticResource AdminAccentBrush}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="2" Spacing="4">
-                                        <TextBlock Text="Staff Friendliness" FontSize="12" Foreground="{ThemeResource SecondaryTextBrush}"/>
-                                        <RatingControl Value="{Binding staffFriendlinessRating}" IsReadOnly="True" RequestedTheme="Light"/>
+                                        <TextBlock Text="Staff Friendliness"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                        <RatingControl Value="{Binding staffFriendlinessRating}"
+                                                       IsReadOnly="True"
+                                                       Foreground="{StaticResource AdminAccentBrush}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="3" Spacing="4">
-                                        <TextBlock Text="Cleanliness" FontSize="12" Foreground="{ThemeResource SecondaryTextBrush}"/>
-                                        <RatingControl Value="{Binding cleanlinessRating}" IsReadOnly="True" RequestedTheme="Light"/>
+                                        <TextBlock Text="Cleanliness"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource AdminMutedTextBrush}"/>
+                                        <RatingControl Value="{Binding cleanlinessRating}"
+                                                       IsReadOnly="True"
+                                                       Foreground="{StaticResource AdminAccentBrush}"/>
                                     </StackPanel>
                                 </Grid>
 
-                                <Border Grid.Row="2" Background="{ThemeResource PageBackgroundBrush}" CornerRadius="8" Padding="16">
-                                    <TextBlock Text="{Binding message}" FontStyle="Italic" Foreground="{ThemeResource PrimaryTextBrush}" FontSize="15" TextWrapping="Wrap"/>
+                                <Border Grid.Row="2"
+                                        BorderBrush="{StaticResource AdminBorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="16">
+                                    <TextBlock Text="{Binding message}"
+                                               FontStyle="Italic"
+                                               Foreground="#CBD5E1"
+                                               FontSize="15"
+                                               TextWrapping="Wrap"/>
                                 </Border>
                             </Grid>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-        </StackPanel>
+        </Grid>
     </ScrollViewer>
 </Page>

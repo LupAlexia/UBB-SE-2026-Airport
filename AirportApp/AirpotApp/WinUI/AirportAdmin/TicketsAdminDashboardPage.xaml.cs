@@ -4,10 +4,8 @@ using System.Linq;
 using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.Src.ViewModel;
 
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 
 namespace AirportApp.WinUI.AirportAdmin
@@ -45,40 +43,21 @@ namespace AirportApp.WinUI.AirportAdmin
                 return;
             }
 
-            var primaryButtonStyle = new Style(typeof(Button));
-            primaryButtonStyle.Setters.Add(new Setter(Button.BackgroundProperty, new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x2B, 0xB8, 0xC0))));
-            primaryButtonStyle.Setters.Add(new Setter(Button.ForegroundProperty, new SolidColorBrush(Colors.White)));
-            primaryButtonStyle.Setters.Add(new Setter(Button.BorderBrushProperty, new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x2B, 0xB8, 0xC0))));
-            primaryButtonStyle.Setters.Add(new Setter(Button.BorderThicknessProperty, new Thickness(1)));
-            primaryButtonStyle.Setters.Add(new Setter(Button.CornerRadiusProperty, new CornerRadius(5)));
-
-            var closeButtonStyle = new Style(typeof(Button));
-            closeButtonStyle.Setters.Add(new Setter(Button.BackgroundProperty, new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0xE5, 0xE7, 0xEB))));
-            closeButtonStyle.Setters.Add(new Setter(Button.ForegroundProperty, new SolidColorBrush(Colors.Black)));
-            closeButtonStyle.Setters.Add(new Setter(Button.BorderBrushProperty, new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0xE5, 0xE7, 0xEB))));
-            closeButtonStyle.Setters.Add(new Setter(Button.BorderThicknessProperty, new Thickness(1)));
-            closeButtonStyle.Setters.Add(new Setter(Button.CornerRadiusProperty, new CornerRadius(5)));
-
             var dialog = new ContentDialog
             {
-                Title = $"Edit CurrentStatus for Ticket #{ticket.ticketId}",
+                Title = $"Edit status for ticket #{ticket.ticketId}",
                 PrimaryButtonText = "Save",
                 CloseButtonText = "Cancel",
                 XamlRoot = XamlRoot,
-                RequestedTheme = ElementTheme.Light,
-                PrimaryButtonStyle = primaryButtonStyle,
-                CloseButtonStyle = closeButtonStyle
+                RequestedTheme = ElementTheme.Dark
             };
 
             var combo = new ComboBox
             {
                 Width = 200,
                 Margin = new Thickness(0, 20, 0, 0),
-                RequestedTheme = ElementTheme.Light,
-                Background = new SolidColorBrush(Colors.White),
-                Foreground = new SolidColorBrush(Colors.Black),
-                HorizontalAlignment = HorizontalAlignment.Left,
-                PlaceholderForeground = new SolidColorBrush(Colors.DarkGray)
+                RequestedTheme = ElementTheme.Dark,
+                HorizontalAlignment = HorizontalAlignment.Left
             };
 
             foreach (var status in Enum.GetValues(typeof(ComplaintTicketStatusEnum)).Cast<ComplaintTicketStatusEnum>())
