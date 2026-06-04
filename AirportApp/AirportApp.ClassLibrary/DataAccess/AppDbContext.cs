@@ -24,7 +24,6 @@ public class AppDbContext : DbContext
     public DbSet<Reservation> Reservations { get; set; }
 
     public DbSet<Sender> Senders { get; set; }
-    public DbSet<Administrator> Administrators { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Chat> Chats { get; set; }
@@ -52,9 +51,17 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Sender>()
+            .ToTable("Senders")
             .HasDiscriminator<string>("Discriminator")
+            .HasValue<Sender>("Sender")
             .HasValue<User>("User")
             .HasValue<Administrator>("Administrator");
+
+        modelBuilder.Entity<Administrator>()
+            .HasBaseType<Sender>();
+
+        modelBuilder.Entity<User>()
+            .HasBaseType<Sender>();
 
         modelBuilder.Entity<Flight>(flightBuilder =>
         {

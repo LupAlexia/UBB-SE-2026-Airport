@@ -1,11 +1,20 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AirportApp.ClassLibrary.Service.Interface;
+using AirportApp.ClassLibrary.Entity.Dto;
+using AirportApp.ClassLibrary.Entity.Domain;
 
 namespace AirportApp.Web.Controllers;
 
 [Authorize]
 public class DashboardController : Controller
 {
+    private readonly IReviewService _reviewService;
+
+    public DashboardController(IReviewService reviewService)
+    {
+        _reviewService = reviewService;
+    }
     public IActionResult RedirectUser()
     {
         if (User.IsInRole("Admin"))
@@ -31,9 +40,41 @@ public class DashboardController : Controller
     }
 
     [Authorize(Roles = "Admin")]
-    public IActionResult AdminDashboard()
+    public async Task<IActionResult> AdminDashboard()
     {
-        return View();
+        var reviewsDtoList = new List<ReviewDTO>();
+
+        try
+        {
+            var allReviews = (await _reviewService.GetAllAsync() ?? new List<Review>())
+                .OrderByDescending(review => review.Id)
+                .ToList();
+
+            if (allReviews.Count > 0)
+            {
+                foreach (var review in allReviews)
+                {
+                    float reviewOverallAverage = await _reviewService.CalculateAverageRatingAsync(review);
+
+                    reviewsDtoList.Add(new ReviewDTO(
+                        review.Id,
+                        review.User?.Id ?? 0,
+                        review.User?.RetrieveConfiguredDisplayFullNameForBot() ?? "Anonymous Traveler",
+                        review.Message,
+                        review.DutyFreeRating,
+                        review.FlightExperienceRating,
+                        review.StaffFriendlinessRating,
+                        review.CleanlinessRating,
+                        reviewOverallAverage));
+                }
+            }
+        }
+        catch (Exception)
+        {
+            ViewBag.ErrorMessage = "Could not load client reviews at this time.";
+        }
+
+        return View(reviewsDtoList);
     }
 
     [Authorize(Roles = "Manager")]

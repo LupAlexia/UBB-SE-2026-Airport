@@ -67,7 +67,7 @@ namespace AirportApp.Web.Controllers
         }
 
         // GET: FAQEntries/Create
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -76,7 +76,7 @@ namespace AirportApp.Web.Controllers
         // POST: FAQEntries/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Question,Answer,Category")] FAQEntry fAQEntry)
@@ -90,7 +90,7 @@ namespace AirportApp.Web.Controllers
         }
 
         // GET: FAQEntries/Edit/5
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -111,7 +111,7 @@ namespace AirportApp.Web.Controllers
         // POST: FAQEntries/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Question,Answer,Category,ViewCount,HelpfulVotesCount,NotHelpfulVotesCount")] FAQEntry fAQEntry)
@@ -139,7 +139,7 @@ namespace AirportApp.Web.Controllers
         }
 
         // GET: FAQEntries/Delete/5
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -159,7 +159,7 @@ namespace AirportApp.Web.Controllers
         }
 
         // POST: FAQEntries/Delete/5
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
