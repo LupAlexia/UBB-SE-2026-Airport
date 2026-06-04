@@ -1,109 +1,136 @@
-﻿@model List<AirportApp.ClassLibrary.Entity.Dto.ReviewDTO>
-@{
-    ViewData["Title"] = "Support Overview";
+﻿@{
+    ViewData["Title"] = "Customer Support";
 }
 
-@* Add this line for the upper bar to appear at the top of the page *@
 <partial name="_UpperBar" />
 
-<div class="container-fluid p-0" style="background-color: #FFFFFF; min-vh-100;">
-
-    <div id="supportCarousel" class="carousel slide carousel-fade mb-5" data-bs-ride="carousel">
-        <div class="carousel-inner" style="height: 400px;">
-
-            <div class="carousel-item active h-100">
-                <div class="position-relative h-100 bg-dark">
-                    <img src="/Assets/Airport2.jpg" class="d-block w-100 h-100 object-fit-cover" style="opacity: 0.6;" alt="Airport">
-                    <div class="carousel-caption d-flex flex-column justify-content-center h-100 bottom-0">
-                        <h1 class="fw-bold text-white display-4">Premium Customer Support</h1>
-                    </div>
-                </div>
-            </div>
-
-            <div class="carousel-item h-100">
-                <div class="position-relative h-100 bg-dark">
-                    <img src="/Assets/Bags.jpg" class="d-block w-100 h-100 object-fit-cover" style="opacity: 0.6;" alt="Baggage">
-                    <div class="carousel-caption d-flex flex-column justify-content-center h-100 bottom-0">
-                        <h1 class="fw-bold text-white display-4">Seamless Airport Assistance</h1>
-                    </div>
-                </div>
-            </div>
-
-            <div class="carousel-item h-100">
-                <div class="position-relative h-100 bg-dark">
-                    <img src="/Assets/Travel3.jpeg" class="d-block w-100 h-100 object-fit-cover" style="opacity: 0.6;" alt="Coverage">
-                    <div class="carousel-caption d-flex flex-column justify-content-center h-100 bottom-0">
-                        <h1 class="fw-bold text-white display-4">Global Coverage</h1>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+<div class="container-fluid py-5" style="background: linear-gradient(180deg, #F7FAFC 0%, #EEF6FF 100%); min-height: calc(100vh - 70px);">
+    <div class="text-center mb-5">
+        <p class="text-uppercase fw-semibold mb-2" style="letter-spacing: .12em; color: #2BB8C0;">Customer support</p>
+        <h1 class="fw-bold m-0" style="font-size: clamp(2rem, 4vw, 3.25rem); color: #111827; font-family: 'Segoe UI', sans-serif;">What can we help you with?</h1>
+        <p class="text-muted mt-3 mb-0" style="font-size: 15px; max-width: 48rem; margin-inline: auto;">Choose the path that fits your issue. You can chat with support, read FAQs, file a complaint ticket, or leave a review.</p>
     </div>
 
-    <div class="container pb-5">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold" style="color: #201F1E; font-size: 36px;">What Our Customers Say</h2>
-            <div class="mx-auto mt-2" style="height: 3px; width: 50px; background-color: #0078D4;"></div>
-        </div>
-
-        @if (ViewBag.ErrorMessage != null)
-        {
-            <div class="alert alert-warning text-center mx-auto" style="max-width: 500px;">
-                @ViewBag.ErrorMessage
-            </div>
-        }
-
-        <div class="row g-4 justify-content-center">
-            @if (Model != null && Model.Any())
-            {
-                foreach (var review in Model)
-                {
-                    <div class="col-12 col-md-6 d-flex justify-content-center">
-                        <div class="card p-4 border shadow-sm w-100" style="max-width: 420px; border-radius: 8px; border-color: #EDEBE9; background-color: #FFFFFF;">
-                            <div class="card-body p-0 d-flex flex-column gap-3">
-
-                                <div style="color: #0078D4; font-size: 18px; letter-spacing: 2px;">
-                                    @for (int i = 1; i <= 5; i++)
-                                    {
-                                        if (i <= Math.Round(review.overallRating))
-                                        {
-                                            <span>★</span>
-                                        }
-                                        else
-                                        {
-                                            <span style="color: #E1DFDD;">★</span>
-                                        }
-                                    }
-                                </div>
-
-                                <p class="card-text fst-italic" style="color: #201F1E; font-size: 16px; line-height: 1.5; min-height: 70px;">
-                                    "@review.message"
-                                </p>
-
-                                <div>
-                                    <h6 class="fw-bold m-0" style="color: #0078D4; font-size: 16px;">@review.userName</h6>
-                                    <small style="color: #605E5C; font-size: 12px;">Verified Traveler</small>
-                                </div>
-
-                            </div>
-                        </div>
+    <div class="d-flex flex-column flex-md-row gap-4 justify-content-center align-items-stretch flex-wrap">
+        <a asp-controller="ChatBot" asp-action="Index" class="text-decoration-none text-start">
+            <div class="card shadow-sm border-0 position-relative overflow-hidden h-100 d-flex flex-column support-card" style="width: 290px; min-height: 240px; border-radius: 18px; background-color: #FFFFFF;">
+                <div class="support-accent" style="background-color: #2BB8C0;"></div>
+                <div class="card-body d-flex flex-column gap-3 p-4 justify-content-center">
+                    <div class="icon-badge" style="background-color: #F0FAFA; color: #2BB8C0;">💬</div>
+                    <div>
+                        <h3 class="fw-semibold m-0 mb-1" style="font-size: 20px; color: #111827; font-family: 'Segoe UI', sans-serif;">Chat Support</h3>
+                        <p class="text-muted m-0" style="font-size: 13px; line-height: 1.4;">Open the guided chat assistant for quick help.</p>
                     </div>
-                }
-            }
-        </div>
-    </div>
+                    <div class="d-flex gap-2 flex-wrap mt-auto">
+                        <span class="badge support-badge">Chat Bot</span>
+                        <span class="badge support-badge">Live help</span>
+                    </div>
+                </div>
+            </div>
+        </a>
 
+        <a asp-controller="FAQEntries" asp-action="Index" class="text-decoration-none text-start">
+            <div class="card shadow-sm border-0 position-relative overflow-hidden h-100 d-flex flex-column support-card" style="width: 290px; min-height: 240px; border-radius: 18px; background-color: #FFFFFF;">
+                <div class="support-accent" style="background-color: #6366F1;"></div>
+                <div class="card-body d-flex flex-column gap-3 p-4 justify-content-center">
+                    <div class="icon-badge" style="background-color: #F5F3FF; color: #6366F1;">?</div>
+                    <div>
+                        <h3 class="fw-semibold m-0 mb-1" style="font-size: 20px; color: #111827; font-family: 'Segoe UI', sans-serif;">FAQ</h3>
+                        <p class="text-muted m-0" style="font-size: 13px; line-height: 1.4;">Browse popular questions and answers by category.</p>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap mt-auto">
+                        <span class="badge support-badge alt">Questions</span>
+                        <span class="badge support-badge alt">Answers</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+        <a asp-controller="ComplaintTickets" asp-action="Index" class="text-decoration-none text-start">
+            <div class="card shadow-sm border-0 position-relative overflow-hidden h-100 d-flex flex-column support-card" style="width: 290px; min-height: 240px; border-radius: 18px; background-color: #FFFFFF;">
+                <div class="support-accent" style="background-color: #F59E0B;"></div>
+                <div class="card-body d-flex flex-column gap-3 p-4 justify-content-center">
+                    <div class="icon-badge" style="background-color: #FEF3C7; color: #F59E0B;">📝</div>
+                    <div>
+                        <h3 class="fw-semibold m-0 mb-1" style="font-size: 20px; color: #111827; font-family: 'Segoe UI', sans-serif;">Complaint Tickets</h3>
+                        <p class="text-muted m-0" style="font-size: 13px; line-height: 1.4;">View or create support tickets for follow-up issues.</p>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap mt-auto">
+                        <span class="badge support-badge warn">Tickets</span>
+                        <span class="badge support-badge warn">Status</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+        <a asp-controller="Reviews" asp-action="Create" class="text-decoration-none text-start">
+            <div class="card shadow-sm border-0 position-relative overflow-hidden h-100 d-flex flex-column support-card" style="width: 290px; min-height: 240px; border-radius: 18px; background-color: #FFFFFF;">
+                <div class="support-accent" style="background-color: #10B981;"></div>
+                <div class="card-body d-flex flex-column gap-3 p-4 justify-content-center">
+                    <div class="icon-badge" style="background-color: #ECFDF5; color: #10B981;">★</div>
+                    <div>
+                        <h3 class="fw-semibold m-0 mb-1" style="font-size: 20px; color: #111827; font-family: 'Segoe UI', sans-serif;">Reviews</h3>
+                        <p class="text-muted m-0" style="font-size: 13px; line-height: 1.4;">Share your experience with the airport team.</p>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap mt-auto">
+                        <span class="badge support-badge green">Feedback</span>
+                        <span class="badge support-badge green">Ratings</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    $(document).ready(function () {
-        var myCarousel = document.querySelector('#supportCarousel');
-        var carousel = new bootstrap.Carousel(myCarousel, {
-            interval: 4000,
-            ride: 'carousel'
-        });
-    });
-</script>
+<style>
+    .support-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .support-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12) !important;
+    }
+
+    .support-accent {
+        position: absolute;
+        inset: 0 auto auto 0;
+        width: 100%;
+        height: 6px;
+    }
+
+    .icon-badge {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .support-badge {
+        background-color: #F0FAFA;
+        color: #2BB8C0;
+        font-weight: 500;
+        font-size: 11px;
+        padding: 6px 10px;
+        border-radius: 6px;
+    }
+
+    .support-badge.alt {
+        background-color: #F5F3FF;
+        color: #6366F1;
+    }
+
+    .support-badge.warn {
+        background-color: #FEF3C7;
+        color: #F59E0B;
+    }
+
+    .support-badge.green {
+        background-color: #ECFDF5;
+        color: #10B981;
+    }
+</style>

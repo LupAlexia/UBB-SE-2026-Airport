@@ -15,8 +15,7 @@ public class UserServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClie
 
     public async Task<User> GetByIdAsync(int identificationNumber)
     {
-        var dto = await GetRequiredAsync<UserDTO>($"{BaseUrl}/{identificationNumber}");
-        return MapToEntity(dto);
+        return await GetRequiredAsync<User>($"{BaseUrl}/{identificationNumber}");
     }
 
     public async Task<int> AddUserAsync(User userEntity)
@@ -36,8 +35,7 @@ public class UserServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClie
 
     public async Task<List<User>> GetAllUsersAsync()
     {
-        var dtos = await GetListAsync<UserDTO>(BaseUrl);
-        return dtos.Select(MapToEntity).ToList();
+        return await GetListAsync<User>(BaseUrl);
     }
 
     public Task CreateNewUserAsync(int identificationNumber, string fullName, string emailAddress)
@@ -48,11 +46,6 @@ public class UserServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClie
     public Task ValidateUserIntegrityAsync(User userEntity)
     {
         throw new NotSupportedException("ValidateUserIntegrityAsync is not available through the service proxy.");
-    }
-
-    private static User MapToEntity(UserDTO dto)
-    {
-        return new User(0, dto.name, dto.email);
     }
 
     private static UserDTO MapToDto(User user)

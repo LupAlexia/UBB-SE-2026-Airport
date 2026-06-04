@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Claims;
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Service.Interface;
@@ -18,13 +19,15 @@ namespace AirportApp.Web.Controllers
     {
         private readonly IDashboardService dashboardService;
         private readonly IFlightSearchService flightSearchService;
+        private readonly IFlightRouteService flightRouteService;
         private readonly IAuthService authService;
         private readonly IPricingService pricingService;
 
-        public FlightTicketsController(IDashboardService dashboard, IFlightSearchService flightSearch, IAuthService auth, IPricingService pricing)
+        public FlightTicketsController(IDashboardService dashboard, IFlightSearchService flightSearch, IFlightRouteService flightRoute, IAuthService auth, IPricingService pricing)
         {
             dashboardService = dashboard;
             flightSearchService = flightSearch;
+            flightRouteService = flightRoute;
             authService = auth;
             pricingService = pricing;
         }
@@ -314,9 +317,10 @@ namespace AirportApp.Web.Controllers
         }
 
         // GET: FlightTickets/Search
-        public IActionResult Search()
+        public async Task<IActionResult> Search()
         {
             SetCurrentUserViewData();
+            ViewBag.AvailableFlights = await flightRouteService.GetAllFlightsWithDetailsAsync();
             return View();
         }
 
@@ -325,6 +329,7 @@ namespace AirportApp.Web.Controllers
         public async Task<IActionResult> Search(string location, bool isDeparture, string date, string passengers)
         {
             SetCurrentUserViewData();
+            ViewBag.AvailableFlights = await flightRouteService.GetAllFlightsWithDetailsAsync();
             ViewBag.Location = location;
             ViewBag.IsDeparture = isDeparture;
             ViewBag.Date = date;
@@ -333,13 +338,20 @@ namespace AirportApp.Web.Controllers
             if (string.IsNullOrEmpty(location))
             {
                 ModelState.AddModelError(string.Empty, "Please enter a location.");
+                ViewBag.AvailableFlights = await flightRouteService.GetAllFlightsWithDetailsAsync();
                 return View();
             }
 
             DateTime? parsedDate = null;
-            if (!string.IsNullOrEmpty(date) && DateTime.TryParse(date, out var flightDateTime))
+            if (!string.IsNullOrWhiteSpace(date))
             {
-                parsedDate = flightDateTime;
+                string[] supportedDateFormats = ["yyyy-MM-dd", "dd/MM/yyyy", "MM/dd/yyyy"];
+
+                if (DateTime.TryParseExact(date, supportedDateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var flightDateTime) ||
+                    DateTime.TryParse(date, CultureInfo.CurrentCulture, DateTimeStyles.None, out flightDateTime))
+                {
+                    parsedDate = flightDateTime;
+                }
             }
 
             int? parsedPassengers = null;
@@ -363,6 +375,7 @@ namespace AirportApp.Web.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, $"Error searching flights: {ex.Message}");
+                ViewBag.AvailableFlights = await flightRouteService.GetAllFlightsWithDetailsAsync();
                 return View();
             }
         }

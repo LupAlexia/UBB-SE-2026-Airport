@@ -44,9 +44,23 @@ namespace AirportApp.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateAsync([FromBody] CreateChatDTO chatCreationData)
         {
-            User user = await userService.GetByIdAsync(chatCreationData.userId);
+            if (chatCreationData.userId <= 0)
+            {
+                return BadRequest("A valid user id is required to open a chat.");
+            }
+
+            User user;
+            try
+            {
+                user = await userService.GetByIdAsync(chatCreationData.userId);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"User with id {chatCreationData.userId} was not found.");
+            }
+
             Chat chat = await chatService.OpenChatAsync(user);
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = chat.Id }, chat);
+            return Ok(new ChatDTO(chat.Id, chat.User.Id, chat.Status, chat.Messages.Count));
         }
 
         [HttpPut("{id}")]

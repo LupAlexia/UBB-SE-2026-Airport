@@ -11,9 +11,12 @@
     <nav class="navbar navbar-expand-md border-bottom bg-white px-4 py-0 mb-4" style="height: 70px; border-color: #EDEBE9 !important;">
         <div class="container-fluid d-flex align-items-center justify-content-between">
 
-            <a asp-controller="Dashboard" asp-action="RedirectUser" class="text-decoration-none d-flex align-items-center gap-2">
-                <img src="/Assets/CloudSpritzersLogo.png" alt="Logo" style="width: 50px; height: 50px; object-fit: contain;" />
-                <span class="fw-bold" style="font-size: 22px; color: #0078D4; font-family: 'Segoe UI', sans-serif;">CloudSpritzers</span>
+            <a href="@Url.Action("RedirectUser", "Dashboard")"
+               class="text-decoration-none d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill border"
+               style="border-color: #D9E2EC !important; color: #050B14; font-size: 15px; font-family: 'Segoe UI', sans-serif;"
+               onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href = this.href; } return false;">
+                <i class="bi bi-arrow-left" style="color: #00A3A3; font-size: 18px;"></i>
+                <span class="fw-semibold">Back</span>
             </a>
 
             <div class="d-flex align-items-center gap-4">

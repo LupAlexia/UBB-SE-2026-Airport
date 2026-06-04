@@ -16,17 +16,20 @@ public class AuthController : Controller
     private readonly IAdministratorService _administratorService;
     private readonly IEmployeeService _employeeService;
     private readonly IManagerService _managerService;
+    private readonly IUserService _userService;
 
     public AuthController(
         IAuthService authService,
         IAdministratorService administratorService,
         IEmployeeService employeeService,
-        IManagerService managerService)
+        IManagerService managerService,
+        IUserService userService)
     {
         _authService = authService;
         _administratorService = administratorService;
         _employeeService = employeeService;
         _managerService = managerService;
+        _userService = userService;
     }
 
     [AllowAnonymous]
@@ -122,31 +125,30 @@ public class AuthController : Controller
 
                 case "Customer":
                 default:
-                    Customer? customer = null;
-                    try
+                    Customer? customer = await TryGetCustomerAsync(parsedId);
+                    if (customer != null)
                     {
-                        customer = await _authService.GetByIdAsync(parsedId);
-                    }
-                    catch (KeyNotFoundException)
-                    {
-                        customer = null;
+                        await SignInAsync(customer.Id.ToString(), customer.Username, customer.Email, new[] { "Customer" });
+                        break;
                     }
 
-                    if (customer == null)
+                    User? user = await TryGetUserAsync(parsedId);
+                    if (user == null)
                     {
-                        ModelState.AddModelError(string.Empty, "Customer ID not found.");
+                        ModelState.AddModelError(string.Empty, "Customer or user ID not found.");
                         ViewData["Role"] = role;
                         return View();
                     }
-                    await SignInAsync(customer.Id.ToString(), customer.Username, customer.Email, new[] { "Customer" });
+
+                    await SignInAsync(user.Id.ToString(), user.FullName, user.EmailAddress, new[] { "Customer" });
                     break;
             }
 
             return RedirectToAction("RedirectUser", "Dashboard");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            ModelState.AddModelError(string.Empty, "An error occurred during identification.");
+            ModelState.AddModelError(string.Empty, ex.Message);
             ViewData["Role"] = role;
             return View();
         }
@@ -234,5 +236,37 @@ public class AuthController : Controller
                 IsPersistent = false,
                 ExpiresUtc = DateTimeOffset.UtcNow.Add(CookieLifetime)
             });
+    }
+
+    private async Task<Customer?> TryGetCustomerAsync(int parsedId)
+    {
+        try
+        {
+            return await _authService.GetByIdAsync(parsedId);
+        }
+        catch (KeyNotFoundException)
+        {
+            return null;
+        }
+        catch (InvalidOperationException)
+        {
+            return null;
+        }
+    }
+
+    private async Task<User?> TryGetUserAsync(int parsedId)
+    {
+        try
+        {
+            return await _userService.GetByIdAsync(parsedId);
+        }
+        catch (KeyNotFoundException)
+        {
+            return null;
+        }
+        catch (InvalidOperationException)
+        {
+            return null;
+        }
     }
 }
