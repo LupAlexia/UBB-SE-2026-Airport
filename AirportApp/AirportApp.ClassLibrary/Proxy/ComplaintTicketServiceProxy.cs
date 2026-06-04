@@ -67,12 +67,14 @@ public class ComplaintTicketServiceProxy(HttpClient httpClient) : ServiceProxyBa
 
     public async Task UpdateUrgencyLevelAsync(int ticketId, ComplaintTicketUrgencyLevelEnum newUrgencyLevel)
     {
-        await PutAsync($"{BaseUrl}/{ticketId}/urgency", newUrgencyLevel);
+        var requestPayload = new { UrgencyLevel = newUrgencyLevel };
+        await PutAsync($"{BaseUrl}/{ticketId}/urgency", requestPayload);
     }
 
     public async Task UpdateStatusAsync(int ticketId, ComplaintTicketStatusEnum newStatus)
     {
-        await PutAsync($"{BaseUrl}/{ticketId}/status", newStatus);
+        var requestPayload = new { CurrentStatus = newStatus };
+        await PutAsync($"{BaseUrl}/{ticketId}/status", requestPayload);
     }
 
     public async Task<IEnumerable<TicketDTO>> FilterTicketsByStatusAsync(IEnumerable<TicketDTO> tickets, TicketFilterStatusEnum filter)
