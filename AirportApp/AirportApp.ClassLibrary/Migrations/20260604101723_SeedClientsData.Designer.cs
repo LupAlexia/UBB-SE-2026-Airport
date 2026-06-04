@@ -4,6 +4,7 @@ using AirportApp.ClassLibrary.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AirportApp.ClassLibrary.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260604101723_SeedClientsData")]
+    partial class SeedClientsData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -791,24 +794,6 @@ namespace AirportApp.ClassLibrary.Migrations
                             NodeId = 4,
                             IsFinalAnswer = true,
                             QuestionText = "You can change seats in the My Booking app."
-                        },
-                        new
-                        {
-                            NodeId = 5,
-                            IsFinalAnswer = true,
-                            QuestionText = "Please go to the baggage services desk or file a lost baggage report at the arrivals hall."
-                        },
-                        new
-                        {
-                            NodeId = 6,
-                            IsFinalAnswer = true,
-                            QuestionText = "Take photos and report the damage at the baggage service desk before leaving the airport."
-                        },
-                        new
-                        {
-                            NodeId = 7,
-                            IsFinalAnswer = true,
-                            QuestionText = "Use your reference number to track the bag and contact baggage services if it does not arrive."
                         });
                 });
 
@@ -847,37 +832,17 @@ namespace AirportApp.ClassLibrary.Migrations
                         new
                         {
                             OptionId = 1,
-                            Label = "Baggage Issues",
-                            NextNodeId = 2,
-                            ParentNodeId = 1
+                            Label = "Baggage Issues"
                         },
                         new
                         {
                             OptionId = 2,
-                            Label = "Seat Selection",
-                            NextNodeId = 4,
-                            ParentNodeId = 1
+                            Label = "Seat Selection"
                         },
                         new
                         {
                             OptionId = 3,
-                            Label = "Lost baggage",
-                            NextNodeId = 5,
-                            ParentNodeId = 2
-                        },
-                        new
-                        {
-                            OptionId = 4,
-                            Label = "Damaged baggage",
-                            NextNodeId = 6,
-                            ParentNodeId = 2
-                        },
-                        new
-                        {
-                            OptionId = 5,
-                            Label = "Delayed baggage",
-                            NextNodeId = 7,
-                            ParentNodeId = 2
+                            Label = "Lost Item"
                         });
                 });
 
