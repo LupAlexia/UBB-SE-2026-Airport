@@ -16,13 +16,13 @@ public class ChatServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpClie
     public async Task<Chat> OpenChatAsync(User userToOpenChatFor)
     {
         var req = new CreateChatDTO(userToOpenChatFor.Id, ChatStatus.Active);
-        var dto = await PostForResultAsync<CreateChatDTO, ChatDTO>($"{BaseUrl}/open", req);
+        var dto = await PostForResultAsync<CreateChatDTO, ChatDTO>(BaseUrl, req);
         return MapToEntity(dto);
     }
 
     public async Task CloseChatAsync(int chatId)
     {
-        await PostAsync<object>($"{BaseUrl}/{chatId}/close", null!);
+        await DeleteAsync($"{BaseUrl}/{chatId}");
     }
 
     public async Task<IEnumerable<Chat>> GetAllChatsAsync()

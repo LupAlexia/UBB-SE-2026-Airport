@@ -108,14 +108,7 @@ namespace AirportApp.Src.View.Faq
 
         private void AddFaqButton_Click(object sender, RoutedEventArgs arguments)
         {
-            var data = new FAQNavigationData
-            {
-                CurrentPersonId = currentPersonId,
-                IsEmployee = ViewModel.IsAdmin,
-                FAQEntry = null
-            };
-
-            navigationService.NavigateTo(typeof(FAQAddEditPage), data);
+            navigationService.NavigateTo(typeof(FAQAddEditPage), ViewModel.BuildAddNavigationData(currentPersonId));
         }
 
         private void EditFaqButton_Click(object sender, RoutedEventArgs arguments)
@@ -125,9 +118,7 @@ namespace AirportApp.Src.View.Faq
                 return;
             }
 
-            var data = ViewModel.BuildNavigationData(currentPersonId);
-
-            navigationService.NavigateTo(typeof(FAQAddEditPage), data);
+            navigationService.NavigateTo(typeof(FAQAddEditPage), ViewModel.BuildNavigationData(currentPersonId));
         }
 
         private async void DeleteFaqButton_Click(object sender, RoutedEventArgs arguments)

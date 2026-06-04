@@ -8,7 +8,10 @@ namespace AirportApp.Src.ViewModel
     {
         Flights,
         Employees,
-        AirportConfiguration
+        AirportConfiguration,
+        FAQ,
+        Tickets,
+        Reviews
     }
 
     public partial class AirportAdminViewModel : INotifyPropertyChanged
@@ -32,12 +35,18 @@ namespace AirportApp.Src.ViewModel
         public ICommand ShowFlightsCommand { get; }
         public ICommand ShowEmployeesCommand { get; }
         public ICommand ShowAirportCommand { get; }
+        public ICommand ShowFAQCommand { get; }
+        public ICommand ShowTicketsCommand { get; }
+        public ICommand ShowReviewsCommand { get; }
 
         public AirportAdminViewModel()
         {
             ShowFlightsCommand = new RelayCommand(ShowFlights);
             ShowEmployeesCommand = new RelayCommand(ShowEmployees);
             ShowAirportCommand = new RelayCommand(ShowAirport);
+            ShowFAQCommand = new RelayCommand(ShowFAQ);
+            ShowTicketsCommand = new RelayCommand(ShowTickets);
+            ShowReviewsCommand = new RelayCommand(ShowReviews);
         }
 
         public void Initialize()
@@ -56,6 +65,21 @@ namespace AirportApp.Src.ViewModel
         private void ShowAirport()
         {
             SelectedSection = AirportAdminSection.AirportConfiguration;
+        }
+
+        private void ShowFAQ()
+        {
+            SelectedSection = AirportAdminSection.FAQ;
+        }
+
+        private void ShowTickets()
+        {
+            SelectedSection = AirportAdminSection.Tickets;
+        }
+
+        private void ShowReviews()
+        {
+            SelectedSection = AirportAdminSection.Reviews;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

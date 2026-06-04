@@ -4,6 +4,7 @@
     var isDeparture = ViewBag.IsDeparture as bool?;
     var date = ViewBag.Date as string;
     var passengers = ViewBag.Passengers as string;
+    var availableFlights = ViewBag.AvailableFlights as IEnumerable<AirportApp.ClassLibrary.Entity.Domain.Flight> ?? Array.Empty<AirportApp.ClassLibrary.Entity.Domain.Flight>();
 }
 
 <section class="flight-search-page">
@@ -59,9 +60,41 @@
     <section class="flight-results-shell empty-results-shell" aria-labelledby="available-flights-title">
         <h2 id="available-flights-title">Available Flights</h2>
         <p class="flight-result-message">Enter a location and search to see matching flights.</p>
-        <div class="flight-results-empty-state">
-            No flights loaded yet.
-        </div>
+
+        @if (availableFlights.Any())
+        {
+            <div class="table-responsive flight-results-table-wrap">
+                <table class="table flight-results-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Flight Nr</th>
+                            <th scope="col">Route</th>
+                            <th scope="col">Date &amp; Time</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var flight in availableFlights)
+                        {
+                            var routeCity = flight.Route?.Airport?.City ?? flight.Route?.Airport?.AirportCode ?? "Unknown";
+
+                            <tr>
+                                <td class="flight-number-cell">@flight.FlightNumber</td>
+                                <td>@routeCity</td>
+                                <td>@flight.Date.ToString("g")</td>
+                                <td>@(flight.Route?.RouteType ?? "-")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="flight-results-empty-state">
+                No flights loaded yet.
+            </div>
+        }
     </section>
 </section>
 

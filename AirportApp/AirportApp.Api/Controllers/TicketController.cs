@@ -65,7 +65,7 @@ namespace AirportApp.Api.Controllers
             };
 
             await ticketService.AddTicketAsync(ticket);
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = ticket.Id }, ticket);
+            return Ok(ticket);
         }
 
         [HttpDelete("{id}")]

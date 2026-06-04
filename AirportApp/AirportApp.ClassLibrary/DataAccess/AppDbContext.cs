@@ -311,13 +311,18 @@ public class AppDbContext : DbContext
             new { NodeId = 1, QuestionText = "How can I help you?", IsFinalAnswer = false },
             new { NodeId = 2, QuestionText = "What's wrong with your baggage?", IsFinalAnswer = false },
             new { NodeId = 3, QuestionText = "Contact the Lost & Found desk at Level 1.", IsFinalAnswer = true },
-            new { NodeId = 4, QuestionText = "You can change seats in the My Booking app.", IsFinalAnswer = true }
+            new { NodeId = 4, QuestionText = "You can change seats in the My Booking app.", IsFinalAnswer = true },
+            new { NodeId = 5, QuestionText = "Please go to the baggage services desk or file a lost baggage report at the arrivals hall.", IsFinalAnswer = true },
+            new { NodeId = 6, QuestionText = "Take photos and report the damage at the baggage service desk before leaving the airport.", IsFinalAnswer = true },
+            new { NodeId = 7, QuestionText = "Use your reference number to track the bag and contact baggage services if it does not arrive.", IsFinalAnswer = true }
         );
 
         modelBuilder.Entity<FAQOption>().HasData(
-            new { OptionId = 1, NodeId = 1, Label = "Baggage Issues", NextOptionId = 2 },
-            new { OptionId = 2, NodeId = 1, Label = "Seat Selection", NextOptionId = 4 },
-            new { OptionId = 3, NodeId = 2, Label = "Lost Item", NextOptionId = 3 }
+            new { OptionId = 1, Label = "Baggage Issues", ParentNodeId = 1, NextNodeId = 2, BotMessageId = (int?)null },
+            new { OptionId = 2, Label = "Seat Selection", ParentNodeId = 1, NextNodeId = 4, BotMessageId = (int?)null },
+            new { OptionId = 3, Label = "Lost baggage", ParentNodeId = 2, NextNodeId = 5, BotMessageId = (int?)null },
+            new { OptionId = 4, Label = "Damaged baggage", ParentNodeId = 2, NextNodeId = 6, BotMessageId = (int?)null },
+            new { OptionId = 5, Label = "Delayed baggage", ParentNodeId = 2, NextNodeId = 7, BotMessageId = (int?)null }
         );
 
         modelBuilder.Entity<ComplaintTicketCategory>().HasData(

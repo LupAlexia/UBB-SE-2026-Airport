@@ -791,6 +791,24 @@ namespace AirportApp.ClassLibrary.Migrations
                             NodeId = 4,
                             IsFinalAnswer = true,
                             QuestionText = "You can change seats in the My Booking app."
+                        },
+                        new
+                        {
+                            NodeId = 5,
+                            IsFinalAnswer = true,
+                            QuestionText = "Please go to the baggage services desk or file a lost baggage report at the arrivals hall."
+                        },
+                        new
+                        {
+                            NodeId = 6,
+                            IsFinalAnswer = true,
+                            QuestionText = "Take photos and report the damage at the baggage service desk before leaving the airport."
+                        },
+                        new
+                        {
+                            NodeId = 7,
+                            IsFinalAnswer = true,
+                            QuestionText = "Use your reference number to track the bag and contact baggage services if it does not arrive."
                         });
                 });
 
@@ -829,17 +847,37 @@ namespace AirportApp.ClassLibrary.Migrations
                         new
                         {
                             OptionId = 1,
-                            Label = "Baggage Issues"
+                            Label = "Baggage Issues",
+                            NextNodeId = 2,
+                            ParentNodeId = 1
                         },
                         new
                         {
                             OptionId = 2,
-                            Label = "Seat Selection"
+                            Label = "Seat Selection",
+                            NextNodeId = 4,
+                            ParentNodeId = 1
                         },
                         new
                         {
                             OptionId = 3,
-                            Label = "Lost Item"
+                            Label = "Lost baggage",
+                            NextNodeId = 5,
+                            ParentNodeId = 2
+                        },
+                        new
+                        {
+                            OptionId = 4,
+                            Label = "Damaged baggage",
+                            NextNodeId = 6,
+                            ParentNodeId = 2
+                        },
+                        new
+                        {
+                            OptionId = 5,
+                            Label = "Delayed baggage",
+                            NextNodeId = 7,
+                            ParentNodeId = 2
                         });
                 });
 

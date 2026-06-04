@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using AirportApp.ClassLibrary.Entity.Domain;
 
 namespace AirportApp.ClassLibrary.Entity.Dto
@@ -28,22 +29,23 @@ namespace AirportApp.ClassLibrary.Entity.Dto
             }
         }
 
+        [JsonConstructor]
         public FAQEntryDTO(
-            int identificationNumber,
+            int id,
             string question,
             string answer,
             FAQCategoryEnum category,
             int viewCount,
-            int wasHelpfulVotes,
-            int wasNotHelpfulVotes)
+            int helpfulVotesCount,
+            int notHelpfulVotesCount)
         {
-            Id = identificationNumber;
+            Id = id;
             Question = question;
             Answer = answer;
             Category = category;
             ViewCount = viewCount;
-            HelpfulVotesCount = wasHelpfulVotes;
-            NotHelpfulVotesCount = wasNotHelpfulVotes;
+            HelpfulVotesCount = helpfulVotesCount;
+            NotHelpfulVotesCount = notHelpfulVotesCount;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

@@ -14,9 +14,10 @@ public class FlightsController(IFlightService flightService, IFlightSearchServic
     // ── CRUD (from 921) ──────────────────────────────────────────────────────
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Flight>>> GetAllFlights()
+    public async Task<ActionResult<IEnumerable<FlightDTO>>> GetAllFlights()
     {
-        return Ok(await flightService.GetAllFlightsAsync());
+        var flights = await flightService.GetAllFlightsAsync();
+        return Ok(flights.Select(MapToFlightDTO));
     }
 
     [HttpGet("{flightId:int}")]
@@ -32,9 +33,10 @@ public class FlightsController(IFlightService flightService, IFlightSearchServic
     }
 
     [HttpGet("by-route/{routeId:int}")]
-    public async Task<ActionResult<IEnumerable<Flight>>> GetFlightsByRouteId(int routeId)
+    public async Task<ActionResult<IEnumerable<FlightDTO>>> GetFlightsByRouteId(int routeId)
     {
-        return Ok(await flightService.GetFlightsByRouteIdAsync(routeId));
+        var flights = await flightService.GetFlightsByRouteIdAsync(routeId);
+        return Ok(flights.Select(MapToFlightDTO));
     }
 
     [HttpPost]
@@ -146,7 +148,9 @@ public class FlightsController(IFlightService flightService, IFlightSearchServic
             flight.Id,
             flight.Route?.Id ?? 0,
             flight.Gate?.Id ?? 0,
+            flight.Gate?.GateName ?? string.Empty,
             flight.Runway?.Id ?? 0,
+            flight.Runway?.Name ?? string.Empty,
             flight.Date,
             flight.FlightNumber,
             routeDTO);

@@ -69,7 +69,9 @@ namespace AirportApp.Api.Controllers
                 flight.Id,
                 flight.Route?.Id ?? 0,
                 flight.Gate?.Id ?? 0,
+                flight.Gate?.GateName ?? string.Empty,
                 flight.Runway?.Id ?? 0,
+                flight.Runway?.Name ?? string.Empty,
                 flight.Date,
                 flight.FlightNumber,
                 MapRouteToDTO(flight.Route));

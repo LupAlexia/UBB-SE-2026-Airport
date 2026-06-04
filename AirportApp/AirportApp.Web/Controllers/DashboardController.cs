@@ -25,6 +25,12 @@ public class DashboardController : Controller
     }
 
     [Authorize(Roles = "Customer")]
+    public IActionResult SupportDashboard()
+    {
+        return View();
+    }
+
+    [Authorize(Roles = "Customer")]
     public IActionResult CustomerSelection()
     {
         return View();
@@ -39,12 +45,12 @@ public class DashboardController : Controller
     [Authorize(Roles = "Manager")]
     public IActionResult ManagerDashboard()
     {
-        return View();
+        return RedirectToAction("Index", "CompanyDashboard");
     }
 
     [Authorize(Roles = "Employee")]
     public IActionResult EmployeeDashboard()
     {
-        return View();
+        return RedirectToAction("Index", "EmployeeDashboard");
     }
 }
