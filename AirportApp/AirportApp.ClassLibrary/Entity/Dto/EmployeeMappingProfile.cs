@@ -14,6 +14,7 @@ namespace AirportApp.ClassLibrary.Entity.Dto
         {
             CreateMap<Administrator, AdministratorDTO>()
                 .ConstructUsing(employee => new AdministratorDTO(
+                    employee.RetrieveUniqueDatabaseIdentifierForBot(),
                     employee.RetrieveConfiguredDisplayFullNameForBot(),
                     employee.RetrieveConfiguredEmailAddressForBotContact()))
                 .ForAllMembers(options => options.Ignore());

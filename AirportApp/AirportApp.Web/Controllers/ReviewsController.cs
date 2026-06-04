@@ -4,14 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using AirportApp.ClassLibrary.DataAccess;
 using AirportApp.ClassLibrary.Entity.Dto;
 using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Service.Interface;
-using Microsoft.AspNetCore.Authorization;
-
 namespace AirportApp.Web.Controllers
 {
     [Authorize]
@@ -49,7 +44,7 @@ namespace AirportApp.Web.Controllers
         }
 
         // GET: Reviews
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             List<Review> reviews = (await reviewService.GetAllAsync() ?? new List<Review>())
@@ -165,7 +160,7 @@ namespace AirportApp.Web.Controllers
         }
 
         // GET: Reviews/Edit/5
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -184,7 +179,7 @@ namespace AirportApp.Web.Controllers
         // POST: Reviews/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Message,DutyFreeRating,FlightExperienceRating,StaffFriendlinessRating,CleanlinessRating")] Review review)
@@ -211,7 +206,7 @@ namespace AirportApp.Web.Controllers
         }
 
         // GET: Reviews/Delete/5
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -229,7 +224,7 @@ namespace AirportApp.Web.Controllers
         }
 
         // POST: Reviews/Delete/5
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
