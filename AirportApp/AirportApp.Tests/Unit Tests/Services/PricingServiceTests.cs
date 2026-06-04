@@ -29,7 +29,7 @@ public class PricingServiceTests
     [SetUp]
     public void SetUp()
     {
-        _pricingService = new PricingService();
+        _pricingService = new PricingService(new MembershipPricingStrategyFactory());
     }
 
     private static Flight CreateFlightWithDurationInMinutes(int durationInMinutes)
@@ -124,7 +124,7 @@ public class PricingServiceTests
         var ticket = new FlightTicket
         {
             Price = StandardFlightBasePrice,
-            User = null,
+            User = null!,
             SelectedAddOns = new List<AddOn> { new AddOn { BasePrice = FirstAddOnBasePrice } }
         };
         float expectedTotal = StandardFlightBasePrice + FirstAddOnBasePrice;

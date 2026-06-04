@@ -1489,9 +1489,11 @@ namespace AirportApp.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Senders");
+                    b.ToTable("Senders", (string)null);
 
-                    b.UseTptMappingStrategy();
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Sender");
+
+                    b.UseTphMappingStrategy();
 
                     b.HasData(
                         new
@@ -1650,14 +1652,18 @@ namespace AirportApp.ClassLibrary.Migrations
                 {
                     b.HasBaseType("AirportApp.ClassLibrary.Entity.Domain.Sender");
 
-                    b.ToTable("Administrators");
+                    b.ToTable("Senders");
+
+                    b.HasDiscriminator().HasValue("Administrator");
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.User", b =>
                 {
                     b.HasBaseType("AirportApp.ClassLibrary.Entity.Domain.Sender");
 
-                    b.ToTable("Users");
+                    b.ToTable("Senders");
+
+                    b.HasDiscriminator().HasValue("User");
 
                     b.HasData(
                         new
@@ -2005,24 +2011,6 @@ namespace AirportApp.ClassLibrary.Migrations
                         .IsRequired();
 
                     b.Navigation("Shop");
-                });
-
-            modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.Administrator", b =>
-                {
-                    b.HasOne("AirportApp.ClassLibrary.Entity.Domain.Sender", null)
-                        .WithOne()
-                        .HasForeignKey("AirportApp.ClassLibrary.Entity.Domain.Administrator", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.User", b =>
-                {
-                    b.HasOne("AirportApp.ClassLibrary.Entity.Domain.Sender", null)
-                        .WithOne()
-                        .HasForeignKey("AirportApp.ClassLibrary.Entity.Domain.User", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("AirportApp.ClassLibrary.Entity.Domain.Airport", b =>

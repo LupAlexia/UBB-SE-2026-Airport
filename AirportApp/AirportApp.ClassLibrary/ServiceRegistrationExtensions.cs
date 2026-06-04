@@ -79,6 +79,7 @@ public static class ServiceRegistrationExtensions
         services.AddScoped<IManagerService, ManagerService>();
         services.AddScoped<IMembershipService, MembershipService>();
         services.AddScoped<IMessageService, MessageService>();
+        services.AddScoped<IMembershipPricingStrategyFactory, MembershipPricingStrategyFactory>();
         services.AddScoped<IPricingService, PricingService>();
         services.AddScoped<IReservationService, ReservationService>();
         services.AddScoped<IReviewService, ReviewService>();

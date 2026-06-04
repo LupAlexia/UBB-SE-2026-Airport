@@ -1,12 +1,11 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
 using AirportApp.Services.Interfaces;
 using AirportApp.WinUI;
 using AirportApp.WinUI.AirportAdmin;
+using AirportApp.WinUI.Pages;
 using AirportApp.WinUI.StaffLogin;
-
 using CommunityToolkit.Mvvm.Input;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace AirportApp.Src.ViewModel
 {
@@ -37,6 +36,12 @@ namespace AirportApp.Src.ViewModel
         private void NavigateToStaff()
         {
             navigationService.NavigateTo(typeof(StaffLoginPage));
+        }
+
+        [RelayCommand]
+        private void NavigateToAirport()
+        {
+            navigationService.NavigateTo(typeof(AirportRootPage));
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)

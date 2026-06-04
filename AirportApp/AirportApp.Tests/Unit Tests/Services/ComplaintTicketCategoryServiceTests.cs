@@ -13,7 +13,7 @@ public class ComplaintTicketCategoryServiceTests
     private const string CategoryName = "Delay";
 
     [Test]
-    public void GetCategoryByIdAsync_ThrowsKeyNotFoundException_WhenCategoryDoesNotExist()
+    public void GetCategoryByIdAsync_CategoryDoesNotExist_ThrowsKeyNotFoundException()
     {
         var categoryRepository = Substitute.For<IComplaintTicketCategoryRepository>();
         categoryRepository.GetByIdAsync(InvalidCategoryId).Returns(Task.FromResult<ComplaintTicketCategory?>(null));
@@ -23,7 +23,7 @@ public class ComplaintTicketCategoryServiceTests
     }
 
     [Test]
-    public async Task GetCategoryByIdAsync_ReturnsCategory_WhenCategoryExists()
+    public async Task GetCategoryByIdAsync_CategoryExists_ReturnsCategory()
     {
         var categoryRepository = Substitute.For<IComplaintTicketCategoryRepository>();
         var category = new ComplaintTicketCategory(ValidCategoryId, CategoryName, ComplaintTicketUrgencyLevelEnum.MEDIUM);

@@ -6,9 +6,23 @@ using Microsoft.Extensions.DependencyInjection;
 
 WebApplicationBuilder applicationBuilder = WebApplication.CreateBuilder(args);
 
-applicationBuilder.Services.AddDbContext<AppDbContext>(dbContextOptions =>
-    dbContextOptions.UseSqlServer(
-        applicationBuilder.Configuration.GetConnectionString("DefaultConnection")));
+bool isTestingEnvironment = applicationBuilder.Environment.IsEnvironment("Testing") ||
+                            AppDomain.CurrentDomain.GetAssemblies().Any(a =>
+                                a.FullName != null &&
+                                (a.FullName.Contains("AirportApp.Tests") ||
+                                 a.FullName.Contains("Microsoft.AspNetCore.Mvc.Testing")));
+
+if (isTestingEnvironment)
+{
+    applicationBuilder.Services.AddDbContext<AppDbContext>(dbContextOptions =>
+        dbContextOptions.UseInMemoryDatabase("InMemoryAirportApiTestDb"));
+}
+else
+{
+    applicationBuilder.Services.AddDbContext<AppDbContext>(dbContextOptions =>
+        dbContextOptions.UseSqlServer(
+            applicationBuilder.Configuration.GetConnectionString("DefaultConnection")));
+}
 
 applicationBuilder.Services.AddAirportServices();
 
@@ -33,9 +47,11 @@ applicationBuilder.Services.AddSwaggerGen();
 
 WebApplication application = applicationBuilder.Build();
 
-using (IServiceScope scope = application.Services.CreateScope())
+if (!isTestingEnvironment)
 {
-    AppDbContext databaseContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    using (IServiceScope scope = application.Services.CreateScope())
+    {
+        AppDbContext databaseContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await databaseContext.Database.MigrateAsync();
 
     if (!await databaseContext.TicketSubcategories.AnyAsync())
@@ -211,6 +227,72 @@ using (IServiceScope scope = application.Services.CreateScope())
         await databaseContext.SaveChangesAsync();
     }
 
+    if (!await databaseContext.Flights.AnyAsync(flight => flight.FlightNumber == "BA201" && flight.Date == new DateTime(2026, 7, 4, 8, 0, 0)))
+    {
+        AirportApp.ClassLibrary.Entity.Domain.Route londonRoute = new() { Id = 1 };
+        Runway runway = new() { Id = 1 };
+        Gate gate = new() { Id = 1 };
+
+        databaseContext.Entry(londonRoute).State = EntityState.Unchanged;
+        databaseContext.Entry(runway).State = EntityState.Unchanged;
+        databaseContext.Entry(gate).State = EntityState.Unchanged;
+
+        databaseContext.Flights.Add(new Flight
+        {
+            Date = new DateTime(2026, 7, 4, 8, 0, 0),
+            FlightNumber = "BA201",
+            Route = londonRoute,
+            Runway = runway,
+            Gate = gate
+        });
+
+        await databaseContext.SaveChangesAsync();
+    }
+
+    if (!await databaseContext.Flights.AnyAsync(flight => flight.FlightNumber == "DL456" && flight.Date == new DateTime(2026, 7, 11, 14, 0, 0)))
+    {
+        AirportApp.ClassLibrary.Entity.Domain.Route newYorkRoute = new() { Id = 2 };
+        Runway runway = new() { Id = 2 };
+        Gate gate = new() { Id = 3 };
+
+        databaseContext.Entry(newYorkRoute).State = EntityState.Unchanged;
+        databaseContext.Entry(runway).State = EntityState.Unchanged;
+        databaseContext.Entry(gate).State = EntityState.Unchanged;
+
+        databaseContext.Flights.Add(new Flight
+        {
+            Date = new DateTime(2026, 7, 11, 14, 0, 0),
+            FlightNumber = "DL456",
+            Route = newYorkRoute,
+            Runway = runway,
+            Gate = gate
+        });
+
+        await databaseContext.SaveChangesAsync();
+    }
+
+    if (!await databaseContext.Flights.AnyAsync(flight => flight.FlightNumber == "W6 3302" && flight.Date == new DateTime(2026, 7, 18, 6, 30, 0)))
+    {
+        AirportApp.ClassLibrary.Entity.Domain.Route clujRoute = new() { Id = 3 };
+        Runway runway = new() { Id = 3 };
+        Gate gate = new() { Id = 5 };
+
+        databaseContext.Entry(clujRoute).State = EntityState.Unchanged;
+        databaseContext.Entry(runway).State = EntityState.Unchanged;
+        databaseContext.Entry(gate).State = EntityState.Unchanged;
+
+        databaseContext.Flights.Add(new Flight
+        {
+            Date = new DateTime(2026, 7, 18, 6, 30, 0),
+            FlightNumber = "W6 3302",
+            Route = clujRoute,
+            Runway = runway,
+            Gate = gate
+        });
+
+        await databaseContext.SaveChangesAsync();
+    }
+
     if (!await databaseContext.FaqNodes.AnyAsync(node => node.NodeId == 5))
     {
         FAQNode lostBaggageNode = new()
@@ -257,6 +339,7 @@ using (IServiceScope scope = application.Services.CreateScope())
         await databaseContext.SaveChangesAsync();
     }
 }
+}
 
 application.UseSwagger();
 application.UseSwaggerUI(swaggerUiOptions =>
@@ -270,11 +353,14 @@ application.UseHttpsRedirection();
 application.UseAuthorization();
 application.MapControllers();
 
-application.Lifetime.ApplicationStarted.Register(() =>
+if (!isTestingEnvironment)
 {
-    string swaggerUrl = "http://localhost:5043";
-    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(swaggerUrl) { UseShellExecute = true });
-});
+    application.Lifetime.ApplicationStarted.Register(() =>
+    {
+        string swaggerUrl = "http://localhost:5043";
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(swaggerUrl) { UseShellExecute = true });
+    });
+}
 
 application.Run();
 

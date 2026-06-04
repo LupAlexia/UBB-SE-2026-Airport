@@ -31,7 +31,7 @@ public class CancellationServiceTests
     [Test]
     public void CanCancelTicket_NullTicket_ReturnsFalse()
     {
-        var (canCancel, _) = _cancellationService.CanCancelTicket(null);
+        var (canCancel, _) = _cancellationService.CanCancelTicket(null!);
 
         Assert.That(canCancel, Is.False);
     }
@@ -39,7 +39,7 @@ public class CancellationServiceTests
     [Test]
     public void CanCancelTicket_NullTicket_ReturnsTicketNotFoundReason()
     {
-        var (_, reason) = _cancellationService.CanCancelTicket(null);
+        var (_, reason) = _cancellationService.CanCancelTicket(null!);
 
         Assert.That(reason, Is.EqualTo(TicketNotFoundMessage));
     }
@@ -127,7 +127,7 @@ public class CancellationServiceTests
     [Test]
     public void CanCancelTicket_ActiveTicketWithNullFlight_ReturnsTrue()
     {
-        var ticket = new FlightTicket { Id = DefaultTicketId, Status = ActiveStatus, Flight = null };
+        var ticket = new FlightTicket { Id = DefaultTicketId, Status = ActiveStatus, Flight = null! };
 
         var (canCancel, _) = _cancellationService.CanCancelTicket(ticket);
 
@@ -137,7 +137,7 @@ public class CancellationServiceTests
     [Test]
     public void CanCancelTicket_ActiveTicketWithNullFlight_ReturnsEmptyReason()
     {
-        var ticket = new FlightTicket { Id = DefaultTicketId, Status = ActiveStatus, Flight = null };
+        var ticket = new FlightTicket { Id = DefaultTicketId, Status = ActiveStatus, Flight = null! };
 
         var (_, reason) = _cancellationService.CanCancelTicket(ticket);
 

@@ -12,7 +12,7 @@ public class FAQServiceTests
         new FAQEntry(id, question, answer, category, 0, 0, 0);
 
     [Test]
-    public async Task FilterFAQEntryAsync_ReturnsAllEntries_WhenCategoryIsAll()
+    public async Task FilterFAQEntryAsync_CategoryIsAll_ReturnsAllEntries()
     {
         var faqRepository = Substitute.For<IFAQRepository>();
         var entries = new List<FAQEntry>
@@ -29,7 +29,7 @@ public class FAQServiceTests
     }
 
     [Test]
-    public async Task FilterFAQEntryAsync_ReturnsOnlyMatchingCategory_WhenCategoryIsNotAll()
+    public async Task FilterFAQEntryAsync_CategoryIsNotAll_ReturnsOnlyMatchingCategory()
     {
         var faqRepository = Substitute.For<IFAQRepository>();
         var baggageEntries = new List<FAQEntry>
@@ -46,7 +46,7 @@ public class FAQServiceTests
     }
 
     [Test]
-    public async Task FilterFAQEntryAsync_ReturnsAllEntries_WhenSearchQueryIsEmpty()
+    public async Task FilterFAQEntryAsync_SearchQueryIsEmpty_ReturnsAllEntries()
     {
         var faqRepository = Substitute.For<IFAQRepository>();
         var entries = new List<FAQEntry>
@@ -63,7 +63,7 @@ public class FAQServiceTests
     }
 
     [Test]
-    public async Task FilterFAQEntryAsync_FiltersEntries_WhenSearchQueryMatchesQuestion()
+    public async Task FilterFAQEntryAsync_SearchQueryMatchesQuestion_FiltersEntries()
     {
         var faqRepository = Substitute.For<IFAQRepository>();
         var entries = new List<FAQEntry>
@@ -81,7 +81,7 @@ public class FAQServiceTests
     }
 
     [Test]
-    public async Task FilterFAQEntryAsync_FiltersEntries_WhenSearchQueryMatchesAnswer()
+    public async Task FilterFAQEntryAsync_SearchQueryMatchesAnswer_FiltersEntries()
     {
         var faqRepository = Substitute.For<IFAQRepository>();
         var entries = new List<FAQEntry>
@@ -99,7 +99,7 @@ public class FAQServiceTests
     }
 
     [Test]
-    public async Task FilterFAQEntryAsync_ReturnsEmptyList_WhenSearchQueryMatchesNothing()
+    public async Task FilterFAQEntryAsync_SearchQueryMatchesNothing_ReturnsEmptyList()
     {
         var faqRepository = Substitute.For<IFAQRepository>();
         var entries = new List<FAQEntry>
@@ -116,7 +116,7 @@ public class FAQServiceTests
     }
 
     [Test]
-    public async Task FilterFAQEntryAsync_SearchIsCaseInsensitive_WhenQueryDiffersByCase()
+    public async Task FilterFAQEntryAsync_QueryDiffersByCase_SearchIsCaseInsensitive()
     {
         var faqRepository = Substitute.For<IFAQRepository>();
         var entries = new List<FAQEntry>

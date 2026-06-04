@@ -34,7 +34,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public void SendMessageAsync_ThrowsArgumentNullException_WhenSelectedOptionIsNull()
+    public void SendMessageAsync_SelectedOptionIsNull_ThrowsArgumentNullException()
     {
         var (_, _, _, _, service) = CreateService();
 
@@ -43,7 +43,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public void SendMessageAsync_ThrowsKeyNotFoundException_WhenChatDoesNotExist()
+    public void SendMessageAsync_ChatDoesNotExist_ThrowsKeyNotFoundException()
     {
         var (chatRepository, _, _, _, service) = CreateService();
         chatRepository.GetByIdAsync(InvalidChatId).Returns(Task.FromResult<Chat?>(null));
@@ -54,7 +54,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public void SendMessageAsync_ThrowsInvalidOperationException_WhenChatIsClosed()
+    public void SendMessageAsync_ChatIsClosed_ThrowsInvalidOperationException()
     {
         var (chatRepository, _, _, _, service) = CreateService();
         var closedChat = new Chat(ValidChatId, CreateUser(), ChatStatus.Closed);
@@ -66,7 +66,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public async Task SendMessageAsync_ReturnsBotMessageWithNodeText_WhenOptionHasNextNode()
+    public async Task SendMessageAsync_OptionHasNextNode_ReturnsBotMessageWithNodeText()
     {
         var (chatRepository, messageRepository, decisionTreeService, botEngine, service) = CreateService();
         var chat = CreateActiveChat();
@@ -82,7 +82,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public async Task SendMessageAsync_SavesBothUserAndBotMessages_WhenOptionHasNextNode()
+    public async Task SendMessageAsync_OptionHasNextNode_SavesBothUserAndBotMessages()
     {
         var (chatRepository, messageRepository, decisionTreeService, botEngine, service) = CreateService();
         var chat = CreateActiveChat();
@@ -98,7 +98,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public async Task SendMessageAsync_ResetsBotConversation_WhenNextNodeIdIsOne()
+    public async Task SendMessageAsync_NextNodeIdIsOne_ResetsBotConversation()
     {
         var (chatRepository, messageRepository, decisionTreeService, _, service) = CreateService();
         var chat = CreateActiveChat();
@@ -114,7 +114,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public void GetMessageAsync_ThrowsKeyNotFoundException_WhenMessageDoesNotExist()
+    public void GetMessageAsync_MessageDoesNotExist_ThrowsKeyNotFoundException()
     {
         var (_, messageRepository, _, _, service) = CreateService();
         messageRepository.GetByIdAsync(InvalidMessageId).Returns(Task.FromResult<Message?>(null));
@@ -124,7 +124,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public void GetMessageAsync_ThrowsInvalidOperationException_WhenMessageBelongsToDifferentChat()
+    public void GetMessageAsync_MessageBelongsToDifferentChat_ThrowsInvalidOperationException()
     {
         var (_, messageRepository, _, _, service) = CreateService();
         var otherChat = new Chat(OtherChatId, CreateUser(), ChatStatus.Active);
@@ -136,7 +136,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public async Task GetMessageAsync_ReturnsMessage_WhenMessageBelongsToChat()
+    public async Task GetMessageAsync_MessageBelongsToChat_ReturnsMessage()
     {
         var (_, messageRepository, _, _, service) = CreateService();
         var chat = CreateActiveChat();
@@ -149,7 +149,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public async Task GetAllMessagesAsync_ExcludesMessagesFromOtherChats()
+    public async Task GetAllMessagesAsync_WithMessagesFromOtherChats_ExcludesMessagesFromOtherChats()
     {
         var (_, messageRepository, _, _, service) = CreateService();
         var chat = CreateActiveChat(ValidChatId);
@@ -169,7 +169,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public async Task GetAllMessagesAsync_ReturnsMessagesOrderedByTimestampAscending()
+    public async Task GetAllMessagesAsync_WithUnsortedMessages_ReturnsMessagesOrderedByTimestampAscending()
     {
         var (_, messageRepository, _, _, service) = CreateService();
         var chat = CreateActiveChat(ValidChatId);
@@ -189,7 +189,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public void CreateMessageAsync_ThrowsKeyNotFoundException_WhenChatDoesNotExist()
+    public void CreateMessageAsync_ChatDoesNotExist_ThrowsKeyNotFoundException()
     {
         var (chatRepository, _, _, _, service) = CreateService();
         chatRepository.GetByIdAsync(InvalidChatId).Returns(Task.FromResult<Chat?>(null));
@@ -199,7 +199,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public async Task CreateMessageAsync_ReturnsIdFromRepository_WhenChatExists()
+    public async Task CreateMessageAsync_ChatExists_ReturnsIdFromRepository()
     {
         var (chatRepository, messageRepository, _, _, service) = CreateService();
         var chat = CreateActiveChat();
@@ -213,7 +213,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public async Task CreateMessageAsync_CallsRepositoryAdd_WhenChatExists()
+    public async Task CreateMessageAsync_ChatExists_CallsRepositoryAdd()
     {
         var (chatRepository, messageRepository, _, _, service) = CreateService();
         var chat = CreateActiveChat();
@@ -227,7 +227,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public void GetByIdAsync_ThrowsKeyNotFoundException_WhenMessageDoesNotExist()
+    public void GetByIdAsync_MessageDoesNotExist_ThrowsKeyNotFoundException()
     {
         var (_, messageRepository, _, _, service) = CreateService();
         messageRepository.GetByIdAsync(InvalidMessageId).Returns(Task.FromResult<Message?>(null));
@@ -236,7 +236,7 @@ public class MessageServiceTests
     }
 
     [Test]
-    public async Task GetByIdAsync_ReturnsMessage_WhenMessageExists()
+    public async Task GetByIdAsync_MessageExists_ReturnsMessage()
     {
         var (_, messageRepository, _, _, service) = CreateService();
         var chat = CreateActiveChat();

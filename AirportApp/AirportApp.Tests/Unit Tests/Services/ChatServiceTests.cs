@@ -15,7 +15,7 @@ public class ChatServiceTests
     private static User CreateUser() => new User(1, "John Doe", "john@example.com");
 
     [Test]
-    public async Task OpenChatAsync_ReturnsActiveChatWithIdFromRepository_WhenRepositorySucceeds()
+    public async Task OpenChatAsync_RepositorySucceeds_ReturnsActiveChatWithIdFromRepository()
     {
         var chatRepository = Substitute.For<IChatRepository>();
         var userRepository = Substitute.For<IUserRepository>();
@@ -29,7 +29,7 @@ public class ChatServiceTests
     }
 
     [Test]
-    public async Task OpenChatAsync_CallsRepositoryAdd_WhenRepositorySucceeds()
+    public async Task OpenChatAsync_RepositorySucceeds_CallsRepositoryAdd()
     {
         var chatRepository = Substitute.For<IChatRepository>();
         var userRepository = Substitute.For<IUserRepository>();
@@ -42,7 +42,7 @@ public class ChatServiceTests
     }
 
     [Test]
-    public void CloseChatAsync_ThrowsException_WhenChatDoesNotExist()
+    public void CloseChatAsync_ChatDoesNotExist_ThrowsException()
     {
         var chatRepository = Substitute.For<IChatRepository>();
         var userRepository = Substitute.For<IUserRepository>();
@@ -53,7 +53,7 @@ public class ChatServiceTests
     }
 
     [Test]
-    public async Task CloseChatAsync_SetsChatStatusToClosed_WhenChatExists()
+    public async Task CloseChatAsync_ChatExists_SetsChatStatusToClosed()
     {
         var chatRepository = Substitute.For<IChatRepository>();
         var userRepository = Substitute.For<IUserRepository>();
@@ -67,7 +67,7 @@ public class ChatServiceTests
     }
 
     [Test]
-    public async Task CloseChatAsync_CallsRepositoryUpdate_WhenChatExists()
+    public async Task CloseChatAsync_ChatExists_CallsRepositoryUpdate()
     {
         var chatRepository = Substitute.For<IChatRepository>();
         var userRepository = Substitute.For<IUserRepository>();
@@ -81,7 +81,7 @@ public class ChatServiceTests
     }
 
     [Test]
-    public void GetChatByIdAsync_ThrowsKeyNotFoundException_WhenChatDoesNotExist()
+    public void GetChatByIdAsync_ChatDoesNotExist_ThrowsKeyNotFoundException()
     {
         var chatRepository = Substitute.For<IChatRepository>();
         var userRepository = Substitute.For<IUserRepository>();
@@ -92,7 +92,7 @@ public class ChatServiceTests
     }
 
     [Test]
-    public async Task GetChatByIdAsync_ReturnsChat_WhenChatExists()
+    public async Task GetChatByIdAsync_ChatExists_ReturnsChat()
     {
         var chatRepository = Substitute.For<IChatRepository>();
         var userRepository = Substitute.For<IUserRepository>();

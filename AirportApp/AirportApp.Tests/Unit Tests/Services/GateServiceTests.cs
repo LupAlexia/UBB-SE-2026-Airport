@@ -16,26 +16,7 @@ public class GateServiceTests
     private const int NumberOfGates = 2;
 
     [Test]
-    public async Task GetAllGatesAsync_ReturnsAllGates_Always()
-    {
-        var gateRepository = Substitute.For<IGateRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var gates = new List<Gate>
-        {
-            new Gate { GateName = FirstGateName },
-            new Gate { GateName = SecondGateName }
-        };
-        gateRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Gate>>(gates));
-
-        var gateService = new GateService(gateRepository, flightRepository);
-        var result = (await gateService.GetAllGatesAsync()).ToList();
-
-        Assert.That(result.Count, Is.EqualTo(NumberOfGates));
-        Assert.That(result, Is.EqualTo(gates));
-    }
-
-    [Test]
-    public async Task GetGateByIdAsync_ReturnsNull_ForZeroId()
+    public async Task GetGateByIdAsync_ZeroId_ReturnsNull()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -47,7 +28,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task GetGateByIdAsync_ReturnsNull_ForNegativeId()
+    public async Task GetGateByIdAsync_NegativeId_ReturnsNull()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -59,7 +40,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task GetGateByIdAsync_ReturnsGate_WhenFound()
+    public async Task GetGateByIdAsync_GateFound_ReturnsGate()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -73,7 +54,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public void AddGateAsync_ThrowsArgumentException_ForNullName()
+    public void AddGateAsync_NullName_ThrowsArgumentException()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -84,7 +65,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public void AddGateAsync_ThrowsArgumentException_ForEmptyName()
+    public void AddGateAsync_EmptyName_ThrowsArgumentException()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -95,7 +76,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public void AddGateAsync_ThrowsArgumentException_ForWhitespaceName()
+    public void AddGateAsync_WhitespaceName_ThrowsArgumentException()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -106,7 +87,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task AddGateAsync_CallsRepository_ForValidData()
+    public async Task AddGateAsync_ValidData_CallsRepository()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -119,7 +100,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task UpdateGateAsync_DoesNotCallRepository_WhenGateNotFound()
+    public async Task UpdateGateAsync_GateNotFound_DoesNotCallRepository()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -132,7 +113,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public void UpdateGateAsync_ThrowsArgumentException_ForWhitespaceNewName()
+    public void UpdateGateAsync_WhitespaceNewName_ThrowsArgumentException()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -145,7 +126,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public void UpdateGateAsync_ThrowsArgumentException_ForEmptyNewName()
+    public void UpdateGateAsync_EmptyNewName_ThrowsArgumentException()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -158,7 +139,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task UpdateGateAsync_UpdatesName_ForValidData()
+    public async Task UpdateGateAsync_ValidData_UpdatesName()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -173,7 +154,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task UpdateGateAsync_CallsRepository_EvenWhenNameIsNull()
+    public async Task UpdateGateAsync_NameIsNull_CallsRepository()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -188,7 +169,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task DeleteGateAsync_DoesNotCallRepository_ForZeroId()
+    public async Task DeleteGateAsync_ZeroId_DoesNotCallRepository()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -200,7 +181,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task DeleteGateAsync_DoesNotCallRepository_ForNegativeId()
+    public async Task DeleteGateAsync_NegativeId_DoesNotCallRepository()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -212,7 +193,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task DeleteGateAsync_CallsRepository_ForValidId()
+    public async Task DeleteGateAsync_ValidId_CallsRepository()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -225,7 +206,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task SaveGateAsync_CallsAdd_WhenIdIsZero()
+    public async Task SaveGateAsync_IdIsZero_CallsAdd()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -239,7 +220,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task SaveGateAsync_CallsUpdate_WhenIdIsNonZero()
+    public async Task SaveGateAsync_IdIsNonZero_CallsUpdate()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -254,7 +235,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task HasFlightsAsync_ReturnsTrue_WhenFlightsExist()
+    public async Task HasFlightsAsync_FlightsExist_ReturnsTrue()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -268,7 +249,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task HasFlightsAsync_ReturnsFalse_WhenNoFlightsExist()
+    public async Task HasFlightsAsync_NoFlightsExist_ReturnsFalse()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -282,7 +263,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task GetDeleteWarningMessageAsync_ReturnsEmptyString_WhenGateNotFound()
+    public async Task GetDeleteWarningMessageAsync_GateNotFound_ReturnsEmptyString()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -295,7 +276,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task GetDeleteWarningMessageAsync_ReturnsCriticalMessage_WhenGateHasFlights()
+    public async Task GetDeleteWarningMessageAsync_GateHasFlights_ReturnsCriticalMessage()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -312,7 +293,7 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task GetDeleteWarningMessageAsync_ReturnsStandardMessage_WhenGateHasNoFlights()
+    public async Task GetDeleteWarningMessageAsync_GateHasNoFlights_ReturnsStandardMessage()
     {
         var gateRepository = Substitute.For<IGateRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();

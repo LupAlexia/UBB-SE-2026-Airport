@@ -5,7 +5,7 @@ using AirportApp.ClassLibrary.Entity.Domain;
 namespace AirportApp.ClassLibrary.Entity.Domain
 {
     [Table("Senders")]
-    public abstract class Sender : ISender
+    public class Sender : ISender
     {
         [Key]
         [Column("Sender_Id")]
@@ -25,19 +25,19 @@ namespace AirportApp.ClassLibrary.Entity.Domain
         [Column("Discriminator")]
         public string Discriminator { get; set; } = string.Empty;
 
-        protected Sender()
+        public Sender()
         {
         }
 
-        protected Sender(int id, string fullName, string emailAddress)
+        public Sender(int id, string fullName, string emailAddress)
         {
             Id = id;
             FullName = fullName;
             EmailAddress = emailAddress;
         }
 
-        public abstract int RetrieveUniqueDatabaseIdentifierForBot();
-        public abstract string RetrieveConfiguredDisplayFullNameForBot();
-        public abstract string RetrieveConfiguredEmailAddressForBotContact();
+        public virtual int RetrieveUniqueDatabaseIdentifierForBot() => Id;
+        public virtual string RetrieveConfiguredDisplayFullNameForBot() => FullName;
+        public virtual string RetrieveConfiguredEmailAddressForBotContact() => EmailAddress;
     }
 }

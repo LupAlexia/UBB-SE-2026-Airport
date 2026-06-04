@@ -734,6 +734,6 @@ public class BookingServiceTests
 
         await _bookingService.GetAddOnsByIdsAsync(addOnIds);
 
-        await _addOnRepository.Received(1).GetByIdsAsync(Arg.Is<IEnumerable<int>>(x => x.SequenceEqual(addOnIds)));
+        await _addOnRepository.Received(1).GetByIdsAsync(Arg.Is<IEnumerable<int>>(ids => ids.SequenceEqual(addOnIds)));
     }
 }

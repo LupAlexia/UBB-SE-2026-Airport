@@ -6,6 +6,10 @@
     var occupiedSet = new HashSet<string>(Model.OccupiedSeats);
     int seatColumnsCount = 6;
     int aisleColumnIndex = 3;
+    var addonDiscounts = Model.AddonDiscountPercentages
+        .Where(x => x.Value > 0)
+        .OrderByDescending(x => x.Value)
+        .ToList();
 }
 
 <div class="booking-page">
@@ -167,8 +171,46 @@
 
             </div><!-- /booking-left -->
 
-            <!-- RIGHT COLUMN: Order Summary -->
+            <!-- RIGHT COLUMN -->
             <div class="booking-right">
+                @if (!string.IsNullOrWhiteSpace(Model.MembershipName) && (Model.FlightDiscountPercentage > 0 || addonDiscounts.Any()))
+                {
+                    <div class="booking-card membership-sidebar-card mb-3">
+                        <h2 class="booking-section-title">Membership Benefits</h2>
+                        <div class="membership-badge-row">
+                            <span class="membership-badge">@Model.MembershipName</span>
+                        </div>
+
+                        <div class="membership-savings-highlight">
+                            <span>Discount total:</span>
+                            <strong id="sidebarMembershipSavings">-@Model.EstimatedMembershipSavings.ToString("0.00") &euro;</strong>
+                        </div>
+
+                        <div class="summary-row mt-2">
+                            <span>Flight discount:</span>
+                            <strong>@Model.FlightDiscountPercentage.ToString("0.#")%</strong>
+                        </div>
+
+                        @if (addonDiscounts.Any())
+                        {
+                            <div class="membership-discount-list">
+                                <div class="membership-discount-title">Add-on discounts</div>
+                                @foreach (var discount in addonDiscounts)
+                                {
+                                    <div class="membership-discount-row">
+                                        <span>@(Model.AvailableAddOns.FirstOrDefault(addOn => addOn.Id == discount.Key)?.Name ?? $"Add-on #{discount.Key}")</span>
+                                        <strong>@discount.Value.ToString("0.#")% off</strong>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        <div class="membership-benefit-note">
+                            Discounts are applied automatically to the booking total.
+                        </div>
+                    </div>
+                }
+
                 <div class="booking-card order-summary-card">
                     <h2 class="booking-section-title">Order Summary</h2>
 
@@ -421,20 +463,27 @@
         const discountedBaseTotal = baseTotal * (1 - FLIGHT_DISCOUNT_PCT / 100);
         const membershipSavings = (baseTotal - discountedBaseTotal) + (addOnsTotal - discountedAddOnsTotal);
         const finalTotal = discountedBaseTotal + discountedAddOnsTotal;
+        const flightSavings = baseTotal - discountedBaseTotal;
+        const addonSavings = addOnsTotal - discountedAddOnsTotal;
 
         document.getElementById('summaryPassengerCount').textContent = passengerCount;
-        document.getElementById('summaryBaseTotal').textContent = baseTotal.toFixed(2) + ' â‚¬';
-        document.getElementById('summaryAddOnsTotal').textContent = addOnsTotal.toFixed(2) + ' â‚¬';
+        document.getElementById('summaryBaseTotal').textContent = baseTotal.toFixed(2) + ' €';
+        document.getElementById('summaryAddOnsTotal').textContent = addOnsTotal.toFixed(2) + ' €';
 
         const savingsRow = document.getElementById('membershipSavingsRow');
         if (membershipSavings > 0.001) {
-            document.getElementById('summaryMembershipSavings').textContent = '-' + membershipSavings.toFixed(2) + ' â‚¬';
+            document.getElementById('summaryMembershipSavings').textContent = '-' + membershipSavings.toFixed(2) + ' €';
             savingsRow.style.display = '';
         } else {
             savingsRow.style.display = 'none';
         }
 
-        document.getElementById('summaryTotal').textContent = finalTotal.toFixed(2) + ' â‚¬';
+        const sidebarSavings = document.getElementById('sidebarMembershipSavings');
+        if (sidebarSavings) {
+            sidebarSavings.textContent = '-' + membershipSavings.toFixed(2) + ' €';
+        }
+
+        document.getElementById('summaryTotal').textContent = finalTotal.toFixed(2) + ' €';
     }
 
     // --- Init ---

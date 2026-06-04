@@ -270,7 +270,7 @@ public class ShopServiceTests
 
         var result = (await _shopService.SortAlphabeticallyAsync()).ToList();
 
-        Assert.That(result.Select(s => s.Name), Is.EqualTo(new[] { "Apple Store", "Coffee Corner", "Zara" }));
+        Assert.That(result.Select(shop => shop.Name), Is.EqualTo(new[] { "Apple Store", "Coffee Corner", "Zara" }));
     }
 
     [Test]
@@ -296,7 +296,7 @@ public class ShopServiceTests
 
         var result = (await _shopService.SortAlphabeticallyAsync()).ToList();
 
-        Assert.That(result.Select(s => s.Name), Is.EqualTo(new[] { "Apple Store", "coffee", "zara" }));
+        Assert.That(result.Select(shop => shop.Name), Is.EqualTo(new[] { "Apple Store", "coffee", "zara" }));
     }
 
     [Test]

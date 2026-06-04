@@ -20,3 +20,141 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.booking-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.booking-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.booking-left {
+  flex: 1 1 720px;
+  min-width: 0;
+}
+
+.booking-right {
+  flex: 0 0 360px;
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.booking-card {
+  background: #fff;
+  border: 1px solid #87dbe4;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.06);
+}
+
+.booking-title {
+  color: #27b7c8;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.booking-flight-banner {
+  background: #ecfbfd;
+  border: 1px solid #87dbe4;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.booking-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #1f2937;
+}
+
+.membership-sidebar-card {
+  background: linear-gradient(180deg, #f8feff 0%, #ffffff 100%);
+}
+
+.membership-badge-row {
+  margin-bottom: 12px;
+}
+
+.membership-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #e0f7fa;
+  color: #0f766e;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.membership-discount-list {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.membership-discount-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.membership-discount-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+  font-size: 0.95rem;
+}
+
+.membership-benefit-note {
+  margin-top: 12px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.membership-savings-highlight {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #ecfbfd;
+  color: #0f766e;
+  font-weight: 700;
+}
+
+.order-summary-card .summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.summary-divider {
+  margin: 16px 0;
+}
+
+.summary-total-row {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+@media (max-width: 992px) {
+  .booking-right {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+}
