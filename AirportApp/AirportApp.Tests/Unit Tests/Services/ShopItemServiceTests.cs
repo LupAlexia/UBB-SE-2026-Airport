@@ -41,8 +41,6 @@ public class ShopItemServiceTests
         int quantity = DefaultQuantity, float price = DefaultPrice) =>
         new ShopItem(id, quantity, price, shop, string.Empty, name, string.Empty);
 
-    // --- GetByIdAsync ---
-
     [Test]
     public void GetByIdAsync_ItemNotFound_ThrowsInvalidOperationException()
     {
@@ -62,10 +60,8 @@ public class ShopItemServiceTests
         Assert.That(result, Is.EqualTo(existingItem));
     }
 
-    // --- GetItemsByShopIdAsync ---
-
     [Test]
-    public async Task GetItemsByShopIdAsync_ItemsExistForShop_ReturnsOnlyMatchingItems()
+    public async Task GetItemsByShopIdAsync_ItemsExistForShop_ReturnsMatchingItem()
     {
         var matchingItem = CreateShopItem(1, TestShop);
         var nonMatchingItem = CreateShopItem(2, SecondShop);
@@ -74,6 +70,17 @@ public class ShopItemServiceTests
         var result = (await _shopItemService.GetItemsByShopIdAsync(DefaultShopId)).ToList();
 
         Assert.That(result, Contains.Item(matchingItem));
+    }
+
+    [Test]
+    public async Task GetItemsByShopIdAsync_ItemsExistForShop_DoesNotReturnNonMatchingItem()
+    {
+        var matchingItem = CreateShopItem(1, TestShop);
+        var nonMatchingItem = CreateShopItem(2, SecondShop);
+        _shopItemRepository.GetAsync().Returns(Task.FromResult<IEnumerable<ShopItem>>(new List<ShopItem> { matchingItem, nonMatchingItem }));
+
+        var result = (await _shopItemService.GetItemsByShopIdAsync(DefaultShopId)).ToList();
+
         Assert.That(result, Does.Not.Contain(nonMatchingItem));
     }
 
@@ -86,8 +93,6 @@ public class ShopItemServiceTests
 
         Assert.That(result, Is.Empty);
     }
-
-    // --- SearchItemsByNameAsync ---
 
     [Test]
     public async Task SearchItemsByNameAsync_NullSearchText_ReturnsAllItemsInShop()
@@ -110,6 +115,17 @@ public class ShopItemServiceTests
         var result = (await _shopItemService.SearchItemsByNameAsync(DefaultShopId, "Apple")).ToList();
 
         Assert.That(result, Contains.Item(matchingItem));
+    }
+
+    [Test]
+    public async Task SearchItemsByNameAsync_TextMatchesItemName_DoesNotReturnNonMatchingItem()
+    {
+        var matchingItem = CreateShopItem(1, TestShop, name: "Apple Juice");
+        var nonMatchingItem = CreateShopItem(2, TestShop, name: "Biscuit");
+        _shopItemRepository.GetAsync().Returns(Task.FromResult<IEnumerable<ShopItem>>(new List<ShopItem> { matchingItem, nonMatchingItem }));
+
+        var result = (await _shopItemService.SearchItemsByNameAsync(DefaultShopId, "Apple")).ToList();
+
         Assert.That(result, Does.Not.Contain(nonMatchingItem));
     }
 
@@ -134,8 +150,6 @@ public class ShopItemServiceTests
 
         Assert.That(result, Contains.Item(item));
     }
-
-    // --- AddShopItemAsync ---
 
     [Test]
     public void AddShopItemAsync_NullShop_ThrowsArgumentException()
@@ -203,8 +217,6 @@ public class ShopItemServiceTests
         await _shopItemRepository.Received(1).AddAsync(item);
     }
 
-    // --- UpdateShopItemAsync ---
-
     [Test]
     public void UpdateShopItemAsync_NullShop_ThrowsArgumentException()
     {
@@ -255,8 +267,6 @@ public class ShopItemServiceTests
         await _shopItemRepository.Received(1).UpdateAsync(item);
     }
 
-    // --- RemoveShopItemAsync ---
-
     [Test]
     public async Task RemoveShopItemAsync_ValidShopItemId_CallsRepositoryDelete()
     {
@@ -264,8 +274,6 @@ public class ShopItemServiceTests
 
         await _shopItemRepository.Received(1).DeleteAsync(DefaultShopItemId);
     }
-
-    // --- GetItemsSortedByPriceAsync ---
 
     [Test]
     public void GetItemsSortedByPriceAsync_NullShop_ThrowsArgumentNullException()
@@ -283,10 +291,19 @@ public class ShopItemServiceTests
         var result = (await _shopItemService.GetItemsSortedByPriceAsync(TestShop)).ToList();
 
         Assert.That(result[0], Is.EqualTo(cheapItem));
-        Assert.That(result[1], Is.EqualTo(expensiveItem));
     }
 
-    // --- GetItemsSortedAlphabeticallyAsync ---
+    [Test]
+    public async Task GetItemsSortedByPriceAsync_MultipleItems_ReturnsMostExpensiveItemLast()
+    {
+        var cheapItem = CreateShopItem(1, TestShop, name: "Cheap Item", price: CheapItemPrice);
+        var expensiveItem = CreateShopItem(2, TestShop, name: "Expensive Item", price: ExpensiveItemPrice);
+        _shopItemRepository.GetAsync().Returns(Task.FromResult<IEnumerable<ShopItem>>(new List<ShopItem> { expensiveItem, cheapItem }));
+
+        var result = (await _shopItemService.GetItemsSortedByPriceAsync(TestShop)).ToList();
+
+        Assert.That(result[1], Is.EqualTo(expensiveItem));
+    }
 
     [Test]
     public void GetItemsSortedAlphabeticallyAsync_NullShop_ThrowsArgumentNullException()
@@ -304,6 +321,17 @@ public class ShopItemServiceTests
         var result = (await _shopItemService.GetItemsSortedAlphabeticallyAsync(TestShop)).ToList();
 
         Assert.That(result[0], Is.EqualTo(firstItem));
+    }
+
+    [Test]
+    public async Task GetItemsSortedAlphabeticallyAsync_MultipleItems_ReturnsSecondItemAlphabetically()
+    {
+        var secondItem = CreateShopItem(1, TestShop, name: "Biscuit");
+        var firstItem = CreateShopItem(2, TestShop, name: "Apple Juice");
+        _shopItemRepository.GetAsync().Returns(Task.FromResult<IEnumerable<ShopItem>>(new List<ShopItem> { secondItem, firstItem }));
+
+        var result = (await _shopItemService.GetItemsSortedAlphabeticallyAsync(TestShop)).ToList();
+
         Assert.That(result[1], Is.EqualTo(secondItem));
     }
 }

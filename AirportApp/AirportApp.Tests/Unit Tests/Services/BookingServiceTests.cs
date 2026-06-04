@@ -1,4 +1,4 @@
-﻿using AirportApp.ClassLibrary.Entity.Domain;
+using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Repository.Interface;
 using AirportApp.ClassLibrary.Service;
 using NSubstitute;
@@ -49,7 +49,7 @@ public class BookingServiceTests
     }
 
     [Test]
-    public void CreateTickets_ValidPassenger_AssignsPassengerNameCorrectly()
+    public void CreateTickets_ValidPassenger_AssignsPassengerFirstName()
     {
         var flight = new Flight { Id = DefaultFlightId };
         var user = new Customer { Id = 1, Email = "test@test.com" };
@@ -58,11 +58,22 @@ public class BookingServiceTests
         var tickets = _bookingService.CreateTickets(flight, user, new List<PassengerData> { passenger }, DefaultBasePrice);
 
         Assert.That(tickets[0].PassengerFirstName, Is.EqualTo("Ionel"));
+    }
+
+    [Test]
+    public void CreateTickets_ValidPassenger_AssignsPassengerLastName()
+    {
+        var flight = new Flight { Id = DefaultFlightId };
+        var user = new Customer { Id = 1, Email = "test@test.com" };
+        var passenger = new PassengerData { FirstName = "Ionel", LastName = "Gheorghe", SelectedSeat = Seat1A, Email = "ionel@test.com" };
+
+        var tickets = _bookingService.CreateTickets(flight, user, new List<PassengerData> { passenger }, DefaultBasePrice);
+
         Assert.That(tickets[0].PassengerLastName, Is.EqualTo("Gheorghe"));
     }
 
     [Test]
-    public void CreateTickets_ValidPassenger_AssignsBasePriceAndActiveStatus()
+    public void CreateTickets_ValidPassenger_AssignsBasePrice()
     {
         var flight = new Flight { Id = DefaultFlightId };
         var user = new Customer { Id = 1, Email = "test@test.com" };
@@ -71,6 +82,17 @@ public class BookingServiceTests
         var tickets = _bookingService.CreateTickets(flight, user, new List<PassengerData> { passenger }, DefaultBasePrice);
 
         Assert.That(tickets[0].Price, Is.EqualTo(DefaultBasePrice));
+    }
+
+    [Test]
+    public void CreateTickets_ValidPassenger_AssignsActiveStatus()
+    {
+        var flight = new Flight { Id = DefaultFlightId };
+        var user = new Customer { Id = 1, Email = "test@test.com" };
+        var passenger = new PassengerData { FirstName = "Ana", LastName = "Pop", SelectedSeat = Seat1A };
+
+        var tickets = _bookingService.CreateTickets(flight, user, new List<PassengerData> { passenger }, DefaultBasePrice);
+
         Assert.That(tickets[0].Status, Is.EqualTo(ActiveStatus));
     }
 
@@ -91,7 +113,7 @@ public class BookingServiceTests
     }
 
     [Test]
-    public void CreateTickets_ValidPassenger_AssignsFlightAndUser()
+    public void CreateTickets_ValidPassenger_AssignsFlight()
     {
         var flight = new Flight { Id = DefaultFlightId };
         var user = new Customer { Id = 42, Email = "user@test.com" };
@@ -100,6 +122,17 @@ public class BookingServiceTests
         var tickets = _bookingService.CreateTickets(flight, user, new List<PassengerData> { passenger }, DefaultBasePrice);
 
         Assert.That(tickets[0].Flight, Is.EqualTo(flight));
+    }
+
+    [Test]
+    public void CreateTickets_ValidPassenger_AssignsUser()
+    {
+        var flight = new Flight { Id = DefaultFlightId };
+        var user = new Customer { Id = 42, Email = "user@test.com" };
+        var passenger = new PassengerData { FirstName = "Maria", LastName = "Dan", SelectedSeat = Seat1A };
+
+        var tickets = _bookingService.CreateTickets(flight, user, new List<PassengerData> { passenger }, DefaultBasePrice);
+
         Assert.That(tickets[0].User, Is.EqualTo(user));
     }
 
@@ -298,7 +331,7 @@ public class BookingServiceTests
     }
 
     [Test]
-    public void ParseBookingParameters_FullArgumentArray_ParsesAllFields()
+    public void ParseBookingParameters_FullArgumentArray_ParsesFlight()
     {
         var flight = new Flight { Id = DefaultFlightId };
         var user = new Customer { Id = 1, Email = "test@test.com" };
@@ -307,21 +340,50 @@ public class BookingServiceTests
         var result = _bookingService.ParseBookingParameters(bookingArguments);
 
         Assert.That(result.Flight, Is.EqualTo(flight));
+    }
+
+    [Test]
+    public void ParseBookingParameters_FullArgumentArray_ParsesUser()
+    {
+        var flight = new Flight { Id = DefaultFlightId };
+        var user = new Customer { Id = 1, Email = "test@test.com" };
+        object[] bookingArguments = { flight, user, NormalRequestedPassengers };
+
+        var result = _bookingService.ParseBookingParameters(bookingArguments);
+
         Assert.That(result.User, Is.EqualTo(user));
+    }
+
+    [Test]
+    public void ParseBookingParameters_FullArgumentArray_ParsesRequestedPassengers()
+    {
+        var flight = new Flight { Id = DefaultFlightId };
+        var user = new Customer { Id = 1, Email = "test@test.com" };
+        object[] bookingArguments = { flight, user, NormalRequestedPassengers };
+
+        var result = _bookingService.ParseBookingParameters(bookingArguments);
+
         Assert.That(result.RequestedPassengers, Is.EqualTo(NormalRequestedPassengers));
     }
 
     [Test]
-    public void ParseBookingParameters_InvalidObject_ReturnsDefaults()
+    public void ParseBookingParameters_InvalidObject_ReturnsNullFlight()
     {
         var result = _bookingService.ParseBookingParameters("NotAnArray");
 
         Assert.That(result.Flight, Is.Null);
+    }
+
+    [Test]
+    public void ParseBookingParameters_InvalidObject_ReturnsZeroPassengerCount()
+    {
+        var result = _bookingService.ParseBookingParameters("NotAnArray");
+
         Assert.That(result.RequestedPassengers, Is.EqualTo(0));
     }
 
     [Test]
-    public void ParseBookingParameters_OnlyFlightArgument_ParsesFlightOnly()
+    public void ParseBookingParameters_OnlyFlightArgument_ParsesFlight()
     {
         var flight = new Flight { Id = DefaultFlightId };
         object[] bookingArguments = { flight };
@@ -329,11 +391,21 @@ public class BookingServiceTests
         var result = _bookingService.ParseBookingParameters(bookingArguments);
 
         Assert.That(result.Flight, Is.EqualTo(flight));
+    }
+
+    [Test]
+    public void ParseBookingParameters_OnlyFlightArgument_ReturnsZeroPassengerCount()
+    {
+        var flight = new Flight { Id = DefaultFlightId };
+        object[] bookingArguments = { flight };
+
+        var result = _bookingService.ParseBookingParameters(bookingArguments);
+
         Assert.That(result.RequestedPassengers, Is.EqualTo(0));
     }
 
     [Test]
-    public void ParseBookingParameters_FlightAndPassengerCount_ParsesBothFields()
+    public void ParseBookingParameters_FlightAndPassengerCount_ParsesFlight()
     {
         var flight = new Flight { Id = DefaultFlightId };
         object[] bookingArguments = { flight, NormalRequestedPassengers };
@@ -341,6 +413,16 @@ public class BookingServiceTests
         var result = _bookingService.ParseBookingParameters(bookingArguments);
 
         Assert.That(result.Flight, Is.EqualTo(flight));
+    }
+
+    [Test]
+    public void ParseBookingParameters_FlightAndPassengerCount_ParsesPassengerCount()
+    {
+        var flight = new Flight { Id = DefaultFlightId };
+        object[] bookingArguments = { flight, NormalRequestedPassengers };
+
+        var result = _bookingService.ParseBookingParameters(bookingArguments);
+
         Assert.That(result.RequestedPassengers, Is.EqualTo(NormalRequestedPassengers));
     }
 
@@ -358,79 +440,178 @@ public class BookingServiceTests
     }
 
     [Test]
-    public void StorePendingBooking_ValidInput_StoresInSession()
+    public void StorePendingBooking_ValidInput_StoresNonNullParameters()
     {
         var flight = new Flight { Id = DefaultFlightId };
 
         _bookingService.StorePendingBooking(flight, NormalRequestedPassengers);
 
         Assert.That(UserSession.PendingBookingParameters, Is.Not.Null);
-        var pending = UserSession.PendingBookingParameters as object[];
-        Assert.That(pending, Is.Not.Null);
-        Assert.That(pending![0], Is.EqualTo(flight));
+    }
+
+    [Test]
+    public void StorePendingBooking_ValidInput_StoresFlightAsFirstElement()
+    {
+        var flight = new Flight { Id = DefaultFlightId };
+
+        _bookingService.StorePendingBooking(flight, NormalRequestedPassengers);
+
+        var pending = (object[])UserSession.PendingBookingParameters!;
+        Assert.That(pending[0], Is.EqualTo(flight));
+    }
+
+    [Test]
+    public void StorePendingBooking_ValidInput_StoresPassengerCountAsSecondElement()
+    {
+        var flight = new Flight { Id = DefaultFlightId };
+
+        _bookingService.StorePendingBooking(flight, NormalRequestedPassengers);
+
+        var pending = (object[])UserSession.PendingBookingParameters!;
         Assert.That(pending[1], Is.EqualTo(NormalRequestedPassengers));
     }
 
     [Test]
-    public async Task BuildSeatMapLayoutAsync_ExactMultipleCapacity_CalculatesRowsCorrectly()
+    public async Task BuildSeatMapLayoutAsync_ExactMultipleCapacity_CalculatesCorrectRowCount()
     {
-        var (layout, rowCount) = await _bookingService.BuildSeatMapLayoutAsync(ExactMultipleCapacity);
+        var (_, rowCount) = await _bookingService.BuildSeatMapLayoutAsync(ExactMultipleCapacity);
 
         Assert.That(rowCount, Is.EqualTo(ExpectedExactMultipleRows));
+    }
+
+    [Test]
+    public async Task BuildSeatMapLayoutAsync_ExactMultipleCapacity_GeneratesCorrectLayoutCount()
+    {
+        var (layout, _) = await _bookingService.BuildSeatMapLayoutAsync(ExactMultipleCapacity);
+
         Assert.That(layout.Count, Is.EqualTo(ExpectedExactMultipleLayoutCount));
     }
 
     [Test]
     public async Task BuildSeatMapLayoutAsync_NonMultipleCapacity_RoundsRowsUp()
     {
-        var (layout, rowCount) = await _bookingService.BuildSeatMapLayoutAsync(PartialMultipleCapacity);
+        var (_, rowCount) = await _bookingService.BuildSeatMapLayoutAsync(PartialMultipleCapacity);
 
         Assert.That(rowCount, Is.EqualTo(ExpectedPartialMultipleRows));
+    }
+
+    [Test]
+    public async Task BuildSeatMapLayoutAsync_NonMultipleCapacity_GeneratesCorrectLayoutCount()
+    {
+        var (layout, _) = await _bookingService.BuildSeatMapLayoutAsync(PartialMultipleCapacity);
+
         Assert.That(layout.Count, Is.EqualTo(ExpectedPartialMultipleLayoutCount));
     }
 
     [Test]
-    public async Task BuildSeatMapLayoutAsync_MinimumCapacity_AssignsCorrectLabelsAndColumns()
+    public async Task BuildSeatMapLayoutAsync_MinimumCapacity_CalculatesOneRow()
     {
-        var (layout, rowCount) = await _bookingService.BuildSeatMapLayoutAsync(MinimumFlightCapacity);
+        var (_, rowCount) = await _bookingService.BuildSeatMapLayoutAsync(MinimumFlightCapacity);
 
         Assert.That(rowCount, Is.EqualTo(ExpectedMinimumCapacityRows));
+    }
+
+    [Test]
+    public async Task BuildSeatMapLayoutAsync_MinimumCapacity_AssignsLabel1AToFirstSeat()
+    {
+        var (layout, _) = await _bookingService.BuildSeatMapLayoutAsync(MinimumFlightCapacity);
+
         Assert.That(layout[0].Label, Is.EqualTo("1A"));
+    }
+
+    [Test]
+    public async Task BuildSeatMapLayoutAsync_MinimumCapacity_AssignsLabel1CToThirdSeat()
+    {
+        var (layout, _) = await _bookingService.BuildSeatMapLayoutAsync(MinimumFlightCapacity);
+
         Assert.That(layout[2].Label, Is.EqualTo("1C"));
+    }
+
+    [Test]
+    public async Task BuildSeatMapLayoutAsync_MinimumCapacity_AssignsLabel1DToFourthSeat()
+    {
+        var (layout, _) = await _bookingService.BuildSeatMapLayoutAsync(MinimumFlightCapacity);
+
         Assert.That(layout[3].Label, Is.EqualTo("1D"));
+    }
+
+    [Test]
+    public async Task BuildSeatMapLayoutAsync_MinimumCapacity_AssignsLabel1FToSixthSeat()
+    {
+        var (layout, _) = await _bookingService.BuildSeatMapLayoutAsync(MinimumFlightCapacity);
+
         Assert.That(layout[5].Label, Is.EqualTo("1F"));
     }
 
     [Test]
-    public async Task BuildSeatMapLayoutAsync_MinimumCapacity_AssignsAisleGapAfterColumnC()
+    public async Task BuildSeatMapLayoutAsync_MinimumCapacity_AssignsColumnZeroToFirstSeat()
     {
         var (layout, _) = await _bookingService.BuildSeatMapLayoutAsync(MinimumFlightCapacity);
 
         Assert.That(layout[0].Column, Is.EqualTo(0));
+    }
+
+    [Test]
+    public async Task BuildSeatMapLayoutAsync_MinimumCapacity_AssignsColumnTwoToThirdSeat()
+    {
+        var (layout, _) = await _bookingService.BuildSeatMapLayoutAsync(MinimumFlightCapacity);
+
         Assert.That(layout[2].Column, Is.EqualTo(2));
+    }
+
+    [Test]
+    public async Task BuildSeatMapLayoutAsync_MinimumCapacity_AssignsColumnFourToFourthSeat()
+    {
+        var (layout, _) = await _bookingService.BuildSeatMapLayoutAsync(MinimumFlightCapacity);
+
         Assert.That(layout[3].Column, Is.EqualTo(4));
+    }
+
+    [Test]
+    public async Task BuildSeatMapLayoutAsync_MinimumCapacity_AssignsColumnSixToSixthSeat()
+    {
+        var (layout, _) = await _bookingService.BuildSeatMapLayoutAsync(MinimumFlightCapacity);
+
         Assert.That(layout[5].Column, Is.EqualTo(6));
     }
 
     [Test]
-    public void ApplySeatSelection_SeatAlreadyAssignedToPassenger_ClearsSeat()
+    public void ApplySeatSelection_SeatAlreadyAssignedToPassenger_ClearsSelectedPassengerSeat()
     {
         var seats = new List<string> { Seat1A, Seat1B };
 
         var updated = _bookingService.ApplySeatSelection(seats, 0, Seat1A);
 
         Assert.That(updated[0], Is.Empty);
+    }
+
+    [Test]
+    public void ApplySeatSelection_SeatAlreadyAssignedToPassenger_LeavesOtherPassengerSeatUnchanged()
+    {
+        var seats = new List<string> { Seat1A, Seat1B };
+
+        var updated = _bookingService.ApplySeatSelection(seats, 0, Seat1A);
+
         Assert.That(updated[1], Is.EqualTo(Seat1B));
     }
 
     [Test]
-    public void ApplySeatSelection_NewSeatAssignedToPassenger_ClearsDuplicateAndAssigns()
+    public void ApplySeatSelection_NewSeatAssignedToPassenger_ClearsDuplicateSeat()
     {
         var seats = new List<string> { Seat1A, Seat2B };
 
         var updated = _bookingService.ApplySeatSelection(seats, 1, Seat1A);
 
         Assert.That(updated[0], Is.Empty);
+    }
+
+    [Test]
+    public void ApplySeatSelection_NewSeatAssignedToPassenger_AssignsNewSeatToPassenger()
+    {
+        var seats = new List<string> { Seat1A, Seat2B };
+
+        var updated = _bookingService.ApplySeatSelection(seats, 1, Seat1A);
+
         Assert.That(updated[1], Is.EqualTo(Seat1A));
     }
 
@@ -445,7 +626,7 @@ public class BookingServiceTests
     }
 
     [Test]
-    public void ApplyAddOnUpdates_WithAddAndRemoveLists_UpdatesCollectionCorrectly()
+    public void ApplyAddOnUpdates_WithAddList_AddsNewAddOnToCollection()
     {
         var priorityBoarding = new AddOn { Id = 1, Name = "Priority Boarding" };
         var extraLuggage = new AddOn { Id = 2, Name = "Extra Luggage" };
@@ -454,6 +635,17 @@ public class BookingServiceTests
         _bookingService.ApplyAddOnUpdates(currentAddOns, new List<AddOn> { extraLuggage }, new List<AddOn> { priorityBoarding });
 
         Assert.That(currentAddOns, Contains.Item(extraLuggage));
+    }
+
+    [Test]
+    public void ApplyAddOnUpdates_WithRemoveList_RemovesAddOnFromCollection()
+    {
+        var priorityBoarding = new AddOn { Id = 1, Name = "Priority Boarding" };
+        var extraLuggage = new AddOn { Id = 2, Name = "Extra Luggage" };
+        var currentAddOns = new List<AddOn> { priorityBoarding };
+
+        _bookingService.ApplyAddOnUpdates(currentAddOns, new List<AddOn> { extraLuggage }, new List<AddOn> { priorityBoarding });
+
         Assert.That(currentAddOns, Does.Not.Contain(priorityBoarding));
     }
 
