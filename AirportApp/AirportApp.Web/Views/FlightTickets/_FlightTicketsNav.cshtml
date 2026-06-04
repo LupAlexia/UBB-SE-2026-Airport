@@ -3,6 +3,7 @@
 @{
     bool isSearchActive = string.Equals(Model, "Search", StringComparison.OrdinalIgnoreCase);
     bool isTicketsActive = string.Equals(Model, "MyTickets", StringComparison.OrdinalIgnoreCase);
+    bool isMembershipsActive = string.Equals(Model, "Memberships", StringComparison.OrdinalIgnoreCase);
 }
 
 <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap mb-4 pb-3 border-bottom">
@@ -21,6 +22,11 @@
            asp-action="MyTickets"
            class="btn @(isTicketsActive ? "btn-info text-white" : "btn-outline-info")">
             My Tickets
+        </a>
+        <a asp-controller="Memberships"
+           asp-action="Index"
+           class="btn @(isMembershipsActive ? "btn-info text-white" : "btn-outline-info")">
+            Memberships
         </a>
     </div>
 </div>

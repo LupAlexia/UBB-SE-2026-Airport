@@ -57,5 +57,12 @@ namespace AirportApp.Api.Controllers
             }
             return Ok(membershipAddonDiscountTransferObjectList);
         }
+
+        [HttpPost("purchase")]
+        public async Task<ActionResult<MembershipPurchaseResult>> PurchaseAsync([FromQuery] int userId, [FromQuery] int membershipId)
+        {
+            MembershipPurchaseResult result = await membershipService.PurchaseMembershipAsync(userId, membershipId);
+            return Ok(result);
+        }
     }
 }
