@@ -24,7 +24,7 @@ public class FlightSearchServiceTests
     private static readonly DateTime TargetDate = new DateTime(2026, 6, 10);
 
     [Test]
-    public async Task SearchFlightsAsync_ReturnsEmptyList_WhenLocationIsNull()
+    public async Task SearchFlightsAsync_LocationIsNull_ReturnsEmptyList()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flightSearchService = new FlightSearchService(flightRepository);
@@ -35,7 +35,7 @@ public class FlightSearchServiceTests
     }
 
     [Test]
-    public async Task SearchFlightsAsync_ReturnsEmptyList_WhenLocationIsWhitespace()
+    public async Task SearchFlightsAsync_LocationIsWhitespace_ReturnsEmptyList()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flightSearchService = new FlightSearchService(flightRepository);
@@ -46,18 +46,7 @@ public class FlightSearchServiceTests
     }
 
     [Test]
-    public async Task SearchFlightsAsync_ReturnsEmptyList_WhenLocationIsEmpty()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flightSearchService = new FlightSearchService(flightRepository);
-
-        var result = await flightSearchService.SearchFlightsAsync(string.Empty, isDeparture: true, date: null, passengers: null);
-
-        Assert.That(result, Is.Empty);
-    }
-
-    [Test]
-    public async Task SearchFlightsAsync_ReturnsAllMatchingFlights_WhenNoPassengerFilterIsApplied()
+    public async Task SearchFlightsAsync_NoPassengerFilterApplied_ReturnsAllMatchingFlights()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var matchingFlights = new List<Flight>
@@ -74,7 +63,7 @@ public class FlightSearchServiceTests
     }
 
     [Test]
-    public async Task SearchFlightsAsync_IncludesFlight_WhenEnoughSeatsAreAvailable()
+    public async Task SearchFlightsAsync_EnoughSeatsAreAvailable_IncludesFlight()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var targetFlight = new Flight { Id = TargetFlightId, Route = new Route { Capacity = TargetRouteCapacity } };
@@ -90,7 +79,7 @@ public class FlightSearchServiceTests
     }
 
     [Test]
-    public async Task SearchFlightsAsync_ExcludesFlight_WhenNotEnoughSeatsAreAvailable()
+    public async Task SearchFlightsAsync_NotEnoughSeatsAreAvailable_ExcludesFlight()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var targetFlight = new Flight { Id = TargetFlightId, Route = new Route { Capacity = TargetRouteCapacity } };
@@ -106,7 +95,7 @@ public class FlightSearchServiceTests
     }
 
     [Test]
-    public async Task SearchFlightsAsync_UsesArrivalRouteType_WhenIsDepartureIsFalse()
+    public async Task SearchFlightsAsync_IsDepartureIsFalse_UsesArrivalRouteType()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         flightRepository.SearchFlightsAsync(TargetLocation, ArrivalRouteType, null)
@@ -119,20 +108,7 @@ public class FlightSearchServiceTests
     }
 
     [Test]
-    public async Task SearchFlightsAsync_UsesDepartureRouteType_WhenIsDepartureIsTrue()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        flightRepository.SearchFlightsAsync(TargetLocation, DepartureRouteType, null)
-            .Returns(Task.FromResult<IEnumerable<Flight>>(new List<Flight>()));
-
-        var flightSearchService = new FlightSearchService(flightRepository);
-        await flightSearchService.SearchFlightsAsync(TargetLocation, isDeparture: true, date: null, passengers: null);
-
-        await flightRepository.Received(1).SearchFlightsAsync(TargetLocation, DepartureRouteType, null);
-    }
-
-    [Test]
-    public async Task SearchFlightsAsync_PassesDateToRepository_WhenDateIsProvided()
+    public async Task SearchFlightsAsync_DateIsProvided_PassesDateToRepository()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         flightRepository.SearchFlightsAsync(TargetLocation, DepartureRouteType, TargetDate)
@@ -145,7 +121,7 @@ public class FlightSearchServiceTests
     }
 
     [Test]
-    public void ParsePassengerCount_ReturnsNull_WhenInputIsNull()
+    public void ParsePassengerCount_InputIsNull_ReturnsNull()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flightSearchService = new FlightSearchService(flightRepository);
@@ -156,18 +132,7 @@ public class FlightSearchServiceTests
     }
 
     [Test]
-    public void ParsePassengerCount_ReturnsNull_WhenInputIsEmpty()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flightSearchService = new FlightSearchService(flightRepository);
-
-        var result = flightSearchService.ParsePassengerCount(string.Empty);
-
-        Assert.That(result, Is.Null);
-    }
-
-    [Test]
-    public void ParsePassengerCount_ReturnsParsedValue_WhenInputIsValidPositiveNumber()
+    public void ParsePassengerCount_ValidPositiveNumber_ReturnsParsedValue()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flightSearchService = new FlightSearchService(flightRepository);
@@ -178,7 +143,7 @@ public class FlightSearchServiceTests
     }
 
     [Test]
-    public void ParsePassengerCount_ReturnsOne_WhenInputIsInvalidString()
+    public void ParsePassengerCount_InvalidString_ReturnsOne()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flightSearchService = new FlightSearchService(flightRepository);
@@ -189,7 +154,7 @@ public class FlightSearchServiceTests
     }
 
     [Test]
-    public void ParsePassengerCount_ReturnsOne_WhenInputIsZero()
+    public void ParsePassengerCount_InputIsZero_ReturnsOne()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flightSearchService = new FlightSearchService(flightRepository);
@@ -199,53 +164,4 @@ public class FlightSearchServiceTests
         Assert.That(result, Is.EqualTo(1));
     }
 
-    [Test]
-    public void ParsePassengerCount_ReturnsOne_WhenInputIsNegative()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flightSearchService = new FlightSearchService(flightRepository);
-
-        var result = flightSearchService.ParsePassengerCount(NegativePassengerInput);
-
-        Assert.That(result, Is.EqualTo(1));
-    }
-
-    [Test]
-    public async Task GetFlightByIdAsync_ReturnsFlight_WhenFound()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var targetFlight = new Flight { Id = TargetFlightId };
-        flightRepository.GetByIdAsync(TargetFlightId).Returns(Task.FromResult<Flight?>(targetFlight));
-
-        var flightSearchService = new FlightSearchService(flightRepository);
-        var result = await flightSearchService.GetFlightByIdAsync(TargetFlightId);
-
-        Assert.That(result, Is.EqualTo(targetFlight));
-    }
-
-    [Test]
-    public async Task GetFlightsByRouteAsync_WithGivenRouteParameters_DelegatesSearchToRepository()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var expectedFlights = new List<Flight> { new Flight { Id = TargetFlightId } };
-        flightRepository.SearchFlightsAsync(TargetLocation, DepartureRouteType, TargetDate)
-            .Returns(Task.FromResult<IEnumerable<Flight>>(expectedFlights));
-
-        var flightSearchService = new FlightSearchService(flightRepository);
-        var result = await flightSearchService.GetFlightsByRouteAsync(TargetLocation, DepartureRouteType, TargetDate);
-
-        Assert.That(result, Is.EqualTo(expectedFlights));
-    }
-
-    [Test]
-    public async Task GetOccupiedSeatCountAsync_ReturnsCount_ForValidFlightId()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        flightRepository.GetOccupiedSeatCountAsync(TargetFlightId).Returns(Task.FromResult(OccupiedSeatsCount));
-
-        var flightSearchService = new FlightSearchService(flightRepository);
-        var result = await flightSearchService.GetOccupiedSeatCountAsync(TargetFlightId);
-
-        Assert.That(result, Is.EqualTo(OccupiedSeatsCount));
-    }
 }

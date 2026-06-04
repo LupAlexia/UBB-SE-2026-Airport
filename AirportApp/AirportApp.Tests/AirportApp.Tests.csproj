@@ -29,8 +29,4 @@
     <ProjectReference Include="..\AirportApp.ClassLibrary\AirportApp.ClassLibrary.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Integration\" />
-  </ItemGroup>
-
 </Project>

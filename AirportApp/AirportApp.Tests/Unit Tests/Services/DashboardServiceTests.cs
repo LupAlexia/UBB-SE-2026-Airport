@@ -21,7 +21,7 @@ public class DashboardServiceTests
         new FlightTicket { Flight = null! };
 
     [Test]
-    public async Task GetUserTicketsAsync_ExcludesTicketsWithNullFlight_WhenSomeTicketsHaveNoFlight()
+    public async Task GetUserTicketsAsync_SomeTicketsHaveNoFlight_ExcludesTicketsWithNullFlight()
     {
         var ticketRepository = Substitute.For<IFlightTicketRepository>();
         var tickets = new List<FlightTicket>
@@ -39,7 +39,7 @@ public class DashboardServiceTests
     }
 
     [Test]
-    public async Task GetUserTicketsAsync_ReturnsOnlyPastFlights_WhenFilterIsPast()
+    public async Task GetUserTicketsAsync_FilterIsPast_ReturnsOnlyPastFlights()
     {
         var ticketRepository = Substitute.For<IFlightTicketRepository>();
         var tickets = new List<FlightTicket>
@@ -57,7 +57,7 @@ public class DashboardServiceTests
     }
 
     [Test]
-    public async Task GetUserTicketsAsync_ReturnsOnlyUpcomingFlights_WhenFilterIsNotPast()
+    public async Task GetUserTicketsAsync_FilterIsNotPast_ReturnsOnlyUpcomingFlights()
     {
         var ticketRepository = Substitute.For<IFlightTicketRepository>();
         var tickets = new List<FlightTicket>
@@ -75,7 +75,7 @@ public class DashboardServiceTests
     }
 
     [Test]
-    public async Task GetUserTicketsAsync_ReturnsPastFlightsOrderedDescending_WhenFilterIsPast()
+    public async Task GetUserTicketsAsync_FilterIsPastWithMultipleFlights_ReturnsPastFlightsOrderedDescending()
     {
         var ticketRepository = Substitute.For<IFlightTicketRepository>();
         var tickets = new List<FlightTicket>
@@ -93,7 +93,7 @@ public class DashboardServiceTests
     }
 
     [Test]
-    public async Task GetUserTicketsAsync_ReturnsUpcomingFlightsOrderedAscending_WhenFilterIsNotPast()
+    public async Task GetUserTicketsAsync_FilterIsNotPastWithMultipleFlights_ReturnsUpcomingFlightsOrderedAscending()
     {
         var ticketRepository = Substitute.For<IFlightTicketRepository>();
         var tickets = new List<FlightTicket>
@@ -111,7 +111,7 @@ public class DashboardServiceTests
     }
 
     [Test]
-    public async Task GetUserTicketsAsync_IsCaseInsensitive_WhenFilterCaseVaries()
+    public async Task GetUserTicketsAsync_FilterCaseVaries_IsCaseInsensitive()
     {
         var ticketRepository = Substitute.For<IFlightTicketRepository>();
         var tickets = new List<FlightTicket>

@@ -9,14 +9,16 @@ public class AdministratorRepository(AppDbContext databaseContext) : IAdministra
 {
     public async Task<IEnumerable<Administrator>> GetAsync()
     {
-        return await databaseContext.Administrators
+        return await databaseContext.Senders
+            .OfType<Administrator>()
             .AsNoTracking()
             .ToListAsync();
     }
 
     public async Task<Administrator?> GetByIdAsync(int administratorId)
     {
-        var administrator = await databaseContext.Administrators
+        var administrator = await databaseContext.Senders
+            .OfType<Administrator>()
             .FirstOrDefaultAsync(admin => admin.Id == administratorId);
 
         if (administrator is null)
@@ -35,7 +37,7 @@ public class AdministratorRepository(AppDbContext databaseContext) : IAdministra
         }
 
         administrator.Id = 0;
-        databaseContext.Administrators.Add(administrator);
+        databaseContext.Senders.Add(administrator);
         await databaseContext.SaveChangesAsync();
 
         return administrator.Id;
@@ -48,7 +50,8 @@ public class AdministratorRepository(AppDbContext databaseContext) : IAdministra
             throw new ArgumentNullException(nameof(administrator));
         }
 
-        var existingAdministrator = await databaseContext.Administrators
+        var existingAdministrator = await databaseContext.Senders
+            .OfType<Administrator>()
             .FirstOrDefaultAsync(admin => admin.Id == administrator.Id);
 
         if (existingAdministrator is not null)
@@ -62,12 +65,13 @@ public class AdministratorRepository(AppDbContext databaseContext) : IAdministra
 
     public async Task DeleteAsync(int administratorId)
     {
-        var administratorToRemove = await databaseContext.Administrators
+        var administratorToRemove = await databaseContext.Senders
+            .OfType<Administrator>()
             .FirstOrDefaultAsync(admin => admin.Id == administratorId);
 
         if (administratorToRemove is not null)
         {
-            databaseContext.Administrators.Remove(administratorToRemove);
+            databaseContext.Senders.Remove(administratorToRemove);
             await databaseContext.SaveChangesAsync();
         }
     }

@@ -63,7 +63,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public void AssignEmployeeToFlightUsingIdsAsync_ThrowsArgumentException_WhenFlightIdIsInvalid()
+    public void AssignEmployeeToFlightUsingIdsAsync_FlightIdIsInvalid_ThrowsArgumentException()
     {
         var service = CreateTestService();
 
@@ -72,7 +72,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public void AssignEmployeeToFlightUsingIdsAsync_ThrowsArgumentException_WhenEmployeeIdIsInvalid()
+    public void AssignEmployeeToFlightUsingIdsAsync_EmployeeIdIsInvalid_ThrowsArgumentException()
     {
         var service = CreateTestService();
 
@@ -81,7 +81,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public void AssignEmployeeToFlightUsingIdsAsync_ThrowsInvalidOperationException_WhenEmployeeDoesNotExist()
+    public void AssignEmployeeToFlightUsingIdsAsync_EmployeeDoesNotExist_ThrowsInvalidOperationException()
     {
         var employeeRepository = Substitute.For<IEmployeeRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -95,7 +95,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public void AssignEmployeeToFlightUsingIdsAsync_ThrowsInvalidOperationException_WhenFlightDoesNotExist()
+    public void AssignEmployeeToFlightUsingIdsAsync_FlightDoesNotExist_ThrowsInvalidOperationException()
     {
         var employeeRepository = Substitute.For<IEmployeeRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -109,7 +109,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public void AssignEmployeeToFlightUsingIdsAsync_ThrowsInvalidOperationException_WhenEmployeeIsAlreadyAssigned()
+    public void AssignEmployeeToFlightUsingIdsAsync_EmployeeIsAlreadyAssigned_ThrowsInvalidOperationException()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var employeeRepository = Substitute.For<IEmployeeRepository>();
@@ -131,7 +131,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task AssignEmployeeToFlightUsingIdsAsync_CallsRepository_WhenArgumentsAndScheduleAreValid()
+    public async Task AssignEmployeeToFlightUsingIdsAsync_ArgumentsAndScheduleAreValid_CallsRepository()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var employeeRepository = Substitute.For<IEmployeeRepository>();
@@ -165,7 +165,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task RemoveEmployeeFromFlightUsingIdsAsync_CallsRepository_WithCorrectIds()
+    public async Task RemoveEmployeeFromFlightUsingIdsAsync_WithCorrectIds_CallsRepository()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         employeeFlightRepository.UnassignAsync(Arg.Any<int>(), Arg.Any<int>()).Returns(Task.CompletedTask);
@@ -177,7 +177,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task RemoveAllCrewAssignmentsForFlightAsync_CallsRepository_WhenIdIsValid()
+    public async Task RemoveAllCrewAssignmentsForFlightAsync_IdIsValid_CallsRepository()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         employeeFlightRepository.DeleteByFlightIdAsync(TargetFlightId).Returns(Task.CompletedTask);
@@ -189,7 +189,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task RemoveAllCrewAssignmentsForFlightAsync_DoesNotCallRepository_WhenIdIsInvalid()
+    public async Task RemoveAllCrewAssignmentsForFlightAsync_IdIsInvalid_DoesNotCallRepository()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
 
@@ -200,7 +200,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task RemoveAllFlightsAssignmentsForEmployeeAsync_CallsRepository_WhenIdIsValid()
+    public async Task RemoveAllFlightsAssignmentsForEmployeeAsync_IdIsValid_CallsRepository()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         employeeFlightRepository.DeleteByEmployeeIdAsync(TargetEmployeeId).Returns(Task.CompletedTask);
@@ -212,7 +212,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task RemoveAllFlightsAssignmentsForEmployeeAsync_DoesNotCallRepository_WhenIdIsInvalid()
+    public async Task RemoveAllFlightsAssignmentsForEmployeeAsync_IdIsInvalid_DoesNotCallRepository()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
 
@@ -223,7 +223,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task GetEmployeesAssignedToFlightAsync_ReturnsOnlyExistingEmployees_WhenSomeIdsAreNotFound()
+    public async Task GetEmployeesAssignedToFlightAsync_SomeIdsAreNotFound_ReturnsOnlyExistingEmployees()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var employeeRepository = Substitute.For<IEmployeeRepository>();
@@ -246,7 +246,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task GetEmployeeScheduleAsync_ReturnsEmptyList_WhenEmployeeIdIsInvalid()
+    public async Task GetEmployeeScheduleAsync_EmployeeIdIsInvalid_ReturnsEmptyList()
     {
         var service = CreateTestService();
 
@@ -256,7 +256,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task GetEmployeeScheduleAsync_SkipsNullFlights_WhenRepositoryReturnsNullForId()
+    public async Task GetEmployeeScheduleAsync_RepositoryReturnsNullForId_SkipsNullFlights()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -279,7 +279,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task IsEmployeeAvailableAsync_ReturnsFalse_WhenTargetRouteIsNotFound()
+    public async Task IsEmployeeAvailableAsync_TargetRouteIsNotFound_ReturnsFalse()
     {
         var routeRepository = Substitute.For<IRouteRepository>();
         routeRepository.GetByIdAsync(TargetRouteId).Returns(Task.FromResult<Route?>(null));
@@ -291,7 +291,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task IsEmployeeAvailableAsync_ReturnsTrue_WhenNoFlightsOverlap()
+    public async Task IsEmployeeAvailableAsync_NoFlightsOverlap_ReturnsTrue()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var routeRepository = Substitute.For<IRouteRepository>();
@@ -317,7 +317,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task IsEmployeeAvailableAsync_ReturnsFalse_WhenFlightTimesOverlap()
+    public async Task IsEmployeeAvailableAsync_FlightTimesOverlap_ReturnsFalse()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -354,7 +354,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task IsEmployeeAvailableAsync_ReturnsTrue_WhenConflictMatchesExcludedFlightId()
+    public async Task IsEmployeeAvailableAsync_ConflictMatchesExcludedFlightId_ReturnsTrue()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -379,7 +379,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task IsEmployeeAvailableAsync_ReturnsTrue_WhenExistingFlightIsOnDifferentDate()
+    public async Task IsEmployeeAvailableAsync_ExistingFlightIsOnDifferentDate_ReturnsTrue()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -409,7 +409,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task IsEmployeeAvailableAsync_ReturnsTrue_WhenExistingFlightRouteIsNull()
+    public async Task IsEmployeeAvailableAsync_ExistingFlightRouteIsNull_ReturnsTrue()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -440,7 +440,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task AssignEmpolyeesToFlightUsingIdsAsync_ContinuesProcessing_WhenPartialFailureOccurs()
+    public async Task AssignEmpolyeesToFlightUsingIdsAsync_PartialFailureOccurs_ContinuesProcessing()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var employeeRepository = Substitute.For<IEmployeeRepository>();
@@ -491,7 +491,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task GetFormattedEmployeeScheduleAsync_ReturnsEmptyList_WhenIdIsInvalid()
+    public async Task GetFormattedEmployeeScheduleAsync_IdIsInvalid_ReturnsEmptyList()
     {
         var service = CreateTestService();
 
@@ -501,7 +501,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public async Task GetFormattedEmployeeScheduleAsync_UsesDefaultPlaceholders_WhenGateAndRunwayAreNull()
+    public async Task GetFormattedEmployeeScheduleAsync_GateAndRunwayAreNull_UsesDefaultPlaceholders()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -656,7 +656,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public void FormatCrewList_ReturnsUnassigned_WhenNoCrewIsAssigned()
+    public void FormatCrewList_NoCrewIsAssigned_ReturnsUnassigned()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         employeeFlightRepository.GetEmployeeIdsByFlightIdAsync(TargetFlightId)
@@ -670,7 +670,7 @@ public class EmployeeFlightServiceTests
     }
 
     [Test]
-    public void FormatCrewList_ReturnsFormattedNames_WhenCrewIsAssigned()
+    public void FormatCrewList_CrewIsAssigned_ReturnsFormattedNames()
     {
         var employeeFlightRepository = Substitute.For<IEmployeeFlightRepository>();
         var employeeRepository = Substitute.For<IEmployeeRepository>();

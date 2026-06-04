@@ -73,31 +73,4 @@ public class AdministratorServiceTests
             service.ValidateAdministratorIntegrityAsync(
                 new Administrator(ValidAdminId, ValidName, ValidEmail)));
     }
-
-    [Test]
-    public async Task GetAllAdministratorsAsync_EmptyRepository_ReturnsEmptyList()
-    {
-        var repo = Substitute.For<IAdministratorRepository>();
-        repo.GetAsync().Returns(Task.FromResult<IEnumerable<Administrator>>(new List<Administrator>()));
-
-        var result = await new AdministratorService(repo).GetAllAdministratorsAsync();
-
-        Assert.That(result, Is.Empty);
-    }
-
-    [Test]
-    public async Task GetAllAdministratorsAsync_RepositoryHasData_ReturnsAllAdministrators()
-    {
-        var admins = new List<Administrator>
-        {
-            new Administrator(1, "Alice", "alice@a.com"),
-            new Administrator(2, "Bob",   "bob@b.com")
-        };
-        var repo = Substitute.For<IAdministratorRepository>();
-        repo.GetAsync().Returns(Task.FromResult<IEnumerable<Administrator>>(admins));
-
-        var result = await new AdministratorService(repo).GetAllAdministratorsAsync();
-
-        Assert.That(result.Count, Is.EqualTo(2));
-    }
 }

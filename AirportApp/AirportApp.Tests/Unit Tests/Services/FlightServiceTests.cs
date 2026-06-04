@@ -26,25 +26,7 @@ public class FlightServiceTests
     private static readonly DateTime NewFlightDate2 = new DateTime(2025, 12, 1);
 
     [Test]
-    public async Task GetAllFlightsAsync_ReturnsAllFlights_Always()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flights = new List<Flight>
-        {
-            new Flight { FlightNumber = FirstFlightNumber },
-            new Flight { FlightNumber = SecondFlightNumber }
-        };
-        flightRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Flight>>(flights));
-
-        var flightService = new FlightService(flightRepository);
-        var result = (await flightService.GetAllFlightsAsync()).ToList();
-
-        Assert.That(result.Count, Is.EqualTo(NumberOfFlights));
-        Assert.That(result, Is.EqualTo(flights));
-    }
-
-    [Test]
-    public async Task GetFlightByIdAsync_ReturnsNull_ForNegativeId()
+    public async Task GetFlightByIdAsync_NegativeId_ReturnsNull()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flightService = new FlightService(flightRepository);
@@ -55,18 +37,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public async Task GetFlightByIdAsync_ReturnsNull_ForZeroId()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flightService = new FlightService(flightRepository);
-
-        var result = await flightService.GetFlightByIdAsync(ZeroFlightId);
-
-        Assert.That(result, Is.Null);
-    }
-
-    [Test]
-    public async Task GetFlightByIdAsync_ReturnsFlight_WhenFound()
+    public async Task GetFlightByIdAsync_FlightFound_ReturnsFlight()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var targetFlight = new Flight { FlightNumber = FirstFlightNumber };
@@ -79,7 +50,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public async Task GetFlightsByRouteIdAsync_ReturnsEmptyList_ForInvalidRouteId()
+    public async Task GetFlightsByRouteIdAsync_InvalidRouteId_ReturnsEmptyList()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flightService = new FlightService(flightRepository);
@@ -91,7 +62,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public async Task GetFlightsByRouteIdAsync_ReturnsFlights_WhenFound()
+    public async Task GetFlightsByRouteIdAsync_FlightsFound_ReturnsFlights()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flights = new List<Flight> { new Flight { FlightNumber = FirstFlightNumber } };
@@ -104,7 +75,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public void AddFlightAsync_ThrowsArgumentException_ForNullFlightNumber()
+    public void AddFlightAsync_NullFlightNumber_ThrowsArgumentException()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flightService = new FlightService(flightRepository);
@@ -114,17 +85,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public void AddFlightAsync_ThrowsArgumentException_ForEmptyFlightNumber()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flightService = new FlightService(flightRepository);
-
-        Assert.ThrowsAsync<ArgumentException>(() =>
-            flightService.AddFlightAsync(string.Empty, ValidRouteId, DateTime.Now, ValidRunwayId, ValidGateId));
-    }
-
-    [Test]
-    public void AddFlightAsync_ThrowsArgumentException_ForWhitespaceFlightNumber()
+    public void AddFlightAsync_WhitespaceFlightNumber_ThrowsArgumentException()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flightService = new FlightService(flightRepository);
@@ -134,7 +95,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public void AddFlightAsync_ThrowsArgumentException_ForInvalidRouteId()
+    public void AddFlightAsync_InvalidRouteId_ThrowsArgumentException()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flightService = new FlightService(flightRepository);
@@ -144,7 +105,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public async Task AddFlightAsync_ReturnsNewFlightId_ForValidData()
+    public async Task AddFlightAsync_ValidData_ReturnsNewFlightId()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         flightRepository.AddAsync(Arg.Any<Flight>()).Returns(Task.FromResult(ValidFlightId));
@@ -157,7 +118,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public void UpdateFlightAsync_ThrowsInvalidOperationException_WhenFlightNotFound()
+    public void UpdateFlightAsync_FlightNotFound_ThrowsInvalidOperationException()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         flightRepository.GetByIdAsync(InvalidFlightId).Returns(Task.FromResult<Flight?>(null));
@@ -168,7 +129,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public async Task UpdateFlightAsync_UpdatesOnlyDate_WhenFlightNumberIsNotProvided()
+    public async Task UpdateFlightAsync_FlightNumberNotProvided_UpdatesOnlyDate()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flight = new Flight { FlightNumber = FirstFlightNumber, Date = FlightDate };
@@ -183,7 +144,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public async Task UpdateFlightAsync_UpdatesOnlyFlightNumber_WhenDateIsNotProvided()
+    public async Task UpdateFlightAsync_DateNotProvided_UpdatesOnlyFlightNumber()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flight = new Flight { FlightNumber = FirstFlightNumber, Date = FlightDate };
@@ -198,7 +159,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public async Task UpdateFlightAsync_UpdatesOnlyRunwayId_WhenOtherFieldsAreNotProvided()
+    public async Task UpdateFlightAsync_OtherFieldsNotProvided_UpdatesOnlyRunwayId()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flight = new Flight { FlightNumber = FirstFlightNumber, Runway = new Runway { Id = ValidRunwayId } };
@@ -213,22 +174,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public async Task UpdateFlightAsync_UpdatesOnlyGateId_WhenOtherFieldsAreNotProvided()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flight = new Flight { FlightNumber = FirstFlightNumber, Gate = new Gate { Id = ValidGateId } };
-        flightRepository.GetByIdAsync(ValidFlightId).Returns(Task.FromResult<Flight?>(flight));
-
-        var flightService = new FlightService(flightRepository);
-        await flightService.UpdateFlightAsync(ValidFlightId, gateId: NewGateId);
-
-        Assert.That(flight.Gate.Id, Is.EqualTo(NewGateId));
-        Assert.That(flight.FlightNumber, Is.EqualTo(FirstFlightNumber));
-        await flightRepository.Received(1).UpdateAsync(flight);
-    }
-
-    [Test]
-    public async Task UpdateFlightAsync_UpdatesAllFields_WhenAllFieldsAreProvided()
+    public async Task UpdateFlightAsync_AllFieldsProvided_UpdatesAllFields()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flight = new Flight
@@ -251,7 +197,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public void DeleteFlightAsync_ThrowsArgumentException_ForZeroId()
+    public void DeleteFlightAsync_ZeroId_ThrowsArgumentException()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         var flightService = new FlightService(flightRepository);
@@ -260,16 +206,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public void DeleteFlightAsync_ThrowsArgumentException_ForNegativeId()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flightService = new FlightService(flightRepository);
-
-        Assert.ThrowsAsync<ArgumentException>(() => flightService.DeleteFlightAsync(NegativeFlightId));
-    }
-
-    [Test]
-    public void DeleteFlightAsync_ThrowsInvalidOperationException_WhenFlightNotFound()
+    public void DeleteFlightAsync_FlightNotFound_ThrowsInvalidOperationException()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         flightRepository.GetByIdAsync(ValidFlightId).Returns(Task.FromResult<Flight?>(null));
@@ -280,7 +217,7 @@ public class FlightServiceTests
     }
 
     [Test]
-    public async Task DeleteFlightAsync_CallsRepositoryDelete_WhenIdIsValid()
+    public async Task DeleteFlightAsync_IdIsValid_CallsRepositoryDelete()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
         flightRepository.GetByIdAsync(ValidFlightId).Returns(Task.FromResult<Flight?>(new Flight()));

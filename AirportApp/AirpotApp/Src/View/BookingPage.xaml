@@ -8,9 +8,9 @@
     xmlns:vm="using:AirportApp.Src.ViewModel"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
-
-    <Grid Padding="24" Background="{StaticResource PageBackgroundBrush}">
+    mc:Ignorable="d"
+    RequestedTheme="Light">
+    <Grid Padding="24" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="1*"/>
@@ -20,18 +20,19 @@
             <StackPanel>
                 <TextBlock Text="Complete Your Booking" FontSize="28" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,20"/>
 
-                <Border BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,20">
+                <Border BorderBrush="#2bb8c0" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,20">
                     <StackPanel>
                         <TextBlock Text="Passengers" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
                         <TextBlock Margin="0,0,0,10" Foreground="{StaticResource SecondaryTextBrush}">
                             <Run Text="Maximum passengers for this booking: "/>
-                            <Run Text="{x:Bind ViewModel.MaximumPassengers, Mode=OneWay}"/>
+                            <Run Text="{x:Bind ViewModel.MaximumPassengers, Mode=OneWay, FallbackValue='0'}"/>
                         </TextBlock>
+
                         <ItemsControl ItemsSource="{x:Bind ViewModel.Passengers, Mode=OneWay}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="vm:PassengerFormViewModel">
-                                    <StackPanel Margin="0,0,0,15" Background="{StaticResource InputBackgroundBrush}" Padding="10" CornerRadius="8">
-                                        <TextBlock Text="Passenger Details" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                                    <StackPanel Margin="0,0,0,15" Background="#1A2bb8c0" Padding="10" CornerRadius="8">
+                                        <TextBlock Text="Passenger Details" FontWeight="SemiBold" Margin="0,0,0,10" Foreground="#333333"/>
                                         <Grid RowSpacing="10" ColumnSpacing="10">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
@@ -47,26 +48,28 @@
                                             <TextBox Header="Email" Text="{x:Bind Email, Mode=TwoWay}" Grid.Row="1" Grid.Column="0"/>
                                             <TextBox Header="Phone" Text="{x:Bind Phone, Mode=TwoWay}" Grid.Row="1" Grid.Column="1"/>
                                         </Grid>
+
                                         <StackPanel Margin="0,10,0,0">
-                                            <TextBlock Text="Add-Ons:" FontWeight="SemiBold" Margin="0,0,0,5" />
+                                            <TextBlock Text="Add-Ons:" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="#333333" />
                                             <ListView ItemsSource="{Binding ElementName=RootPage, Path=ViewModel.AvailableAddOns}"
                                                       SelectionMode="Multiple"
                                                       SelectionChanged="AddOnList_SelectionChanged"
                                                       Tag="{Binding}" MaxHeight="100">
                                                 <ListView.ItemTemplate>
                                                     <DataTemplate>
-                                                        <TextBlock>
+                                                        <TextBlock Foreground="#333333">
                                                             <Run Text="{Binding Name}" /> - <Run Text="{Binding BasePrice}" /> €
                                                         </TextBlock>
                                                     </DataTemplate>
                                                 </ListView.ItemTemplate>
                                             </ListView>
                                         </StackPanel>
+
                                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                            <TextBlock Text="Selected Seat: " VerticalAlignment="Center"/>
-                                            <TextBlock Text="{x:Bind SelectedSeat, Mode=OneWay}" FontWeight="Bold" Margin="5,0,10,0" VerticalAlignment="Center"/>
-                                            <Button Content="Remove Passenger"
-                                                    Command="{Binding ElementName=RootPage, Path=ViewModel.RemovePassengerCommand}"
+                                            <TextBlock Text="Selected Seat: " VerticalAlignment="Center" Foreground="#333333"/>
+                                            <TextBlock Text="{x:Bind SelectedSeat, Mode=OneWay, FallbackValue='None'}" FontWeight="Bold" Margin="5,0,10,0" VerticalAlignment="Center" Foreground="#2bb8c0"/>
+                                            <Button Content="Remove Passenger" 
+                                                    Command="{Binding ElementName=RootPage, Path=ViewModel.RemovePassengerCommand}" 
                                                     IsEnabled="{Binding ElementName=RootPage, Path=ViewModel.CanRemovePassenger}"
                                                     CommandParameter="{Binding}"
                                                     Background="{StaticResource ErrorBrush}" Foreground="White" CornerRadius="4"/>
@@ -80,7 +83,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,20">
+                <Border BorderBrush="#2bb8c0" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,20">
                     <StackPanel>
                         <TextBlock Text="Interactive Seat Map" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
                         <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,10" VerticalAlignment="Center">
@@ -101,35 +104,35 @@
             </StackPanel>
         </ScrollViewer>
 
-        <Border Grid.Column="1" BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Background="{StaticResource InputBackgroundBrush}" VerticalAlignment="Top">
+        <Border Grid.Column="1" BorderBrush="#2bb8c0" BorderThickness="1" CornerRadius="8" Padding="16" Background="#f8fcfc" VerticalAlignment="Top">
             <StackPanel>
-                <TextBlock Text="Order Summary" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,20" Foreground="{StaticResource PrimaryTextBrush}"/>
+                <TextBlock Text="Order Summary" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,20" Foreground="#333333"/>
 
                 <Grid Margin="0,5">
-                    <TextBlock Text="Base Price / person:" HorizontalAlignment="Left"/>
-                    <TextBlock Text="{x:Bind ViewModel.BasePricePerPersonDisplay, Mode=OneWay}" HorizontalAlignment="Right" FontWeight="Bold"/>
+                    <TextBlock Text="Base Price / person:" HorizontalAlignment="Left" Foreground="#333333"/>
+                    <TextBlock Text="{x:Bind ViewModel.BasePricePerPersonDisplay, Mode=OneWay, FallbackValue='0.00 €'}" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#333333"/>
                 </Grid>
 
                 <Grid Margin="0,5">
-                    <TextBlock Text="Base Total:" HorizontalAlignment="Left"/>
-                    <TextBlock Text="{x:Bind ViewModel.BasePriceTotalDisplay, Mode=OneWay}" HorizontalAlignment="Right" FontWeight="Bold"/>
+                    <TextBlock Text="Base Total:" HorizontalAlignment="Left" Foreground="#333333"/>
+                    <TextBlock Text="{x:Bind ViewModel.BasePriceTotalDisplay, Mode=OneWay, FallbackValue='0.00 €'}" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#333333"/>
                 </Grid>
 
                 <Grid Margin="0,5">
-                    <TextBlock Text="Add-ons:" HorizontalAlignment="Left"/>
-                    <TextBlock Text="{x:Bind ViewModel.AddOnsTotalDisplay, Mode=OneWay}" HorizontalAlignment="Right" FontWeight="Bold"/>
+                    <TextBlock Text="Add-ons:" HorizontalAlignment="Left" Foreground="#333333"/>
+                    <TextBlock Text="{x:Bind ViewModel.AddOnsTotalDisplay, Mode=OneWay, FallbackValue='0.00 €'}" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#333333"/>
                 </Grid>
 
                 <Grid Margin="0,5">
-                    <TextBlock Text="Membership saves:" HorizontalAlignment="Left"/>
-                    <TextBlock Text="{x:Bind ViewModel.MembershipSavingsDisplay, Mode=OneWay}" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
+                    <TextBlock Text="Membership saves:" HorizontalAlignment="Left" Foreground="#333333"/>
+                    <TextBlock Text="{x:Bind ViewModel.MembershipSavingsDisplay, Mode=OneWay, FallbackValue='0.00 €'}" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#2bb8c0"/>
                 </Grid>
 
                 <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,10"/>
 
                 <Grid Margin="0,5">
-                    <TextBlock Text="TOTAL:" FontSize="18" FontWeight="Bold" HorizontalAlignment="Left" Foreground="{StaticResource PrimaryTextBrush}"/>
-                    <TextBlock Text="{x:Bind ViewModel.FinalTotalPriceDisplay, Mode=OneWay}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Right" Foreground="{StaticResource PrimaryBrush}"/>
+                    <TextBlock Text="TOTAL:" FontSize="18" FontWeight="Bold" HorizontalAlignment="Left" Foreground="#333333"/>
+                    <TextBlock Text="{x:Bind ViewModel.FinalTotalPriceDisplay, Mode=OneWay, FallbackValue='0.00 €'}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Right" Foreground="#2bb8c0"/>
                 </Grid>
 
                 <Button Content="Confirm Booking"
@@ -143,6 +146,5 @@
                            Margin="0,10,0,0"/>
             </StackPanel>
         </Border>
-
     </Grid>
 </Page>

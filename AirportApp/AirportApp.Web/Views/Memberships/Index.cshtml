@@ -4,6 +4,8 @@
     ViewData["Title"] = "Memberships";
 }
 
+@await Html.PartialAsync("~/Views/FlightTickets/_FlightTicketsNav.cshtml", "Memberships")
+
 <h1>Available Memberships</h1>
 
 @if (TempData["SuccessMessage"] != null)

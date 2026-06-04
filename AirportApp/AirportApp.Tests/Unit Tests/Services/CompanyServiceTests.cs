@@ -9,9 +9,9 @@ namespace AirportApp.Tests.Unit_Tests.Services;
 [TestFixture]
 public class CompanyServiceTests
 {
-    private const int    ValidCompanyId           = 7;
-    private const string ValidCompanyName          = "Sky Airlines";
-    private const int    StartingFlightSequenceNumber = 1000;
+    private const int ValidCompanyId = 7;
+    private const string ValidCompanyName = "Sky Airlines";
+    private const int StartingFlightSequenceNumber = 1000;
 
     private static Company MakeCompany(int id = ValidCompanyId, string name = ValidCompanyName) =>
         new Company(id, name);

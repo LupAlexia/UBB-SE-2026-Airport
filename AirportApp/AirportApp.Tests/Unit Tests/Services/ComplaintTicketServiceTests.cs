@@ -25,7 +25,7 @@ public class ComplaintTicketServiceTests
         new ComplaintTicketSubcategory(1, "Long delay", 0, CreateCategory(parentCategoryId));
 
     [Test]
-    public void CreateTicketAsync_ThrowsArgumentNullException_WhenCreatorIsNull()
+    public void CreateTicketAsync_CreatorIsNull_ThrowsArgumentNullException()
     {
         var ticketRepository = Substitute.For<IComplaintTicketRepository>();
         var service = new ComplaintTicketService(ticketRepository);
@@ -36,7 +36,7 @@ public class ComplaintTicketServiceTests
     }
 
     [Test]
-    public void CreateTicketAsync_ThrowsArgumentNullException_WhenCategoryIsNull()
+    public void CreateTicketAsync_CategoryIsNull_ThrowsArgumentNullException()
     {
         var ticketRepository = Substitute.For<IComplaintTicketRepository>();
         var service = new ComplaintTicketService(ticketRepository);
@@ -47,7 +47,7 @@ public class ComplaintTicketServiceTests
     }
 
     [Test]
-    public void CreateTicketAsync_ThrowsArgumentNullException_WhenSubcategoryIsNull()
+    public void CreateTicketAsync_SubcategoryIsNull_ThrowsArgumentNullException()
     {
         var ticketRepository = Substitute.For<IComplaintTicketRepository>();
         var service = new ComplaintTicketService(ticketRepository);
@@ -58,7 +58,7 @@ public class ComplaintTicketServiceTests
     }
 
     [Test]
-    public void CreateTicketAsync_ThrowsArgumentNullException_WhenSubjectIsEmpty()
+    public void CreateTicketAsync_SubjectIsEmpty_ThrowsArgumentNullException()
     {
         var ticketRepository = Substitute.For<IComplaintTicketRepository>();
         var service = new ComplaintTicketService(ticketRepository);
@@ -69,7 +69,7 @@ public class ComplaintTicketServiceTests
     }
 
     [Test]
-    public void CreateTicketAsync_ThrowsArgumentNullException_WhenDescriptionIsWhitespace()
+    public void CreateTicketAsync_DescriptionIsWhitespace_ThrowsArgumentNullException()
     {
         var ticketRepository = Substitute.For<IComplaintTicketRepository>();
         var service = new ComplaintTicketService(ticketRepository);
@@ -80,7 +80,7 @@ public class ComplaintTicketServiceTests
     }
 
     [Test]
-    public void CreateTicketAsync_ThrowsArgumentException_WhenSubcategoryDoesNotBelongToCategory()
+    public void CreateTicketAsync_SubcategoryDoesNotBelongToCategory_ThrowsArgumentException()
     {
         var ticketRepository = Substitute.For<IComplaintTicketRepository>();
         var service = new ComplaintTicketService(ticketRepository);
@@ -93,7 +93,7 @@ public class ComplaintTicketServiceTests
     }
 
     [Test]
-    public async Task CreateTicketAsync_CallsRepositoryAdd_WhenDataIsValid()
+    public async Task CreateTicketAsync_DataIsValid_CallsRepositoryAdd()
     {
         var ticketRepository = Substitute.For<IComplaintTicketRepository>();
         var service = new ComplaintTicketService(ticketRepository);
@@ -105,7 +105,7 @@ public class ComplaintTicketServiceTests
     }
 
     [Test]
-    public void GetTicketByIdAsync_ThrowsKeyNotFoundException_WhenTicketDoesNotExist()
+    public void GetTicketByIdAsync_TicketDoesNotExist_ThrowsKeyNotFoundException()
     {
         var ticketRepository = Substitute.For<IComplaintTicketRepository>();
         ticketRepository.GetByIdAsync(InvalidTicketId).Returns(Task.FromResult<ComplaintTicket?>(null));
@@ -115,7 +115,7 @@ public class ComplaintTicketServiceTests
     }
 
     [Test]
-    public async Task GetTicketByIdAsync_ReturnsTicket_WhenTicketExists()
+    public async Task GetTicketByIdAsync_TicketExists_ReturnsTicket()
     {
         var ticketRepository = Substitute.For<IComplaintTicketRepository>();
         var ticket = new ComplaintTicket { Id = ValidTicketId, Subject = ValidSubject };
@@ -128,7 +128,7 @@ public class ComplaintTicketServiceTests
     }
 
     [Test]
-    public async Task FilterTicketsByStatusAsync_ReturnsOnlyOpenTickets_WhenFilterIsOpen()
+    public async Task FilterTicketsByStatusAsync_FilterIsOpen_ReturnsOnlyOpenTickets()
     {
         var ticketRepository = Substitute.For<IComplaintTicketRepository>();
         var service = new ComplaintTicketService(ticketRepository);
@@ -146,7 +146,7 @@ public class ComplaintTicketServiceTests
     }
 
     [Test]
-    public async Task FilterTicketsByStatusAsync_ReturnsOnlyInProgressTickets_WhenFilterIsInProgress()
+    public async Task FilterTicketsByStatusAsync_FilterIsInProgress_ReturnsOnlyInProgressTickets()
     {
         var ticketRepository = Substitute.For<IComplaintTicketRepository>();
         var service = new ComplaintTicketService(ticketRepository);
@@ -163,7 +163,7 @@ public class ComplaintTicketServiceTests
     }
 
     [Test]
-    public async Task FilterTicketsByStatusAsync_ReturnsOnlyResolvedTickets_WhenFilterIsResolved()
+    public async Task FilterTicketsByStatusAsync_FilterIsResolved_ReturnsOnlyResolvedTickets()
     {
         var ticketRepository = Substitute.For<IComplaintTicketRepository>();
         var service = new ComplaintTicketService(ticketRepository);
@@ -180,7 +180,7 @@ public class ComplaintTicketServiceTests
     }
 
     [Test]
-    public async Task FilterTicketsByStatusAsync_ReturnsAllTickets_WhenFilterIsAll()
+    public async Task FilterTicketsByStatusAsync_FilterIsAll_ReturnsAllTickets()
     {
         var ticketRepository = Substitute.For<IComplaintTicketRepository>();
         var service = new ComplaintTicketService(ticketRepository);

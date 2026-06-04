@@ -1,7 +1,6 @@
 using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Repository.Interface;
 using AirportApp.ClassLibrary.Service;
-using Microsoft.AspNetCore.Identity;
 using NSubstitute;
 
 namespace AirportApp.Tests.Unit_Tests.Services;
@@ -18,7 +17,7 @@ public class AuthServiceTests
     private static Customer MakeHashedCustomer(string email, string rawPassword)
     {
         var customer = new Customer { Email = email, Username = ValidUsername, Id = ExistingUserId };
-        customer.PasswordHash = new PasswordHasher<Customer>().HashPassword(customer, rawPassword);
+        customer.PasswordHash = rawPassword;
         return customer;
     }
 

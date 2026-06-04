@@ -13,7 +13,7 @@ public class DecisionTreeServiceTests
     private const string NodeQuestionText = "How can we help you?";
 
     [Test]
-    public void GetNodeByIdAsync_ThrowsKeyNotFoundException_WhenNodeDoesNotExist()
+    public void GetNodeByIdAsync_NodeDoesNotExist_ThrowsKeyNotFoundException()
     {
         var decisionTreeRepository = Substitute.For<IDecisionTreeRepository>();
         decisionTreeRepository.GetByIdAsync(InvalidNodeId).Returns(Task.FromResult<FAQNode?>(null));
@@ -23,7 +23,7 @@ public class DecisionTreeServiceTests
     }
 
     [Test]
-    public async Task GetNodeByIdAsync_ReturnsNode_WhenNodeExists()
+    public async Task GetNodeByIdAsync_NodeExists_ReturnsNode()
     {
         var decisionTreeRepository = Substitute.For<IDecisionTreeRepository>();
         var node = new FAQNode(ValidNodeId, NodeQuestionText, new List<FAQOption>(), false);

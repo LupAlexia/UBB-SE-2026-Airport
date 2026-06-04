@@ -6,6 +6,8 @@
     var selectedTicketFilter = ViewBag.SelectedTicketFilter as string ?? "Upcoming";
 }
 
+@await Html.PartialAsync("_FlightTicketsNav", "MyTickets")
+
 <div class="d-flex justify-content-between align-items-end mb-4">
     <div>
         <h1 class="fw-bold text-dark mb-1" style="font-size: 28px;">My Flight Tickets</h1>
@@ -14,7 +16,7 @@
             <p class="text-muted mb-0">Manage your active bookings, cancellations, and generate PDFs.</p>
         }
     </div>
-    <form asp-action="Index" method="get" class="d-flex align-items-center gap-2">
+    <form asp-action="MyTickets" method="get" class="d-flex align-items-center gap-2">
         <label for="ticketFilter" class="form-label mb-0 text-muted">Show:</label>
         <select id="ticketFilter" name="ticketFilter" class="form-select" style="width: 150px;" onchange="this.form.submit()">
             @foreach (var filter in ticketFilters)

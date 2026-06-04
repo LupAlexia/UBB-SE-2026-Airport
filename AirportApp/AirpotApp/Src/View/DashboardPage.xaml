@@ -6,21 +6,30 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:AirportApp.Src.View"
+    xmlns:general="using:AirportApp.Src.View.General"
     xmlns:viewmodel="using:AirportApp.Src.ViewModel"
     mc:Ignorable="d"
     Background="{StaticResource PageBackgroundBrush}">
 
-    <Grid Padding="30">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <general:TravelTicketsNavControl Grid.Row="0" SelectedSection="MyTickets"/>
+
+        <Grid Grid.Row="1" Padding="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
         <TextBlock Grid.Row="0"
-                   Text="{Binding WelcomeMessage}"
-                   FontSize="32"
-                   FontWeight="SemiBold"
-                   Foreground="{StaticResource PrimaryTextBrush}"
+                   Text="{Binding WelcomeMessage}" 
+                   FontSize="32" 
+                   FontWeight="SemiBold" 
                    Margin="0,0,0,20"/>
 
         <Grid Grid.Row="1">
@@ -109,6 +118,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+        </Grid>
         </Grid>
     </Grid>
 </Page>
