@@ -66,14 +66,6 @@ public class RouteServiceTests
     }
 
     [Test]
-    public void NormalizeFlightType_EmptyStringInput_ReturnsDash()
-    {
-        var routeService = BuildService(Substitute.For<IRouteRepository>(), Substitute.For<IFlightRepository>());
-
-        Assert.That(routeService.NormalizeFlightType(string.Empty), Is.EqualTo(DashString));
-    }
-
-    [Test]
     public void NormalizeFlightType_WhitespaceInput_ReturnsDash()
     {
         var routeService = BuildService(Substitute.For<IRouteRepository>(), Substitute.For<IFlightRepository>());

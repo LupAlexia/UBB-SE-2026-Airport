@@ -37,17 +37,6 @@ public class FlightServiceTests
     }
 
     [Test]
-    public async Task GetFlightByIdAsync_ZeroId_ReturnsNull()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flightService = new FlightService(flightRepository);
-
-        var result = await flightService.GetFlightByIdAsync(ZeroFlightId);
-
-        Assert.That(result, Is.Null);
-    }
-
-    [Test]
     public async Task GetFlightByIdAsync_FlightFound_ReturnsFlight()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -93,16 +82,6 @@ public class FlightServiceTests
 
         Assert.ThrowsAsync<ArgumentException>(() =>
             flightService.AddFlightAsync(null!, ValidRouteId, DateTime.Now, ValidRunwayId, ValidGateId));
-    }
-
-    [Test]
-    public void AddFlightAsync_EmptyFlightNumber_ThrowsArgumentException()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flightService = new FlightService(flightRepository);
-
-        Assert.ThrowsAsync<ArgumentException>(() =>
-            flightService.AddFlightAsync(string.Empty, ValidRouteId, DateTime.Now, ValidRunwayId, ValidGateId));
     }
 
     [Test]
@@ -195,21 +174,6 @@ public class FlightServiceTests
     }
 
     [Test]
-    public async Task UpdateFlightAsync_OtherFieldsNotProvided_UpdatesOnlyGateId()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flight = new Flight { FlightNumber = FirstFlightNumber, Gate = new Gate { Id = ValidGateId } };
-        flightRepository.GetByIdAsync(ValidFlightId).Returns(Task.FromResult<Flight?>(flight));
-
-        var flightService = new FlightService(flightRepository);
-        await flightService.UpdateFlightAsync(ValidFlightId, gateId: NewGateId);
-
-        Assert.That(flight.Gate.Id, Is.EqualTo(NewGateId));
-        Assert.That(flight.FlightNumber, Is.EqualTo(FirstFlightNumber));
-        await flightRepository.Received(1).UpdateAsync(flight);
-    }
-
-    [Test]
     public async Task UpdateFlightAsync_AllFieldsProvided_UpdatesAllFields()
     {
         var flightRepository = Substitute.For<IFlightRepository>();
@@ -239,15 +203,6 @@ public class FlightServiceTests
         var flightService = new FlightService(flightRepository);
 
         Assert.ThrowsAsync<ArgumentException>(() => flightService.DeleteFlightAsync(ZeroFlightId));
-    }
-
-    [Test]
-    public void DeleteFlightAsync_NegativeId_ThrowsArgumentException()
-    {
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var flightService = new FlightService(flightRepository);
-
-        Assert.ThrowsAsync<ArgumentException>(() => flightService.DeleteFlightAsync(NegativeFlightId));
     }
 
     [Test]

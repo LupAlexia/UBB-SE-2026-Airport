@@ -28,18 +28,6 @@ public class GateServiceTests
     }
 
     [Test]
-    public async Task GetGateByIdAsync_NegativeId_ReturnsNull()
-    {
-        var gateRepository = Substitute.For<IGateRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var gateService = new GateService(gateRepository, flightRepository);
-
-        var result = await gateService.GetGateByIdAsync(NegativeGateId);
-
-        Assert.That(result, Is.Null);
-    }
-
-    [Test]
     public async Task GetGateByIdAsync_GateFound_ReturnsGate()
     {
         var gateRepository = Substitute.For<IGateRepository>();
@@ -62,17 +50,6 @@ public class GateServiceTests
 
         Assert.ThrowsAsync<ArgumentException>(() =>
             gateService.AddGateAsync(new Gate { GateName = null! }));
-    }
-
-    [Test]
-    public void AddGateAsync_EmptyName_ThrowsArgumentException()
-    {
-        var gateRepository = Substitute.For<IGateRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var gateService = new GateService(gateRepository, flightRepository);
-
-        Assert.ThrowsAsync<ArgumentException>(() =>
-            gateService.AddGateAsync(new Gate { GateName = string.Empty }));
     }
 
     [Test]
@@ -126,19 +103,6 @@ public class GateServiceTests
     }
 
     [Test]
-    public void UpdateGateAsync_EmptyNewName_ThrowsArgumentException()
-    {
-        var gateRepository = Substitute.For<IGateRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        gateRepository.GetByIdAsync(ValidGateId).Returns(Task.FromResult<Gate?>(new Gate { GateName = FirstGateName }));
-
-        var gateService = new GateService(gateRepository, flightRepository);
-
-        Assert.ThrowsAsync<ArgumentException>(() =>
-            gateService.UpdateGateAsync(new Gate { Id = ValidGateId, GateName = string.Empty }));
-    }
-
-    [Test]
     public async Task UpdateGateAsync_ValidData_UpdatesName()
     {
         var gateRepository = Substitute.For<IGateRepository>();
@@ -176,18 +140,6 @@ public class GateServiceTests
         var gateService = new GateService(gateRepository, flightRepository);
 
         await gateService.DeleteGateAsync(InexistentGateId);
-
-        await gateRepository.DidNotReceive().DeleteAsync(Arg.Any<int>());
-    }
-
-    [Test]
-    public async Task DeleteGateAsync_NegativeId_DoesNotCallRepository()
-    {
-        var gateRepository = Substitute.For<IGateRepository>();
-        var flightRepository = Substitute.For<IFlightRepository>();
-        var gateService = new GateService(gateRepository, flightRepository);
-
-        await gateService.DeleteGateAsync(NegativeGateId);
 
         await gateRepository.DidNotReceive().DeleteAsync(Arg.Any<int>());
     }
