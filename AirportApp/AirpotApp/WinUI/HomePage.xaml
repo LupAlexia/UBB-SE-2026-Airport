@@ -9,76 +9,114 @@
     Background="#0F172A">
 
     <Page.Resources>
-        <Style x:Key="DashboardButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="260"/>
-            <Setter Property="Height" Value="140"/>
-            <Setter Property="Margin" Value="15"/>
-            <Setter Property="Background" Value="Black"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="White"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="FontSize" Value="24"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+        <Style x:Key="RoleCardStyle" TargetType="Button">
+            <Setter Property="Width" Value="220"/>
+            <Setter Property="MinHeight" Value="160"/>
+            <Setter Property="Margin" Value="12"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="24,28"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
     </Page.Resources>
 
-    <Grid Padding="30">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Grid>
+        <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="0">
 
-        <Grid Grid.Row="1">
-            <StackPanel HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Spacing="20">
+            <TextBlock Text="Staff Portal"
+                       FontSize="38"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,10"/>
 
-                <TextBlock Text="Welcome to the Flight Module!"
-                           FontSize="30"
-                           FontWeight="Bold"
-                           Foreground="White"
-                           HorizontalAlignment="Center"
-                           Margin="0,0,0,10"/>
+            <TextBlock Text="Select your role to continue"
+                       FontSize="15"
+                       Foreground="#A0AEC0"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,36"/>
 
-                <TextBlock Text="What type of user are you?"
-                           FontSize="16"
-                           Foreground="#B0B0B0"
-                           HorizontalAlignment="Center"
-                           Margin="0,0,0,25"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel.Resources>
+                    <ResourceDictionary>
+                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="White"/>
+                        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="#111827"/>
+                        <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="#2bb8c0"/>
+                        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#F8FAFC"/>
+                        <SolidColorBrush x:Key="ButtonForegroundPressed" Color="#111827"/>
+                        <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="#2bb8c0"/>
+                    </ResourceDictionary>
+                </StackPanel.Resources>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <StackPanel.Resources>
-                        <ResourceDictionary>
-                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#1E293B"/>
-                            <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
-                            <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="#2bb8c0"/>
-                            <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#0F172A"/>
-                            <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
-                            <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="#2bb8c0"/>
-                        </ResourceDictionary>
-                    </StackPanel.Resources>
-
-                    <Button Style="{StaticResource DashboardButtonStyle}"
-                            Command="{x:Bind ViewModel.NavigateToCompanyCommand}">
-                        <TextBlock Text="Company Representative"
+                <!-- Admin -->
+                <Button Style="{StaticResource RoleCardStyle}"
+                        Command="{x:Bind ViewModel.NavigateToAdminCommand}">
+                    <StackPanel Spacing="10" HorizontalAlignment="Center">
+                        <TextBlock Text="Admin"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Foreground="#111827"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Manage FAQ, tickets, reviews, employees, routes, and gates."
+                                   FontSize="13"
+                                   Foreground="#6B7280"
                                    TextWrapping="Wrap"
                                    TextAlignment="Center"
-                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   MaxWidth="172"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Manager (Company Representative) -->
+                <Button Style="{StaticResource RoleCardStyle}"
+                        Command="{x:Bind ViewModel.NavigateToCompanyCommand}">
+                    <StackPanel Spacing="10" HorizontalAlignment="Center">
+                        <TextBlock Text="Manager"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Foreground="#111827"
                                    HorizontalAlignment="Center"/>
-                    </Button>
+                        <TextBlock Text="Flight company manager – add and manage flights."
+                                   FontSize="13"
+                                   Foreground="#6B7280"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   MaxWidth="172"/>
+                    </StackPanel>
+                </Button>
 
-                    <Button Content="Airport Administrator"
-                            Style="{StaticResource DashboardButtonStyle}"
-                            Command="{x:Bind ViewModel.NavigateToAdminCommand}"/>
-
-                    <Button Content="Airport Staff Member"
-                            Style="{StaticResource DashboardButtonStyle}"
-                            Command="{x:Bind ViewModel.NavigateToStaffCommand}"/>
-                </StackPanel>
+                <!-- Employee (Airport Staff Member) -->
+                <Button Style="{StaticResource RoleCardStyle}"
+                        Command="{x:Bind ViewModel.NavigateToStaffCommand}">
+                    <StackPanel Spacing="10" HorizontalAlignment="Center">
+                        <TextBlock Text="Employee"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Foreground="#111827"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Flight crew – view schedule and assigned flights."
+                                   FontSize="13"
+                                   Foreground="#6B7280"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   MaxWidth="172"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
-        </Grid>
+
+            <HyperlinkButton Content="← Back to role selection"
+                 HorizontalAlignment="Center"
+                 Foreground="#A0AEC0"
+                 Margin="0,28,0,0"
+                 Command="{x:Bind ViewModel.NavigateToAirportCommand}"/>
+        </StackPanel>
     </Grid>
 </Page>

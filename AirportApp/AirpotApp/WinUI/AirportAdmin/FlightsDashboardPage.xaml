@@ -29,12 +29,7 @@
             <AutoSuggestBox PlaceholderText="Search flights..."
                             Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <Button Grid.Column="2" Content="Refresh"
-                    Command="{x:Bind ViewModel.LoadFlightsCommand}"/>
 
-            <Button Grid.Column="4" Content="Manage Crew"
-                    Style="{StaticResource AccentButtonStyle}"
-                    Command="{x:Bind ViewModel.OpenCrewManagementCommand}"/>
         </Grid>
 
         <local:FlightListControl Grid.Row="2"
