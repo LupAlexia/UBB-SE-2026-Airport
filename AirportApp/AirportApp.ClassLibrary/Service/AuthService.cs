@@ -34,10 +34,6 @@ public class AuthService(ICustomerRepository userRepository) : IAuthService
             throw new InvalidOperationException("No account found with this email.");
         if (currentUserId.HasValue && existingUser.Id != currentUserId.Value)
             throw new InvalidOperationException("This account does not belong to the current user.");
-
-        //PasswordVerificationResult result = passwordHasher.VerifyHashedPassword(existingUser, existingUser.PasswordHash, password);
-        //if (result == PasswordVerificationResult.Failed)
-          //  throw new InvalidOperationException("Invalid email or password.");
         if(existingUser.PasswordHash != password)
             throw new InvalidOperationException("Invalid email or password.");
 
