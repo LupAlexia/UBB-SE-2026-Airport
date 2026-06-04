@@ -5,6 +5,7 @@
 @{
     ViewData["Title"] = "Submit a New Ticket";
     var subcategoryDetails = JsonSerializer.Serialize(ViewBag.SubcategoryDetails);
+    var initialSubcategories = ViewBag.InitialSubcategories as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>();
 }
 
 <section class="ticket-form-page">
@@ -39,6 +40,10 @@
                 <label asp-for="SubcategoryId" class="form-label">Subcategory*</label>
                 <select asp-for="SubcategoryId" id="subcategorySelect" class="form-select">
                     <option value="">Select Subcategory</option>
+                    @foreach (var subcategory in initialSubcategories)
+                    {
+                        <option value="@subcategory.Value" selected="@(subcategory.Selected ? "selected" : null)">@subcategory.Text</option>
+                    }
                 </select>
                 <span asp-validation-for="SubcategoryId" class="text-danger"></span>
             </div>
@@ -74,6 +79,19 @@
             const subcategorySelect = document.getElementById('subcategorySelect');
             const selectedSubcategory = '@Model.SubcategoryId';
 
+            function ensureCategorySelected() {
+                if (categorySelect.value) {
+                    return;
+                }
+
+                const firstCategoryOption = Array.from(categorySelect.options)
+                    .find(option => option.value !== '');
+
+                if (firstCategoryOption) {
+                    categorySelect.value = firstCategoryOption.value;
+                }
+            }
+
             function renderSubcategories() {
                 const categoryId = Number(categorySelect.value);
                 subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
@@ -90,6 +108,7 @@
             }
 
             categorySelect.addEventListener('change', renderSubcategories);
+            ensureCategorySelected();
             renderSubcategories();
         })();
     </script>

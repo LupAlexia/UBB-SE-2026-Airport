@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
-var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://localhost:5171/";
+var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://localhost:5043/";
 
 builder.Services.AddControllersWithViews(options =>
 {

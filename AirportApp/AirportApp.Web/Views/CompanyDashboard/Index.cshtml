@@ -7,24 +7,35 @@
 @section Styles
 {
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/company-representative.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true" />
 }
 
 <div class="topbar">
     <i class="bi bi-airplane-fill topbar-icon"></i>
     <span class="topbar-title">Flight Module</span>
+    @if (Model.ManagerCompanies.Count > 1)
+    {
+        <form method="get" asp-action="Index" id="companyForm" style="margin-left:auto;">
+            <select name="companyId" class="form-ctrl" onchange="this.form.submit()" style="min-width:160px;">
+                @foreach (var company in Model.ManagerCompanies)
+                {
+                    if (company.Id == Model.CompanyId)
+                    {
+                        <option value="@company.Id" selected>@company.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@company.Id">@company.Name</option>
+                    }
+                }
+            </select>
+        </form>
+    }
 </div>
 
 
 <div class="page-wrap">
-    @if (!ViewData.ModelState.IsValid)
-    {
-        <div class="alert alert-danger mb-3" role="alert">
-            <strong>Flight could not be created.</strong>
-            <div asp-validation-summary="All" class="mt-2"></div>
-        </div>
-    }
-
     <div class="flight-card">
 
         <!-- Header -->
@@ -79,13 +90,19 @@
                             <td>@f.DestinationText</td>
                             <td>@f.RunwayText</td>
                             <td>@f.GateText</td>
-                            <td>
+                            <td style="display:flex; gap:.5rem;">
 								<a asp-action="DeleteFlight"
 								   asp-route-flightId="@f.Id"
-								   class="btn btn-sm btn-outline-danger"
+								   class="btn-table-danger"
 								   title="Delete flight">
-									<i class="bi bi-trash"></i>
+									<i class="bi bi-trash"></i> Delete
 								</a>
+                                <button type="button"
+                                        class="btn-table-info"
+                                        title="Manage Crew"
+                                        onclick="openCrewModal(@f.Id, '@f.FlightNumber')">
+                                    <i class="bi bi-people"></i> Crew
+                                </button>
                             </td>
                         </tr>
                     }
@@ -101,8 +118,17 @@
 	<div class="modal-box">
 		<div class="modal-title">Add Flight</div>
 
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div style="background:rgba(231,76,60,.15); border:1px solid rgba(231,76,60,.4); border-radius:8px; padding:.75rem 1rem; margin-bottom:1rem; color:#e74c3c; font-size:.88rem;">
+                <strong>Flight could not be created:</strong>
+                <div asp-validation-summary="All" class="mt-1"></div>
+            </div>
+        }
+
 		<form method="post" asp-action="AddFlight" id="addFlightForm">
 			@Html.AntiForgeryToken()
+			<input type="hidden" name="companyId" value="@Model.CompanyId" />
 			<input type="hidden" asp-for="AddFlightForm.CompanyId" />
 
 			<div class="form-grid">
@@ -186,7 +212,7 @@
 						<option value="">Select Gate</option>
 						@foreach (var gate in Model.AddFlightForm.Gates)
 						{
-							<option value="@gate.Id">@gate.Name</option>
+							<option value="@gate.Id">@gate.GateName</option>
 						}
 					</select>
 					<span asp-validation-for="AddFlightForm.GateId" class="text-danger small"></span>
@@ -247,7 +273,7 @@
         <p id="deleteConfirmText">Are you sure you want to delete this flight?</p>
         <form method="post" asp-action="DeleteFlight" id="deleteForm">
             @Html.AntiForgeryToken()
-            <input type="hidden" name="id" id="deleteFlightId" />
+            <input type="hidden" name="flightId" id="deleteFlightId" />
             <div class="modal-footer-btns">
                 <button type="submit" class="btn-danger-confirm">Delete</button>
                 <button type="button" class="btn-cancel" id="cancelDelete">Cancel</button>
@@ -256,9 +282,47 @@
     </div>
 </div>
 
+<!-- crew modal -->
+<div class="modal-backdrop-custom" id="crewModal">
+    <div class="modal-box">
+        <div class="modal-title">Manage Crew — <span id="crewFlightLabel"></span></div>
+        <div id="crewModalContent"><p class="text-muted">Loading...</p></div>
+    </div>
+</div>
+
 @section Scripts
 {
-    <script src="~/js/company-representative.js" asp-append-version="true"></script>
+    <script src="~/js/manager-dashboard.js" asp-append-version="true"></script>
+    <script>
+        var currentCompanyId = @Model.CompanyId;
+
+        async function openCrewModal(flightId, flightNumber) {
+            document.getElementById('crewFlightLabel').textContent = flightNumber;
+            document.getElementById('crewModalContent').innerHTML = '<p style="color:#9ca3af">Loading...</p>';
+            document.getElementById('crewModal').classList.add('open');
+
+            try {
+                const response = await fetch('/CompanyDashboard/GetCrewModal?flightId=' + flightId);
+                if (!response.ok) {
+                    document.getElementById('crewModalContent').innerHTML = '<p style="color:#e74c3c">Error ' + response.status + ' — could not load crew data.</p>';
+                    return;
+                }
+                const html = await response.text();
+                if (!html || !html.trim()) {
+                    document.getElementById('crewModalContent').innerHTML = '<p style="color:#9ca3af">No crew data returned from server.</p>';
+                    return;
+                }
+                document.getElementById('crewModalContent').innerHTML = html;
+                const companyInput = document.getElementById('crewCompanyIdInput');
+                if (companyInput) companyInput.value = currentCompanyId;
+                document.getElementById('cancelCrew')?.addEventListener('click', function () {
+                    document.getElementById('crewModal').classList.remove('open');
+                });
+            } catch (err) {
+                document.getElementById('crewModalContent').innerHTML = '<p style="color:#e74c3c">Failed: ' + err.message + '</p>';
+            }
+        }
+    </script>
 }
 
 

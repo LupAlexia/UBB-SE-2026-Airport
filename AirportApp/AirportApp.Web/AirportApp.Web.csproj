@@ -15,22 +15,10 @@
     <!-- 921 Controllers - need async conversion -->
     <Compile Remove="Controllers\AirportAdministrationController.cs" />
     <Compile Remove="Controllers\AirportManagementController.cs" />
-    <Compile Remove="Controllers\StaffDashboardController.cs" />
-    <Compile Remove="Controllers\CompanyDashboardController.cs" />
-    <Compile Remove="Controllers\DutyFreeController.cs" />
-    <Compile Remove="Controllers\DutyFreeCartController.cs" />
-    <Compile Remove="Controllers\DutyFreeItemDetailsController.cs" />
-    <Compile Remove="Controllers\DutyFreeShopItemsController.cs" />
     <Compile Remove="Controllers\EmployeesController.cs" />
 
     <!-- Exclude related Views -->
     <Content Remove="Views\AirportAdministration\**" />
-    <Content Remove="Views\StaffDashboard\**" />
-    <Content Remove="Views\CompanyDashboard\**" />
-    <Content Remove="Views\DutyFree\**" />
-    <Content Remove="Views\DutyFreeCart\**" />
-    <Content Remove="Views\DutyFreeItemDetails\**" />
-    <Content Remove="Views\DutyFreeShopItems\**" />
     <Content Remove="Views\Employees\**" />
   </ItemGroup>
 

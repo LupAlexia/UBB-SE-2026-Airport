@@ -15,8 +15,15 @@ public class MessageServiceProxy(HttpClient httpClient) : ServiceProxyBase(httpC
 
     public async Task<BotMessage> SendMessageAsync(int chatId, Sender sender, FAQOption selectedOption)
     {
-        var payload = new { ChatId = chatId, Sender = sender, SelectedOption = selectedOption };
-        return await PostForResultAsync<object, BotMessage>($"{BaseUrl}/send", payload);
+        var payload = new SendMessageRequestDTO
+        {
+            ChatId = chatId,
+            SenderId = sender.RetrieveUniqueDatabaseIdentifierForBot(),
+            OptionLabel = selectedOption.Label,
+            NextNodeId = selectedOption.NextOption?.NodeId
+        };
+
+        return await PostForResultAsync<SendMessageRequestDTO, BotMessage>($"{BaseUrl}/send", payload);
     }
 
     public async Task<IMessage> GetMessageAsync(int chatId, int messageId)

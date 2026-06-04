@@ -1,7 +1,7 @@
-﻿@model AirportApp.Web.Models.AirportManagement.StaffDashboardViewModel
+﻿@model AirportApp.Web.Models.AirportManagement.EmployeeDashboardViewModel
 
 @{
-	ViewData["Title"] = "Staff Dashboard";
+	ViewData["Title"] = "Employee Dashboard";
 }
 
 <div class="container-fluid mt-4">
@@ -19,11 +19,11 @@
 				</div>
 				<div class="col-md-2">
 					<div class="small">ROLE</div>
-					<div class="text-white fs-4 fw-bold">Pilot</div>
+					<div class="text-white fs-4 fw-bold">@Model.Role</div>
 				</div>
 				<div class="col-md-2">
 					<div class="small">ASSIGNED FLIGHTS</div>
-					<div class="text-white fs-4 fw-bold">@Model.Schedule.Count</div>
+					<div class="text-white fs-4 fw-bold">@Model.Schedule.Count()</div>
 				</div>
 			</div>
 

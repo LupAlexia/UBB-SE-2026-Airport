@@ -29,21 +29,21 @@ namespace AirportApp.ClassLibrary.Entity.Dto
         }
 
         public FAQEntryDTO(
-            int identificationNumber,
+            int id,
             string question,
             string answer,
             FAQCategoryEnum category,
             int viewCount,
-            int wasHelpfulVotes,
-            int wasNotHelpfulVotes)
+            int helpfulVotesCount,
+            int notHelpfulVotesCount)
         {
-            Id = identificationNumber;
+            Id = id;
             Question = question;
             Answer = answer;
             Category = category;
             ViewCount = viewCount;
-            HelpfulVotesCount = wasHelpfulVotes;
-            NotHelpfulVotesCount = wasNotHelpfulVotes;
+            HelpfulVotesCount = helpfulVotesCount;
+            NotHelpfulVotesCount = notHelpfulVotesCount;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

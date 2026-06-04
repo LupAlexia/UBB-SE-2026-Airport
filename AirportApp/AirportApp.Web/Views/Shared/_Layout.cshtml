@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - AirportApp</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="d-flex flex-column min-vh-100 bg-body-tertiary">
     <header class="sticky-top">

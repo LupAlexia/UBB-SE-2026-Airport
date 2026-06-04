@@ -17,24 +17,32 @@ public class ComplaintTicketServiceProxy(HttpClient httpClient) : ServiceProxyBa
         string subject, string description, DateTime creationTimestamp,
         ComplaintTicketUrgencyLevelEnum? initialUrgencyLevel = null)
     {
-        var ticket = new ComplaintTicket
-        {
-            Id = ticketId,
-            Creator = ticketCreator,
-            CurrentStatus = initialStatus,
-            Category = category,
-            Subcategory = subcategory,
-            Subject = subject,
-            Description = description,
-            CreationTimestamp = creationTimestamp,
-            UrgencyLevel = initialUrgencyLevel ?? ComplaintTicketUrgencyLevelEnum.LOW
-        };
-        await AddTicketAsync(ticket);
+        var ticket = new CreateTicketDTO(
+            ticketCreator.Id,
+            category.Id,
+            subcategory.Id,
+            subject,
+            description,
+            creationTimestamp,
+            initialStatus,
+            initialUrgencyLevel ?? category.CategoryUrgencyLevel);
+
+        await PostAsync(BaseUrl, ticket);
     }
 
     public async Task AddTicketAsync(ComplaintTicket ticketEntity)
     {
-        await PostAsync(BaseUrl, ticketEntity);
+        var ticket = new CreateTicketDTO(
+            ticketEntity.Creator.Id,
+            ticketEntity.Category.Id,
+            ticketEntity.Subcategory.Id,
+            ticketEntity.Subject,
+            ticketEntity.Description,
+            ticketEntity.CreationTimestamp,
+            ticketEntity.CurrentStatus,
+            ticketEntity.UrgencyLevel);
+
+        await PostAsync(BaseUrl, ticket);
     }
 
     public async Task DeleteTicketByIdAsync(int ticketId)
