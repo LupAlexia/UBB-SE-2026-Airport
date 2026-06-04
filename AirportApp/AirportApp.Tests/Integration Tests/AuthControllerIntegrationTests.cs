@@ -1,6 +1,5 @@
 using AirportApp.ClassLibrary.Entity.Domain;
 using AirportApp.ClassLibrary.Entity.Dto;
-using Microsoft.AspNetCore.Identity;
 using NUnit.Framework;
 using System.Net;
 using System.Net.Http;
@@ -42,10 +41,9 @@ public class AuthControllerIntegrationTests
             {
                 Email = customerEmail,
                 Username = "testuser",
-                Phone = "0740123456"
+                Phone = "0740123456",
+                PasswordHash = password
             };
-            var passwordHasher = new PasswordHasher<Customer>();
-            customer.PasswordHash = passwordHasher.HashPassword(customer, password);
 
             db.Customers.Add(customer);
             await db.SaveChangesAsync();
@@ -71,17 +69,16 @@ public class AuthControllerIntegrationTests
         // Arrange
         var customerEmail = "integrationtestuser_token@example.com";
         var password = "TestPassword123!";
-        
+
         await _factory.ExecuteDbContextAsync(async db =>
         {
             var customer = new Customer
             {
                 Email = customerEmail,
                 Username = "testuser_token",
-                Phone = "0740123456"
+                Phone = "0740123456",
+                PasswordHash = password
             };
-            var passwordHasher = new PasswordHasher<Customer>();
-            customer.PasswordHash = passwordHasher.HashPassword(customer, password);
 
             db.Customers.Add(customer);
             await db.SaveChangesAsync();
