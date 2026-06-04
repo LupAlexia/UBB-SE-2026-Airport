@@ -270,9 +270,7 @@ public class ShopServiceTests
 
         var result = (await _shopService.SortAlphabeticallyAsync()).ToList();
 
-        Assert.That(result[0].Name, Is.EqualTo("Apple Store"));
-        Assert.That(result[1].Name, Is.EqualTo("Coffee Corner"));
-        Assert.That(result[2].Name, Is.EqualTo("Zara"));
+        Assert.That(result.Select(s => s.Name), Is.EqualTo(new[] { "Apple Store", "Coffee Corner", "Zara" }));
     }
 
     [Test]
@@ -298,9 +296,7 @@ public class ShopServiceTests
 
         var result = (await _shopService.SortAlphabeticallyAsync()).ToList();
 
-        Assert.That(result[0].Name, Is.EqualTo("Apple Store"));
-        Assert.That(result[1].Name, Is.EqualTo("coffee"));
-        Assert.That(result[2].Name, Is.EqualTo("zara"));
+        Assert.That(result.Select(s => s.Name), Is.EqualTo(new[] { "Apple Store", "coffee", "zara" }));
     }
 
     [Test]
@@ -310,10 +306,9 @@ public class ShopServiceTests
         var otherShop = CreateShop(SecondShopId, AlternativeShopName);
         _shopRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Shop>>(new List<Shop> { matchingShop, otherShop }));
 
-        var result = (await _shopService.SearchByNameAsync(DefaultShopName)).ToList();
+        var result = await _shopService.SearchByNameAsync(DefaultShopName);
 
-        Assert.That(result, Has.Count.EqualTo(1));
-        Assert.That(result[0], Is.EqualTo(matchingShop));
+        Assert.That(result, Is.EquivalentTo(new[] { matchingShop }));
     }
 
     [Test]
@@ -323,10 +318,9 @@ public class ShopServiceTests
         var otherShop = CreateShop(SecondShopId, AlternativeShopName);
         _shopRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Shop>>(new List<Shop> { matchingShop, otherShop }));
 
-        var result = (await _shopService.SearchByNameAsync("Coffee")).ToList();
+        var result = await _shopService.SearchByNameAsync("Coffee");
 
-        Assert.That(result, Has.Count.EqualTo(1));
-        Assert.That(result[0], Is.EqualTo(matchingShop));
+        Assert.That(result, Is.EquivalentTo(new[] { matchingShop }));
     }
 
     [Test]
@@ -346,10 +340,9 @@ public class ShopServiceTests
         var matchingShop = CreateShop(DefaultShopId, DefaultShopName);
         _shopRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Shop>>(new List<Shop> { matchingShop }));
 
-        var result = (await _shopService.SearchByNameAsync(DefaultShopName.ToUpper())).ToList();
+        var result = await _shopService.SearchByNameAsync(DefaultShopName.ToUpper());
 
-        Assert.That(result, Has.Count.EqualTo(1));
-        Assert.That(result[0], Is.EqualTo(matchingShop));
+        Assert.That(result, Is.EquivalentTo(new[] { matchingShop }));
     }
 
     [Test]
@@ -360,10 +353,8 @@ public class ShopServiceTests
         var nonMatchingShop = CreateShop(3, AlternativeShopName);
         _shopRepository.GetAsync().Returns(Task.FromResult<IEnumerable<Shop>>(new List<Shop> { firstMatchingShop, secondMatchingShop, nonMatchingShop }));
 
-        var result = (await _shopService.SearchByNameAsync("Coffee")).ToList();
+        var result = await _shopService.SearchByNameAsync("Coffee");
 
-        Assert.That(result, Has.Count.EqualTo(2));
-        Assert.That(result, Contains.Item(firstMatchingShop));
-        Assert.That(result, Contains.Item(secondMatchingShop));
+        Assert.That(result, Is.EquivalentTo(new[] { firstMatchingShop, secondMatchingShop }));
     }
 }

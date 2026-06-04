@@ -261,6 +261,17 @@ public class PricingServiceTests
         var breakdown = await _pricingService.CalculatePriceBreakdownAsync(flight, customer, tickets);
 
         Assert.That(breakdown.BasePriceTotal, Is.EqualTo(StandardFlightBasePrice).Within(FloatComparisonTolerance));
+    }
+
+    [Test]
+    public async Task CalculatePriceBreakdownAsync_BasicUserWithSingleTicket_ReturnsCorrectFinalTotal()
+    {
+        var flight = CreateFlightWithDurationInMinutes(StandardFlightDurationInMinutes);
+        var customer = CreateCustomerWithoutMembership();
+        var tickets = new List<FlightTicket> { new FlightTicket() };
+
+        var breakdown = await _pricingService.CalculatePriceBreakdownAsync(flight, customer, tickets);
+
         Assert.That(breakdown.FinalTotal, Is.EqualTo(StandardFlightBasePrice).Within(FloatComparisonTolerance));
     }
 
@@ -303,7 +314,7 @@ public class PricingServiceTests
     }
 
     [Test]
-    public async Task CalculatePriceBreakdownAsync_WithAddOns_IncludesAddOnsTotalCorrectly()
+    public async Task CalculatePriceBreakdownAsync_WithAddOns_ReturnsCorrectAddOnsTotal()
     {
         var flight = CreateFlightWithDurationInMinutes(StandardFlightDurationInMinutes);
         var customer = CreateCustomerWithoutMembership();
@@ -316,6 +327,21 @@ public class PricingServiceTests
         var breakdown = await _pricingService.CalculatePriceBreakdownAsync(flight, customer, tickets);
 
         Assert.That(breakdown.AddOnsTotal, Is.EqualTo(FirstAddOnBasePrice).Within(FloatComparisonTolerance));
+    }
+
+    [Test]
+    public async Task CalculatePriceBreakdownAsync_WithAddOns_IncludesAddOnsInFinalTotal()
+    {
+        var flight = CreateFlightWithDurationInMinutes(StandardFlightDurationInMinutes);
+        var customer = CreateCustomerWithoutMembership();
+        var ticket = new FlightTicket
+        {
+            SelectedAddOns = new List<AddOn> { new AddOn { BasePrice = FirstAddOnBasePrice } }
+        };
+        var tickets = new List<FlightTicket> { ticket };
+
+        var breakdown = await _pricingService.CalculatePriceBreakdownAsync(flight, customer, tickets);
+
         Assert.That(breakdown.FinalTotal, Is.EqualTo(StandardFlightBasePrice + FirstAddOnBasePrice).Within(FloatComparisonTolerance));
     }
 
@@ -330,11 +356,36 @@ public class PricingServiceTests
         var breakdown = await _pricingService.CalculatePriceBreakdownAsync(flight, customer, tickets);
 
         Assert.That(breakdown.BasePriceTotal, Is.EqualTo(expectedBasePriceTotal).Within(FloatComparisonTolerance));
+    }
+
+    [Test]
+    public async Task CalculatePriceBreakdownAsync_MultiplePassengers_ReturnsCorrectFinalTotal()
+    {
+        var flight = CreateFlightWithDurationInMinutes(StandardFlightDurationInMinutes);
+        var customer = CreateCustomerWithoutMembership();
+        var tickets = new List<FlightTicket> { new FlightTicket(), new FlightTicket() };
+        float expectedBasePriceTotal = StandardFlightBasePrice * tickets.Count;
+
+        var breakdown = await _pricingService.CalculatePriceBreakdownAsync(flight, customer, tickets);
+
         Assert.That(breakdown.FinalTotal, Is.EqualTo(expectedBasePriceTotal).Within(FloatComparisonTolerance));
     }
 
     [Test]
-    public async Task CalculatePriceBreakdownAsync_MembershipUserWithMultiplePassengers_CalculatesSavingsCorrectly()
+    public async Task CalculatePriceBreakdownAsync_MembershipUserWithMultiplePassengers_CalculatesCorrectMembershipSavings()
+    {
+        var flight = CreateFlightWithDurationInMinutes(StandardFlightDurationInMinutes);
+        var customer = CreateCustomerWithMembership(CreateMembershipWithFlightDiscount());
+        var tickets = new List<FlightTicket> { new FlightTicket(), new FlightTicket() };
+        float expectedSavings = StandardFlightBasePrice * (FlightDiscountPercentage / PercentageDivisor) * tickets.Count;
+
+        var breakdown = await _pricingService.CalculatePriceBreakdownAsync(flight, customer, tickets);
+
+        Assert.That(breakdown.MembershipSavings, Is.EqualTo(expectedSavings).Within(FloatComparisonTolerance));
+    }
+
+    [Test]
+    public async Task CalculatePriceBreakdownAsync_MembershipUserWithMultiplePassengers_CalculatesCorrectFinalTotal()
     {
         var flight = CreateFlightWithDurationInMinutes(StandardFlightDurationInMinutes);
         var customer = CreateCustomerWithMembership(CreateMembershipWithFlightDiscount());
@@ -344,12 +395,57 @@ public class PricingServiceTests
 
         var breakdown = await _pricingService.CalculatePriceBreakdownAsync(flight, customer, tickets);
 
-        Assert.That(breakdown.MembershipSavings, Is.EqualTo(expectedSavings).Within(FloatComparisonTolerance));
         Assert.That(breakdown.FinalTotal, Is.EqualTo(expectedFinalTotal).Within(FloatComparisonTolerance));
     }
 
     [Test]
-    public async Task CalculatePriceBreakdownAsync_ComplexDiscountScenario_CalculatesAllFieldsCorrectly()
+    public async Task CalculatePriceBreakdownAsync_ComplexDiscountScenario_CalculatesCorrectBasePriceTotal()
+    {
+        var flight = CreateFlightWithDurationInMinutes(StandardFlightDurationInMinutes);
+        var membership = CreateMembershipWithFlightDiscount();
+        var addOn = new AddOn { Id = DefaultAddOnId, Name = "Luggage", BasePrice = FirstAddOnBasePrice };
+        membership.AddonDiscounts = new List<MembershipAddonDiscount>
+        {
+            new MembershipAddonDiscount(membership, addOn, AddOnDiscountPercentage)
+        };
+        var customer = CreateCustomerWithMembership(membership);
+        var tickets = new List<FlightTicket>
+        {
+            new FlightTicket { SelectedAddOns = new List<AddOn> { addOn } },
+            new FlightTicket { SelectedAddOns = new List<AddOn> { addOn } }
+        };
+        float expectedBasePriceTotal = StandardFlightBasePrice * tickets.Count;
+
+        var breakdown = await _pricingService.CalculatePriceBreakdownAsync(flight, customer, tickets);
+
+        Assert.That(breakdown.BasePriceTotal, Is.EqualTo(expectedBasePriceTotal).Within(FloatComparisonTolerance));
+    }
+
+    [Test]
+    public async Task CalculatePriceBreakdownAsync_ComplexDiscountScenario_CalculatesCorrectAddOnsTotal()
+    {
+        var flight = CreateFlightWithDurationInMinutes(StandardFlightDurationInMinutes);
+        var membership = CreateMembershipWithFlightDiscount();
+        var addOn = new AddOn { Id = DefaultAddOnId, Name = "Luggage", BasePrice = FirstAddOnBasePrice };
+        membership.AddonDiscounts = new List<MembershipAddonDiscount>
+        {
+            new MembershipAddonDiscount(membership, addOn, AddOnDiscountPercentage)
+        };
+        var customer = CreateCustomerWithMembership(membership);
+        var tickets = new List<FlightTicket>
+        {
+            new FlightTicket { SelectedAddOns = new List<AddOn> { addOn } },
+            new FlightTicket { SelectedAddOns = new List<AddOn> { addOn } }
+        };
+        float expectedAddOnsTotal = FirstAddOnBasePrice * tickets.Count;
+
+        var breakdown = await _pricingService.CalculatePriceBreakdownAsync(flight, customer, tickets);
+
+        Assert.That(breakdown.AddOnsTotal, Is.EqualTo(expectedAddOnsTotal).Within(FloatComparisonTolerance));
+    }
+
+    [Test]
+    public async Task CalculatePriceBreakdownAsync_ComplexDiscountScenario_CalculatesCorrectMembershipSavings()
     {
         var flight = CreateFlightWithDurationInMinutes(StandardFlightDurationInMinutes);
         var membership = CreateMembershipWithFlightDiscount();
@@ -373,9 +469,31 @@ public class PricingServiceTests
 
         var breakdown = await _pricingService.CalculatePriceBreakdownAsync(flight, customer, tickets);
 
-        Assert.That(breakdown.BasePriceTotal, Is.EqualTo(expectedBasePriceTotal).Within(FloatComparisonTolerance));
-        Assert.That(breakdown.AddOnsTotal, Is.EqualTo(expectedAddOnsTotal).Within(FloatComparisonTolerance));
         Assert.That(breakdown.MembershipSavings, Is.EqualTo(expectedSavings).Within(FloatComparisonTolerance));
+    }
+
+    [Test]
+    public async Task CalculatePriceBreakdownAsync_ComplexDiscountScenario_CalculatesCorrectFinalTotal()
+    {
+        var flight = CreateFlightWithDurationInMinutes(StandardFlightDurationInMinutes);
+        var membership = CreateMembershipWithFlightDiscount();
+        var addOn = new AddOn { Id = DefaultAddOnId, Name = "Luggage", BasePrice = FirstAddOnBasePrice };
+        membership.AddonDiscounts = new List<MembershipAddonDiscount>
+        {
+            new MembershipAddonDiscount(membership, addOn, AddOnDiscountPercentage)
+        };
+        var customer = CreateCustomerWithMembership(membership);
+        var tickets = new List<FlightTicket>
+        {
+            new FlightTicket { SelectedAddOns = new List<AddOn> { addOn } },
+            new FlightTicket { SelectedAddOns = new List<AddOn> { addOn } }
+        };
+        float discountedFlightPrice = StandardFlightBasePrice - StandardFlightBasePrice * (FlightDiscountPercentage / PercentageDivisor);
+        float discountedAddOnPrice = FirstAddOnBasePrice - FirstAddOnBasePrice * (AddOnDiscountPercentage / PercentageDivisor);
+        float expectedFinalTotal = (discountedFlightPrice + discountedAddOnPrice) * tickets.Count;
+
+        var breakdown = await _pricingService.CalculatePriceBreakdownAsync(flight, customer, tickets);
+
         Assert.That(breakdown.FinalTotal, Is.EqualTo(expectedFinalTotal).Within(FloatComparisonTolerance));
     }
 }
